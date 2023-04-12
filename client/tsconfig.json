@@ -1,26 +1,29 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "esModuleInterop": true
   },
   "include": [
-    "src"
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "files": [
+    "src/index.tsx",
+    "src/LoginScreen.tsx",
+    "src/tailwind.config.js",
+    "src/index.tsx",
+    "src/index.css",
+    "src/App.tsx",
+    "src/styles/tailwind.css",
+    "src/components/Alert.tsx",
+    "src/components/Chat.tsx",
+    "src/components/LoginForm.tsx",
+    "src/components/Message.tsx",
+    "src/components/RegisterForm.tsx"
   ]
 }

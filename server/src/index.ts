@@ -1,24 +1,17 @@
-import express from "express";
-import { Server } from "socket.io";
-import { createServer } from "http";
+import http from "http";
+import app from "./app";
+import { connectToDatabase } from "./db";
 
-const app = express();
-const server = createServer(app);
-const io = new Server(server);
+const PORT = process.env.PORT || 3001;
 
-io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
-
-  socket.on('send-message', (message) => {
-    io.emit('receive-message', message);
-    console.log('Message received:', message);
+connectToDatabase()
+  .then(() => {
+    console.log("Database connected");
+    const server = http.createServer(app);
+    server.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.log("Database connection failed", error);
   });
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id); 
-  });
-});
-
-server.listen(3001, () => {
-  console.log('Server running on port 3001');
-});

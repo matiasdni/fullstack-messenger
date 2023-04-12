@@ -1,66 +1,77 @@
-import React, { useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import React from "react";
+import Login from "./components/Login";
+import { Route, Routes } from "react-router-dom";
+import { Home } from "./components/Home";
+import PrivateRoute from "./components/PrivateRoute";
 
-function App() {
-  return (
-    <div>
-      <h1>Real-time Chat App</h1>
-      <Chat />
-    </div>
-  );
-}
+function App(): JSX.Element {
+  const [user, setUser] = React.useState(null);
 
-const Chat: React.FC = () => {
-  const [messages, setMessages] = useState<string[]>([]);
-  const [input, setInput] = useState("");
-  const socketRef = useRef<Socket | null>(null);
-
-  useEffect(() => {
-    socketRef.current = io('http://localhost:3001', {
-      transports: ['websocket'],
-    });
-
-    socketRef.current.on('receive-message', (message: string) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-
-    return () => {
-      socketRef.current?.disconnect();
-    };
-  }, []);
-
-  const sendMessage = () => {
-    if (input.trim()) {
-      socketRef.current?.emit('send-message', input);
-      setInput('');
-    }
-  };
+  // const handleLogin = () => setUser({ id: "1", name: "robin" });
+  // const handleLogout = () => setUser(null);
 
   return (
-    <div>
-      <div>
-        {messages.map((message, index) => (
-          <Message key={index} content={message} />
-        ))}
-      </div>
-      <div>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <button onClick={sendMessage}>Send</button>
-      </div>
-    </div>
+    <Routes>
+      <Route path="/" element={<PrivateRoute />}>
+        <Route path="/" element={<Home />} />
+      </Route>
+      <Route path="/login" element={<Login />} />
+    </Routes>
   );
-};
-
-interface MessageProps {
-  content: string;
 }
-
-const Message: React.FC<MessageProps> = ({ content }) => {
-  return <div>{content}</div>;
-};
 
 export default App;
+
+//   return (
+//     <div className="App">
+//       <DarkModeToggle />
+//       <div className="bg-cover dark:bg-gray-900">
+//         {user ? (
+//           <button onClick={handleLogout}>Sign Out</button>
+//         ) : (
+//           <button onClick={handleLogin}>Sign In</button>
+//         )}
+//         <Routes>
+//           <Route
+//             path="home"
+//             element={
+//               <PrivateRoute user={user}>
+//                 <Home />
+//               </PrivateRoute>
+//             }
+//           />
+//           {/*<PrivateRoute path="/dashboard" element={<Dashboard />} />*/}
+//           {!user && <Route path="/login" Component={Login} />}
+//           {user && <Route path="/dashboard" Component={Dashboard} />}
+//         </Routes>
+//       </div>
+//     </div>
+//   );
+// }
+
+/*
+// import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+// import { AuthProvider } from "./contexts/AuthContext";
+// import Signup from "./components/Signup";
+// import ForgotPassword from "./components/ForgotPassword";
+// import UpdateProfile from "./components/UpdateProfile";
+// import Dashboard from "./components/Dashboard";
+// import Home from "./components/Home";
+// import About from "./components/About";
+// import Contact from "./components/Contact";
+// import NotFound from "./components/NotFound";
+// <Router>
+//   <AuthProvider>
+//     <Switch>
+//       <PrivateRoute exact path="/" component={Home} />
+//       <PrivateRoute path="/dashboard" component={Dashboard} />
+//       <PrivateRoute path="/update-profile" component={UpdateProfile} />
+//       <Route path="/login" component={Login} />
+//       <Route path="/signup" component={Signup} />
+//       <Route path="/forgot-password" component={ForgotPassword} />
+//       <Route path="/about" component={About} />
+//       <Route path="/contact" component={Contact} />
+//       <Route path="*" component={NotFound} />
+//     </Switch>
+//   </AuthProvider>
+// </Router>*/
