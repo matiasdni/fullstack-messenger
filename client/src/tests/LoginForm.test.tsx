@@ -6,11 +6,8 @@ import { fireEvent, render, screen } from "@testing-library/react";
 describe("LoginForm", () => {
   it("renders the login form correctly", () => {
     const handleRegisterClick = jest.fn();
-    const handleLogin = jest.fn();
-
-    render(
-      <LoginForm onRegisterClick={handleRegisterClick} onLogin={handleLogin} />
-    );
+    jest.fn();
+    render(<LoginForm onRegisterClick={handleRegisterClick} />);
 
     const usernameInput = screen.getByLabelText("Username:");
     const passwordInput = screen.getByLabelText("Password:");
@@ -27,9 +24,7 @@ describe("LoginForm", () => {
     const handleRegisterClick = jest.fn();
     const handleLogin = jest.fn();
 
-    render(
-      <LoginForm onRegisterClick={handleRegisterClick} onLogin={handleLogin} />
-    );
+    render(<LoginForm onRegisterClick={handleRegisterClick} />);
 
     const usernameInput = screen.getByLabelText(
       "Username:"
@@ -49,9 +44,7 @@ describe("LoginForm", () => {
     const handleRegisterClick = jest.fn();
     const handleLogin = jest.fn();
 
-    render(
-      <LoginForm onRegisterClick={handleRegisterClick} onLogin={handleLogin} />
-    );
+    render(<LoginForm onRegisterClick={handleRegisterClick} />);
 
     const form = screen.getByTestId("login-form");
 
@@ -64,9 +57,7 @@ describe("LoginForm", () => {
     const handleRegisterClick = jest.fn();
     const handleLogin = jest.fn();
 
-    render(
-      <LoginForm onRegisterClick={handleRegisterClick} onLogin={handleLogin} />
-    );
+    render(<LoginForm onRegisterClick={handleRegisterClick} />);
 
     const registerButton = screen.getByText("Register");
 
