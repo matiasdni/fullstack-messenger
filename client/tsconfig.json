@@ -4,26 +4,15 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   },
   "include": [
     "src/**/*"
   ],
   "exclude": [
     "node_modules"
-  ],
-  "files": [
-    "src/index.tsx",
-    "src/LoginScreen.tsx",
-    "src/tailwind.config.js",
-    "src/index.tsx",
-    "src/index.css",
-    "src/App.tsx",
-    "src/styles/tailwind.css",
-    "src/components/Alert.tsx",
-    "src/components/Chat.tsx",
-    "src/components/LoginForm.tsx",
-    "src/components/Message.tsx",
-    "src/components/RegisterForm.tsx"
   ]
 }
