@@ -4,7 +4,6 @@ import PrivateRoute from "./components/PrivateRoute";
 import { Home } from "./components/Home";
 import { LoginScreen } from "./LoginScreen";
 import DarkModeToggle from "./components/DarkModeToggle";
-
 function App(): JSX.Element {
   return (
     <div className="dark:bg-gray-900 bg-gray-100">

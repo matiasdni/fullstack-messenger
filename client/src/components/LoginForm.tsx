@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { loginUser } from "../services/auth";
+import React, { useEffect, useState } from "react";
+import { loginUser, isTokenValid } from "../services/auth";
 import { useDispatch } from "react-redux";
 import { login } from "../features/auth/authSlice";
+import { Link } from "react-router-dom";
 
 interface Props {
   onRegisterClick: () => void;
@@ -37,6 +38,7 @@ export const LoginForm: React.FC<Props> = ({ onRegisterClick }) => {
           <input
             id="login-username"
             type="text"
+            placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
@@ -52,6 +54,7 @@ export const LoginForm: React.FC<Props> = ({ onRegisterClick }) => {
           <input
             id="login-password"
             type="password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white transition-none"
@@ -65,7 +68,6 @@ export const LoginForm: React.FC<Props> = ({ onRegisterClick }) => {
                 type="checkbox"
                 value=""
                 className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 dark:active:bg-gray-700"
-                required
               />
 
               <label
@@ -75,14 +77,11 @@ export const LoginForm: React.FC<Props> = ({ onRegisterClick }) => {
                 Remember me
               </label>
             </div>
-            {/*<Link*/}
-            <div
-              className="justify-end text-sm text-blue-700 hover:underline dark:text-blue-500"
-              // to="/forgot-password"
-            >
-              Lost Password?
-            </div>
-            {/*</Link>*/}
+            <Link to="/forgot-password">
+              <div className="justify-end text-sm text-blue-700 hover:underline dark:text-blue-500">
+                <span>Lost Password?</span>
+              </div>
+            </Link>
           </div>
         </div>
         <div className="my-6">
@@ -95,15 +94,17 @@ export const LoginForm: React.FC<Props> = ({ onRegisterClick }) => {
           </button>
         </div>
         <div className="text-sm mt-20 font-sans text-gray-500 dark:text-gray-300">
-          Not registered?{" "}
-          <a
-            type="button"
-            href={"#"}
-            onClick={onRegisterClick}
-            className="text-blue-700 hover:underline dark:text-blue-500"
-          >
-            Create account
-          </a>
+          <p className="space-x-1">
+            <span>Not registered?</span>
+            <Link
+              type="button"
+              to="/register"
+              onClick={onRegisterClick}
+              className="text-blue-700 hover:underline dark:text-blue-500"
+            >
+              <span>Create account</span>
+            </Link>
+          </p>
         </div>
       </form>
       <p className="text-center mt-2 text-gray-500 text-xs">
