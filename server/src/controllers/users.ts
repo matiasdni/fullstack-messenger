@@ -1,6 +1,5 @@
 import { User } from "../db";
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
 
 const router = require("express").Router();
 
@@ -11,14 +10,10 @@ router.get("/", async (req: Request, res: Response) => {
 
 router.post("/", async (req: Request, res: Response) => {
   const { username, password } = req.body;
-  console.log(username, password);
-  const saltRounds: number = 10;
-
-  const hashedPassword: string = await bcrypt.hash(password, saltRounds);
 
   const newUser: User | void = await User.create({
     username,
-    password_hash: hashedPassword,
+    password_hash: password,
   }).catch((error: Error) => {
     res.status(400).json({ message: error.message });
     console.log(error);
@@ -27,24 +22,36 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 router.delete("/:id", async (req: Request, res: Response) => {
-  const { password } = req.body;
-  const { id: string } = req.params;
+  const { username } = req.body;
 
-  try {
-    const id: number = parseInt(string);
-    const user: any = await findUserByIdAndVerifyPassword(id, password);
+  const user = await User.findOne({
+    where: {
+      username,
+    },
+  });
 
-    if (!user) {
-      return res
-        .status(404)
-        .json({ message: "User not found or invalid password" });
-    }
-
-    await User.destroy({ where: { id } });
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  } else {
+    await User.destroy({ where: { username } });
     res.status(204).json({ message: "User deleted" });
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
   }
+
+  // try {
+  //   const id: number = parseInt(string);
+  //   const user: any = await findUserByIdAndVerifyPassword(id, password);
+  //
+  //   if (!user) {
+  //     return res
+  //       .status(404)
+  //       .json({ message: "User not found or invalid password" });
+  //   }
+  //
+  //   await User.destroy({ where: { id } });
+  //   res.status(204).json({ message: "User deleted" });
+  // } catch (error: any) {
+  //   res.status(400).json({ message: error.message });
+  // }
 });
 
 router.put("/:id", async (req: Request, res: Response) => {

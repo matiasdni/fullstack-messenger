@@ -1,21 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "rootDirs": ["src"],
+    "target": "ES2021",
     "resolveJsonModule": true,
-    "allowJs": true,
-    "checkJs": false,
     "outDir": "build",
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
-    "strict": true,
-    "skipLibCheck": true
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "esModuleInterop": true,
+    "isolatedModules": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "build"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

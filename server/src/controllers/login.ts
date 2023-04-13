@@ -1,32 +1,28 @@
-import { Request, Response } from "express";
+import express, { Request, Response } from "express";
+import { User } from "../db";
+import jwt from "jsonwebtoken";
 
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const router = require("express").Router();
-const User = require("../db");
+const router = express.Router();
 
 router.post("/", async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
-  const user = await User.findOne(username);
+  const user = await User.findOne({
+    where: {
+      username,
+    },
+  });
 
-  const passwordCorrect =
-    user === null ? false : await bcrypt.compare(password, user.passwordHash);
-
-  if (!(user && passwordCorrect)) {
-    return res.status(401).json({
-      error: "invalid credentials",
-    });
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
   }
 
-  const userForToken = {
-    username: user.username,
-    id: user._id,
-  };
-
-  const token = jwt.sign(userForToken, process.env.SECRET);
-
-  res.status(200).send({ token, username: user.username, name: user.name });
+  const passwordCorrect = await user.comparePassword(password);
+  if (!passwordCorrect) {
+    return res.status(404).json({ message: "Invalid password" });
+  }
+  const token = jwt.sign(user.id, process.env.JWT_SECRET! || "secret");
+  res.status(200).json({ token, username: user.username, id: user.id });
 });
 
 module.exports = router;

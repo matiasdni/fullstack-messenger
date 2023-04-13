@@ -1,6 +1,5 @@
 import {
   Association,
-  CreationOptional,
   DataTypes,
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
@@ -22,7 +21,7 @@ class User extends Model<
     }
   >
 > {
-  declare id: CreationOptional<number>;
+  declare id: string;
   declare username: string;
   declare password_hash: string;
   declare getMessages: HasManyGetAssociationsMixin<Message>;
@@ -46,9 +45,8 @@ const initUser = (sequelize: Sequelize): void => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        get(this: User) {
-          const value = this.getDataValue("id");
-        },
+        unique: true,
+        allowNull: false,
       },
       username: {
         type: DataTypes.STRING,
@@ -62,13 +60,6 @@ const initUser = (sequelize: Sequelize): void => {
       password_hash: {
         type: DataTypes.STRING,
         allowNull: false,
-        get(this: User) {
-          const value = this.getDataValue("password_hash");
-          return value ? value.toLowerCase() : value;
-        },
-        set(this: User, value: string) {
-          this.setDataValue("password_hash", value.toLowerCase());
-        },
       },
     },
     {
