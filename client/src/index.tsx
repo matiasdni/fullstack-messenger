@@ -9,12 +9,12 @@ import store from "./store";
 const domNode = document.getElementById("root");
 const root = createRoot(domNode);
 
-// create store and pass it to the Provider
-
 root.render(
-  <Provider store={store}>
-    <Router>
-      <App />
-    </Router>
-  </Provider>
+  <React.StrictMode>
+    <Provider store={store}>
+      <Router>
+        <App />
+      </Router>
+    </Provider>
+  </React.StrictMode>
 );
