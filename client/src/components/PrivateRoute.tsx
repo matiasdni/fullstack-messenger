@@ -1,13 +1,13 @@
 import React from "react";
+import { useAuth } from "../hooks/useAuth";
 import { Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoute = () => {
-  let auth = null; // determine if authorized, from context or however you're doing it
-  auth = "jeje";
-
-  // If authorized, return an outlet that will render child elements
-  // If not, return element that will navigate to login page
-  return auth ? <Outlet /> : <Navigate to="/login" />;
+  const { isAuthenticated, handleLogin, handleLogout } = useAuth();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  return <Outlet />;
 };
 
 export default PrivateRoute;
