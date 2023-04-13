@@ -1,6 +1,4 @@
 /** @type {import("tailwindcss").Config} */
-import * as forms from "@tailwindcss/forms";
-import * as typography from "@tailwindcss/typography";
 
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
@@ -14,5 +12,5 @@ module.exports = {
       textColor: ["active"],
     },
   },
-  plugins: [forms, typography],
+  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],
 };
