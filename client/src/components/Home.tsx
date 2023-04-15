@@ -1,124 +1,112 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useAppSelector } from "../store";
+import { Avatar } from "./Avatar";
+import { Chat } from "./Chat";
+import { socket } from "../socket";
+import { message } from "./Message";
+
+const ChatItem = ({ chatName, lastMessage, time }) => {
+  return (
+    <li className="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+      <div className="flex p-3 items-center">
+        <figure className="flex-none h-10 w-10 min-w-10">
+          <Avatar />
+        </figure>
+        <div className="flex flex-col justify-center overflow-hidden ml-2">
+          <div className="flex grow flex-nowrap flex-row items-center justify-between whitespace-nowrap">
+            <p className="font-bold">{chatName}</p>
+
+            <p className="text-xs">{time}</p>
+          </div>
+          <p className="text-sm truncate align-top">
+            asdsadsadsadsadasdasdsadasdasdasuuiuhiuihuihuhihuiuhiuihuhi
+          </p>
+        </div>
+      </div>
+    </li>
+  );
+};
+
+const ChatList = () => {
+  return (
+    <ul className="overflow-y-auto max-w-1/3 overflow-x-hidden">
+      <ChatItem chatName="Chat 1" lastMessage="Hello" time="12:00" />
+      <ChatItem chatName="Chat 2" lastMessage="Hello" time="12:00" />
+      <ChatItem chatName="Chat 3" lastMessage="Hello" time="12:00" />
+    </ul>
+  );
+};
+
+const Sidebar = () => {
+  const user = useAppSelector((state) => state.auth.user);
+  return (
+    <section className="w-1/3 border border-collapse">
+      <header className="py-2 gap-2 px-3 bg-gray-200 dark:bg-gray-800 flex flex-row items-center">
+        <div className="h-10 w-10">
+          <Avatar />
+        </div>
+        <h1 className="text-xl">
+          Welcome <span>{user?.username}</span>
+        </h1>
+      </header>
+
+      {/* chats list */}
+      <ChatList />
+    </section>
+  );
+};
 
 export const Home = () => {
+  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [chatEvents, setChatEvents] = useState<message[]>([]);
+  const user = useAppSelector((state) => state.auth.user);
+  const token = useAppSelector((state) => state.auth.token);
+
+  useEffect(() => {
+    const onConnect = () => {
+      setIsConnected(true);
+      console.log("socketio connected");
+    };
+
+    const onDisconnect = () => {
+      setIsConnected(false);
+      console.log("socketio disconnected");
+    };
+    if (user) {
+      socket.auth = { token };
+    }
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+
+    socket.connect();
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, [user]);
+
+  useEffect(() => {
+    // chat events
+    const onChatMessage = (message) =>
+      setChatEvents(chatEvents.concat(message));
+
+    socket.on("message", onChatMessage);
+
+    return () => {
+      socket.off("chat-message", onChatMessage);
+    };
+  }, [chatEvents]);
+
   return (
-    <div>
-      <header className="border-gray-700">
-        <nav className="flex items-center justify-between flex-wrap bg-gray-900 p-6">
-          <div className="flex items-center flex-shrink-0 text-white mr-6">
-            <span className="font-semibold text-xl tracking-tight">
-              <a href="/">Home</a>
-            </span>
-          </div>
-          <div className="block lg:hidden">
-            <button className="flex items-center px-3 py-2 border rounded text-gray-200 border-gray-400 hover:text-white hover:border-white">
-              <svg
-                className="fill-current h-3 w-3"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>Menu</title>
-                <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-              </svg>
-            </button>
-          </div>
-          <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-            <div className="text-sm lg:flex-grow">
-              <a
-                href="/"
-                className="block mt-4 lg:inline-block lg:mt-0 text-gray-200 hover:text-white mr-4"
-              >
-                Home
-              </a>
-              <a
-                href="/dashboard"
-                className="block mt-4 lg:inline-block lg:mt-0 text-gray-200 hover:text-white mr-4"
-              >
-                Dashboard
-              </a>
-              <a
-                href="/login"
-                className="block mt-4 lg:inline-block lg:mt-0 text-gray-200 hover:text-white"
-              >
-                Login
-              </a>
-            </div>
-            <div>
-              <a
-                href="/register"
-                className="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-gray-800 hover:bg-white mt-4 lg:mt-0"
-              >
-                Register
-              </a>
-            </div>
-          </div>
-        </nav>
-      </header>
-      <main className="container">
-        <div className="flex flex-col items-center justify-center">
-          <h1 className="text-3xl font-bold text-center">Home Page</h1>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-            fugit, voluptate quas doloribus, magni, sit quia autem quae
-            perferendis pariatur accusantium consequuntur? Quasi, quisquam
-            distinctio. Quos, cumque! Dolorem, quod doloremque.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-            fugit, voluptate quas doloribus, magni, sit quia autem quae
-            perferendis pariatur accusantium consequuntur? Quasi, quisquam
-            distinctio. Quos, cumque! Dolorem, quod doloremque.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-            fugit, voluptate quas doloribus, magni, sit quia autem quae
-            perferendis pariatur accusantium consequuntur? Quasi, quisquam
-            distinctio. Quos, cumque! Dolorem, quod doloremque.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-            fugit, voluptate quas doloribus, magni, sit quia autem quae
-            perferendis pariatur accusantium consequuntur? Quasi, quisquam
-            distinctio. Quos, cumque! Dolorem, quod doloremque.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-            fugit, voluptate quas doloribus, magni, sit quia autem quae
-            perferendis pariatur accusantium consequuntur? Quasi, quisquam
-            distinctio. Quos, cumque! Dolorem, quod doloremque.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-            fugit, voluptate quas doloribus, magni, sit quia autem quae
-            perferendis pariatur accusantium consequuntur? Quasi, quisquam
-            distinctio. Quos, cumque! Dolorem, quod doloremque.
-          </p>
-        </div>
-      </main>
-      <footer className="border-gray-700">
-        <div className="container">
-          <div className="flex flex-col items-center justify-center">
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-              fugit, voluptate quas doloribus, magni, sit quia autem quae
-              perferendis pariatur accusantium consequuntur? Quasi, quisquam
-              distinctio. Quos, cumque! Dolorem, quod doloremque.
-            </p>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-              fugit, voluptate quas doloribus, magni, sit quia autem quae
-              perferendis pariatur accusantium consequuntur? Quasi, quisquam
-              distinctio. Quos, cumque! Dolorem, quod doloremque.
-            </p>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-              fugit, voluptate quas doloribus, magni, sit quia autem quae
-              perferendis pariatur accusantium consequuntur? Quasi, quisquam
-              distinctio. Quos, cumque! Dolorem, quod doloremque.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    <main className="container mx-auto text-neutral-900 dark:text-neutral-300">
+      <div className="flex border border-gray border-collapse rounded shadow-lg">
+        <Sidebar />
+        <Chat
+          chatEvents={chatEvents}
+          setChatEvents={setChatEvents}
+          chat={{ id: "1", name: "Chat 1", users: ["user1", "user2"] }}
+        />
+      </div>
+    </main>
   );
 };

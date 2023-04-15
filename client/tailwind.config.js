@@ -1,6 +1,9 @@
 /** @type {import("tailwindcss").Config} */
+import forms from "@tailwindcss/forms";
+import typography from "@tailwindcss/typography";
 
 module.exports = {
+  darkMode: "class",
   content: [
     "./src/*.{js, jsx, ts, tsx, html }",
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -13,5 +16,5 @@ module.exports = {
     extend: {},
   },
   variants: {},
-  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],
+  plugins: [forms, typography],
 };

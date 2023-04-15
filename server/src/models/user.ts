@@ -34,7 +34,7 @@ class User extends Model<
   declare messages: NonAttribute<Message>[] | Message[];
 
   public async comparePassword(password: string): Promise<boolean> {
-    return bcrypt.compare(password, this.password_hash);
+    return await bcrypt.compare(password, this.password_hash);
   }
 }
 

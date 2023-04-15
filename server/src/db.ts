@@ -34,6 +34,9 @@ export const connectToDatabase = async () => {
   Group.hasMany(Message, { foreignKey: "group_id" });
   Message.belongsTo(Group, { foreignKey: "group_id" });
 
+  GroupMember.belongsTo(User, { foreignKey: "user_id" });
+  GroupMember.belongsTo(Group, { foreignKey: "group_id" });
+
   await sequelize.sync();
   console.log("Database & tables created!");
 };

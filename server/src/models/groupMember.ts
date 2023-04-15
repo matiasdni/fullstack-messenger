@@ -1,5 +1,4 @@
 import {
-  CreationOptional,
   DataTypes,
   ForeignKey,
   InferAttributes,
@@ -16,7 +15,6 @@ class GroupMember extends Model<
 > {
   declare user_id: ForeignKey<User["id"]>;
   declare group_id: ForeignKey<Group["id"]>;
-  declare created_at: CreationOptional<Date>;
 }
 
 const initGroupMember = (sequelize: Sequelize): void => {
@@ -29,9 +27,6 @@ const initGroupMember = (sequelize: Sequelize): void => {
       group_id: {
         type: DataTypes.UUID,
         allowNull: false,
-      },
-      created_at: {
-        type: DataTypes.DATE,
       },
     },
     {

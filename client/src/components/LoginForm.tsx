@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { loginUser, isTokenValid } from "../services/auth";
-import { useDispatch } from "react-redux";
-import { login } from "../features/auth/authSlice";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAppDispatch } from "../store";
 
 interface Props {
   onRegisterClick: () => void;
+  handleLogin: (username: string, password: string) => void;
 }
 
-export const LoginForm: React.FC<Props> = ({ onRegisterClick }) => {
-  const dispatch = useDispatch();
+export const LoginForm: React.FC<Props> = ({
+  onRegisterClick,
+  handleLogin,
+}) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useAppDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const loginData = { username, password };
-    const response = await loginUser(loginData);
-    dispatch(login(response.token));
+    handleLogin(username, password);
   };
 
   return (
@@ -38,10 +37,12 @@ export const LoginForm: React.FC<Props> = ({ onRegisterClick }) => {
           <input
             id="login-username"
             type="text"
-            placeholder="Username"
+            placeholder="Username     "
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            required
+            autoComplete="off"
           />
         </div>
         <div className="p-2">

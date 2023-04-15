@@ -1,5 +1,4 @@
 import {
-  CreationOptional,
   DataTypes,
   ForeignKey,
   InferAttributes,
@@ -14,11 +13,10 @@ class Message extends Model<
   InferAttributes<Message>,
   InferCreationAttributes<Message>
 > {
-  declare id: CreationOptional<number>;
+  declare id: string;
   declare content: string;
   declare user_id: ForeignKey<User["id"]>;
   declare group_id: ForeignKey<Group["id"]>;
-  declare created_at: CreationOptional<Date>;
 }
 
 const initMessage = (sequelize: Sequelize): void => {
@@ -28,6 +26,8 @@ const initMessage = (sequelize: Sequelize): void => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
+        unique: true,
+        allowNull: false,
       },
       content: {
         type: new DataTypes.TEXT(),
@@ -38,12 +38,8 @@ const initMessage = (sequelize: Sequelize): void => {
         allowNull: false,
       },
       group_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
-      },
-      created_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
       },
     },
     {

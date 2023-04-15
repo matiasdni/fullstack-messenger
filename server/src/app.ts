@@ -1,8 +1,8 @@
-import express, { Express, Router } from "express";
+import express, { Express } from "express";
 import cors from "cors";
 
 const loginRouter = require("./controllers/login");
-const usersRouter: Router = require("./controllers/users");
+const usersRouter = require("./controllers/users");
 
 const app: Express = express();
 

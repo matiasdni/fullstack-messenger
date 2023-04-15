@@ -1,67 +1,87 @@
-import React, { useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import { Message } from "./Message";
+import React, { useEffect, useState } from "react";
+import { message, Message } from "./Message";
+import { Avatar } from "./Avatar";
+import { socket } from "../socket";
+import { useAppSelector } from "../store";
+
+type TChat = {
+  id: string;
+  name: string;
+  users: string[];
+};
 
 interface ChatProps {
-  onLogout: () => void;
+  chat: TChat;
+  chatEvents: message[];
+  setChatEvents: React.Dispatch<React.SetStateAction<message[]>>;
 }
 
-export const Chat: React.FC<ChatProps> = ({ onLogout }) => {
-  const [messages, setMessages] = useState<string[]>([]);
+export const Chat: React.FC<ChatProps> = ({
+  chat,
+  chatEvents,
+  setChatEvents,
+}) => {
   const [input, setInput] = useState<string>("");
-  const socketRef = useRef<Socket | null>(null);
+  const { id, name, users } = chat;
+  const [isLoading, setIsLoading] = useState(false);
+  const user = useAppSelector((state) => state.auth.user);
 
-  useEffect(() => {
-    socketRef.current = io("http://localhost:3001", {
-      transports: ["polling", "websocket"],
-    });
-
-    socketRef.current.on("receive-message", (message: string) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-
-    return () => {
-      socketRef.current?.disconnect();
-    };
-  }, []);
+  useEffect(() => {}, [chatEvents]);
 
   const sendMessage = () => {
-    if (input.trim()) {
-      socketRef.current?.emit("send-message", input);
-      setInput("");
+    if (input.trim().length > 0) {
+      try {
+        socket.timeout(2000).emit("message", {
+          content: input,
+          author: user?.username,
+        });
+        setInput("");
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-900 text-white">
-      <div className="flex items-center justify-between bg-gray-800 p-4 shadow-md">
-        <h1 className="text-2x1">Chat</h1>
-        <button
-          onClick={onLogout}
-          className="rounded bg-red-600 px-4 py-2 transition-colors hover:bg-red-500"
-        >
-          Logout
-        </button>
+    <section className="w-2/3 border flex flex-col">
+      <header className="py-2 px-3 bg-grey-lighter flex flex-row justify-between items-center">
+        <div className="flex items-center">
+          <figure className="h-10 w-10">
+            <Avatar />
+          </figure>
+          <div className="ml-4">
+            <p>{name}</p>
+            <p className="text-xs">{users.join(", ")}</p>
+          </div>
+        </div>
+      </header>
+      {/*messages*/}
+      <section className="flex-1 overflow-auto">
+        <div className="py-2 px-3">
+          {chatEvents.map((message, index) => (
+            <Message key={index} message={message} />
+          ))}
+        </div>
+      </section>
+      {/*input*/}
+      <div className="flex-none">
+        <div className="flex flex-row items-center justify-between p-3">
+          <input
+            type="text"
+            className="bg-white dark:bg-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 dark:border-gray-700 rounded-lg py-2 px-4 block w-full appearance-none leading-normal"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type a message..."
+            disabled={isLoading}
+          />
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2"
+            onClick={sendMessage}
+          >
+            Send
+          </button>
+        </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-4">
-        {messages.map((message, index) => (
-          <Message key={index} content={message} />
-        ))}
-      </div>
-      <div className="flex items-center bg-gray-800 p-4 shadow-md">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-        />
-        <button
-          onClick={sendMessage}
-          className="rounded bg-blue-600 px-4 py-2 transition-colors hover:bg-blue-500"
-        >
-          Send
-        </button>
-      </div>
-    </div>
+    </section>
   );
 };
