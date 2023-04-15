@@ -26,8 +26,6 @@ export const Chat: React.FC<ChatProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
 
-  useEffect(() => {}, [chatEvents]);
-
   const sendMessage = () => {
     if (input.trim().length > 0) {
       try {

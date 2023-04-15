@@ -7,7 +7,7 @@ import {
   Sequelize,
 } from "sequelize";
 import { User } from "./user";
-import { Group } from "./group";
+import { Chat } from "./chat";
 
 class Message extends Model<
   InferAttributes<Message>,
@@ -16,7 +16,7 @@ class Message extends Model<
   declare id: string;
   declare content: string;
   declare user_id: ForeignKey<User["id"]>;
-  declare group_id: ForeignKey<Group["id"]>;
+  declare chat_id: ForeignKey<Chat["id"]>;
 }
 
 const initMessage = (sequelize: Sequelize): void => {
@@ -33,18 +33,15 @@ const initMessage = (sequelize: Sequelize): void => {
         type: new DataTypes.TEXT(),
         allowNull: false,
       },
+      chat_id: {
+        type: DataTypes.UUID,
+      },
       user_id: {
         type: DataTypes.UUID,
-        allowNull: false,
-      },
-      group_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
       },
     },
     {
       modelName: "Message",
-      tableName: "messages",
       sequelize,
     }
   );

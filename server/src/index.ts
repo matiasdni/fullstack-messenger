@@ -1,6 +1,6 @@
 import http from "http";
 import app from "./app";
-import { connectToDatabase, Group, GroupMember, User } from "./db";
+import { connectToDatabase, Chat, ChatUser, User } from "./db";
 import { Server, Socket } from "socket.io";
 import jwt from "jsonwebtoken";
 
@@ -8,36 +8,6 @@ const PORT = process.env.PORT || 3001;
 
 connectToDatabase()
   .then(async () => {
-    console.log("Database connected");
-
-    // check if general group exists and create it if it doesn't
-    const generalGroup = await Group.findOne({
-      where: { name: "general", id: 1 },
-    });
-
-    if (!!generalGroup) {
-      await Group.create({
-        name: "general",
-        description: "general chat",
-        id: 1,
-      });
-    }
-    const general = await Group.findOne({ where: { name: "general", id: 1 } });
-
-    const users = await User.findAll();
-    for (const user of users) {
-      const groupMember = await GroupMember.findOne({
-        where: { user_id: user.id, group_id: 1 },
-      });
-      if (!!groupMember) {
-        await GroupMember.create({
-          user_id: user.id,
-          group_id: 1,
-        });
-        console.log("created group member", user.id, user.username);
-      }
-    }
-
     const server = http.createServer(app);
 
     const io = new Server(server, {
