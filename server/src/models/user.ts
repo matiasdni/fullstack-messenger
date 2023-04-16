@@ -3,38 +3,35 @@ import {
   DataTypes,
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
-  InferAttributes,
-  InferCreationAttributes,
   Model,
   NonAttribute,
   Sequelize,
 } from "sequelize";
 import { Message } from "./message";
 import bcrypt from "bcrypt";
+import { Chat } from "./chat";
 
-class User extends Model<
-  InferAttributes<User, { omit: "messages" }>,
-  InferCreationAttributes<
-    User,
-    {
-      omit: "messages";
-    }
-  >
-> {
+class User extends Model {
   declare id: string;
   declare username: string;
-  declare password_hash: string;
+  declare password: string;
+  declare messages: NonAttribute<Message>[] | Message[];
+
   declare getMessages: HasManyGetAssociationsMixin<Message>;
   declare createMessage: HasManyCreateAssociationMixin<Message, "user_id">;
 
   declare static associations: {
     messages: Association<User, Message>;
+    chats: Association<User, Chat>;
   };
 
-  declare messages: NonAttribute<Message>[] | Message[];
+  declare getChats: HasManyGetAssociationsMixin<Chat>;
+  declare createChat: HasManyCreateAssociationMixin<Chat, "users">;
+
+  declare chats: NonAttribute<Chat>[] | Chat[];
 
   public async comparePassword(password: string): Promise<boolean> {
-    return await bcrypt.compare(password, this.password_hash);
+    return await bcrypt.compare(password, this.password);
   }
 }
 
@@ -57,21 +54,18 @@ const initUser = (sequelize: Sequelize): void => {
           return value ? value.toLowerCase() : value;
         },
       },
-      password_hash: {
+      password: {
         type: DataTypes.STRING,
         allowNull: false,
+        set(this: User, value: string) {
+          const hash = bcrypt.hashSync(value, 10);
+          this.setDataValue("password", hash);
+        },
       },
     },
     {
-      hooks: {
-        beforeCreate: async (user: User) => {
-          const salt = await bcrypt.genSalt(10);
-          user.password_hash = await bcrypt.hash(user.password_hash, salt);
-        },
-      },
       sequelize,
       modelName: "User",
-      tableName: "users",
     }
   );
 };

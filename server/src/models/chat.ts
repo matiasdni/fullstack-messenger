@@ -1,17 +1,34 @@
 import {
+  Association,
   CreationOptional,
   DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
+  HasManyCreateAssociationMixin,
+  HasManyGetAssociationsMixin,
   Model,
   NonAttribute,
   Sequelize,
 } from "sequelize";
+import { User } from "./user";
+import { Message } from "./message";
 
-class Chat extends Model<InferAttributes<Chat>, InferCreationAttributes<Chat>> {
+class Chat extends Model {
   declare id: number;
   declare name: string;
   declare description: CreationOptional<string>;
+
+  declare static associations: {
+    users: Association<Chat, User>;
+    messages: Association<Chat, Message>;
+  };
+
+  declare users: NonAttribute<User>[] | User[];
+  declare messages: NonAttribute<Message>[] | Message[];
+
+  declare getUsers: HasManyGetAssociationsMixin<User>;
+  declare getMessages: HasManyGetAssociationsMixin<Message>;
+
+  declare addUser: HasManyCreateAssociationMixin<User, "id">;
+  declare addMessage: HasManyCreateAssociationMixin<Message, "chat_id">;
 }
 
 const initChat = (sequelize: Sequelize): void => {

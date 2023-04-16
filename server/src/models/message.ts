@@ -1,22 +1,31 @@
 import {
+  Association,
+  BelongsToCreateAssociationMixin,
+  BelongsToGetAssociationMixin,
   DataTypes,
   ForeignKey,
-  InferAttributes,
-  InferCreationAttributes,
   Model,
   Sequelize,
 } from "sequelize";
 import { User } from "./user";
 import { Chat } from "./chat";
 
-class Message extends Model<
-  InferAttributes<Message>,
-  InferCreationAttributes<Message>
-> {
+class Message extends Model {
   declare id: string;
   declare content: string;
   declare user_id: ForeignKey<User["id"]>;
   declare chat_id: ForeignKey<Chat["id"]>;
+
+  declare getUser: BelongsToGetAssociationMixin<User>;
+  declare setUser: BelongsToCreateAssociationMixin<User>;
+
+  declare getChat: BelongsToGetAssociationMixin<Chat>;
+  declare setChat: BelongsToCreateAssociationMixin<Chat>;
+
+  declare static associations: {
+    user: Association<Message, User>;
+    chat: Association<Message, Chat>;
+  };
 }
 
 const initMessage = (sequelize: Sequelize): void => {
@@ -33,10 +42,10 @@ const initMessage = (sequelize: Sequelize): void => {
         type: new DataTypes.TEXT(),
         allowNull: false,
       },
-      chat_id: {
+      user_id: {
         type: DataTypes.UUID,
       },
-      user_id: {
+      chat_id: {
         type: DataTypes.UUID,
       },
     },
