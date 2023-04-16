@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { User } from "../db";
+import { User } from "../models/user";
+import { jwtSecret } from "../config";
 
 const router = express.Router();
 
@@ -13,18 +14,15 @@ router.post("/", async (req: Request, res: Response) => {
     },
   });
 
-  console.log("user", user);
-
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
 
   const passwordCorrect = await user.comparePassword(password);
-  console.log("passwordCorrect", passwordCorrect);
   if (!passwordCorrect) {
     return res.status(404).json({ message: "Invalid password" });
   }
-  const token = jwt.sign({ ...user }, process.env.JWT_SECRET!);
+  const token = jwt.sign({ ...user }, jwtSecret, { expiresIn: "1d" });
   res.status(200).json({
     token,
     user: {
