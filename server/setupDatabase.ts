@@ -17,7 +17,7 @@ async function main() {
     console.log("All models were synchronized successfully.");
 
     // Create sample users
-    const user1 = await createUser("user1", "password1");
+    const user1 = await createUser("test", "test");
     const user2 = await createUser("user2", "password2");
 
     // Create the general chat
@@ -30,6 +30,7 @@ async function main() {
     await addUserToChat(user1, generalChat);
     await addUserToChat(user2, generalChat);
 
+
     // Create sample messages in the general chat
     await createMessage("Hello, everyone!", user1, generalChat);
     await createMessage("Hey!", user2, generalChat);
@@ -41,6 +42,8 @@ async function main() {
     // Add users to the another chat
     await addUserToChat(user1, anotherChat);
     await addUserToChat(user2, anotherChat);
+    console.log("user1", await user1.getChats());
+    console.log("user1", await user1.getMessages());
 
     // Create sample messages in the another chat
     await createMessage("Welcome to another chat!", user1, anotherChat);
