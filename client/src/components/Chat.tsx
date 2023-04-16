@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { message, Message } from "./Message";
-import { Avatar } from "./Avatar";
+import React, { useState } from "react";
+import { User } from "../features/auth/types";
 import { socket } from "../socket";
 import { useAppSelector } from "../store";
+import { Avatar } from "./Avatar";
+import { message, Message } from "./Message";
 
 type TChat = {
   id: string;
@@ -24,7 +25,7 @@ export const Chat: React.FC<ChatProps> = ({
   const [input, setInput] = useState<string>("");
   const { id, name, users } = chat;
   const [isLoading, setIsLoading] = useState(false);
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppSelector((state) => state.auth.user) as User;
 
   const sendMessage = () => {
     if (input.trim().length > 0) {

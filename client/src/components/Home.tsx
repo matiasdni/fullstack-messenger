@@ -1,8 +1,9 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { User } from "../features/auth/types";
+import { socket } from "../socket";
 import { useAppSelector } from "../store";
 import { Avatar } from "./Avatar";
 import { Chat } from "./Chat";
-import { socket } from "../socket";
 import { message } from "./Message";
 
 const ChatItem = ({ chatName, lastMessage, time }) => {
@@ -130,8 +131,8 @@ const Modal = ({
 };
 
 const Sidebar = () => {
-  const user = useAppSelector((state) => state.auth.user);
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const user = useAppSelector((state) => state.auth) as User;
   const cancelBtnRef = React.useRef(null);
 
   const handleOpenModal = () => {
@@ -160,7 +161,7 @@ const Sidebar = () => {
           openModal={handleOpenModal}
           handleCloseModal={handleCloseModal}
           handleCreateChat={handleCreateChat}
-          cancelBtnRef={cancelBtnRef}
+          cancelBtnRef={null}
         />
       )}
       <header className="py-2 gap-2 px-3 bg-gray-200 dark:bg-gray-800 flex flex-row items-center">

@@ -15,7 +15,6 @@ function App(): JSX.Element {
         </Route>
         <Route path="/register" element={<LoginScreen />} />
         <Route path="/login" element={<LoginScreen />} />
-
         <Route path="/login" element={<LoginScreen />} />
       </Routes>
     </div>

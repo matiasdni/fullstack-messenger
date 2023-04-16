@@ -10,7 +10,7 @@ interface LoginData {
 interface LoginResponse {
   token: string;
   user: {
-    id: number;
+    id: string;
     username: string;
     role: string;
   };

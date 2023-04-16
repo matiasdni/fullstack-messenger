@@ -1,32 +1,16 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { loginUser } from "../../services/auth";
+import { AuthState, LoginData, User } from "./types";
 
-type LoginData = {
-  username: string;
-  password: string;
-};
-
-type user = {
-  id: number;
-  username: string;
-  role: string;
-};
-
-interface AuthState {
-  user: user | null;
-  token: string | null;
-}
-
-const initialState: AuthState = {
-  user: null,
-  token: null,
+const initialState = {
+  user: null as User | null,
+  token: null as string | null,
 };
 
 export const login = createAsyncThunk(
   "/login",
   async (loginData: LoginData) => {
-    const { token, user } = await loginUser(loginData);
-    return { token, user };
+    return (await loginUser(loginData)) as AuthState;
   }
 );
 
@@ -43,10 +27,10 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
-
+      state = action.payload;
       localStorage.setItem("token", action.payload.token);
+
+      return state;
     });
 
     builder.addCase(login.rejected, (state, action) => {

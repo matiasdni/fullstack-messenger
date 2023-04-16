@@ -1,10 +1,15 @@
-export interface UserState {
-  id: number;
-  username: string;
-  email: string;
-}
-
 export interface AuthState {
-  isAuthenticated: boolean;
+  user: User;
   token: string | null;
 }
+
+export type LoginData = {
+  username: string;
+  password: string;
+};
+
+export type User = {
+  id: string;
+  username: string;
+  role: string;
+};

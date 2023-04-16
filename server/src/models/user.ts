@@ -18,7 +18,6 @@ class User extends Model {
   declare messages: NonAttribute<Message>[] | Message[];
 
   declare getMessages: HasManyGetAssociationsMixin<Message>;
-  declare createMessage: HasManyCreateAssociationMixin<Message, "user_id">;
 
   declare static associations: {
     messages: Association<User, Message>;
@@ -26,9 +25,6 @@ class User extends Model {
   };
 
   declare getChats: HasManyGetAssociationsMixin<Chat>;
-  declare createChat: HasManyCreateAssociationMixin<Chat, "users">;
-
-  declare chats: NonAttribute<Chat>[] | Chat[];
 
   public async comparePassword(password: string): Promise<boolean> {
     return await bcrypt.compare(password, this.password);
