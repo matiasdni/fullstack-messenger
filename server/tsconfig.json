@@ -1,20 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
-    "resolveJsonModule": true,
+    "target": "ESNext",
     "outDir": "build",
-    "forceConsistentCasingInFileNames": true,
     "module": "CommonJS",
     "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "esModuleInterop": true,
-    "isolatedModules": true
+    "skipLibCheck": true,
+    "strict": true
   },
   "include": [
-    "src/**/*"
+    "./src"
   ],
   "exclude": [
     "node_modules"
