@@ -12,20 +12,27 @@ const ChatItem = ({ chat }) => {
     hour: "2-digit",
     minute: "2-digit",
   });
-  console.log(Messages);
+
+  const userNameInclude = (
+    <div>{`${Messages[0].User.username}: ${Messages[0].content}`}</div>
+  );
+
+  const includeUsername = chat.Users.length > 1;
   return (
     <li className="cursor-pointer border-b border-gray-300 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700">
       <div className="flex items-center p-3">
         <figure className="min-w-10 h-10 w-10 flex-none">
           <Avatar />
         </figure>
-        <div className="ml-2 flex flex-col justify-center overflow-hidden">
-          <div className="flex grow flex-row flex-nowrap items-center justify-between whitespace-nowrap">
+        <div className="ml-2 flex w-full flex-col justify-center overflow-hidden">
+          <div className="flex w-full grow flex-row flex-nowrap items-center justify-between whitespace-nowrap">
             <p className="font-bold">{name}</p>
-
+            <div className="flex flex-row items-center gap-2"></div>
             <p className="text-xs">{time}</p>
           </div>
-          <p className="truncate align-top text-sm">{Messages[0].content}</p>
+          <p className="truncate align-top text-sm">
+            {includeUsername ? userNameInclude : Messages[0].content}
+          </p>
         </div>
       </div>
     </li>
@@ -34,7 +41,6 @@ const ChatItem = ({ chat }) => {
 
 const ChatList = () => {
   const chats = useAppSelector(selectChats);
-  console.log(chats);
 
   return (
     <ul className="max-w-1/3 overflow-y-auto overflow-x-hidden">
@@ -76,7 +82,7 @@ export const Sidebar = () => {
   };
 
   return (
-    <section className="w-1/3 border-collapse border">
+    <section className="h-full w-1/3 border-collapse border">
       {/* modal */}
       {openModal && (
         <Modal

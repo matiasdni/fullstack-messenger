@@ -42,8 +42,8 @@ export const Chat: React.FC<ChatProps> = ({
   };
 
   return (
-    <section className="w-2/3 border flex flex-col">
-      <header className="py-2 px-3 bg-grey-lighter flex flex-row justify-between items-center">
+    <section className="flex w-2/3 flex-col border">
+      <header className="bg-grey-lighter flex flex-row  items-center justify-between px-3 py-2">
         <div className="flex items-center">
           <figure className="h-10 w-10">
             <Avatar />
@@ -56,30 +56,38 @@ export const Chat: React.FC<ChatProps> = ({
       </header>
       {/*messages*/}
       <section className="flex-1 overflow-auto">
-        <div className="py-2 px-3">
+        <div className="px-3 py-2">
           {chatEvents.map((message, index) => (
             <Message key={index} message={message} />
           ))}
         </div>
       </section>
       {/*input*/}
-      <div className="flex-none">
-        <div className="flex flex-row items-center justify-between p-3">
-          <input
-            type="text"
-            className="bg-white dark:bg-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 dark:border-gray-700 rounded-lg py-2 px-4 block w-full appearance-none leading-normal"
+      <div className="flex-1">
+        <form className="form-textarea flex h-full w-full flex-row items-center justify-between bg-transparent p-3">
+          <textarea
+            inputMode="text"
+            className="focus:shadow-outline textarea form-textarea form-input h-10 max-h-56 w-full grow resize-y appearance-none flex-wrap overflow-y-hidden whitespace-pre-wrap rounded-lg border border-gray-300 bg-white px-4 leading-normal focus:outline-none dark:border-gray-700 dark:bg-gray-700"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message..."
             disabled={isLoading}
-          />
+          ></textarea>
+          {/*<input*/}
+          {/*  type="text"*/}
+          {/*  className="focus:shadow-outline form- w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 leading-normal focus:outline-none dark:border-gray-700 dark:bg-gray-700"*/}
+          {/*  value={input}*/}
+          {/*  onChange={(e) => setInput(e.target.value)}*/}
+          {/*  placeholder="Type a message..."*/}
+          {/*  disabled={isLoading}*/}
+          {/*/>*/}
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2"
+            className="ml-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
             onClick={sendMessage}
           >
             Send
           </button>
-        </div>
+        </form>
       </div>
     </section>
   );

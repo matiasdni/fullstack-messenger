@@ -21,10 +21,10 @@ export const LoginForm: React.FC<Props> = ({
   };
 
   return (
-    <div className="container grow max-w-sm">
+    <div className="container max-w-sm grow">
       <form
         onSubmit={handleSubmit}
-        className="bg-blue-50 py-[16px] form-input border-0 ring-2 ring-neutral-200 shadow-md dark:ring-0  dark:border-collapse dark:bg-gray-800 dark:shadow-2xl dark:border-gray-700 dark:text-gray-300"
+        className="form-input border-0 bg-blue-50 py-[16px] shadow-md ring-2 ring-neutral-200 dark:border-collapse  dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:shadow-2xl dark:ring-0"
       >
         <h3 className="mb-4 text-2xl font-bold">Sign in to your account</h3>
         <div className="p-2">
@@ -40,7 +40,7 @@ export const LoginForm: React.FC<Props> = ({
             placeholder="Username     "
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            className="block  w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400"
             required
             autoComplete="off"
           />
@@ -58,17 +58,17 @@ export const LoginForm: React.FC<Props> = ({
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white transition-none"
+            className="block w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 transition-none focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400"
           />
         </div>
-        <div className="p-2 mb-2 h-full w-full">
-          <div className="inline-flex justify-between w-full">
-            <div className="text-sm mb-2">
+        <div className="mb-2 h-full w-full p-2">
+          <div className="inline-flex w-full justify-between">
+            <div className="mb-2 text-sm">
               <input
                 id="remember"
                 type="checkbox"
                 value=""
-                className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 dark:active:bg-gray-700"
+                className="focus:ring-3 h-4 w-4 rounded border border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 dark:active:bg-gray-700"
               />
 
               <label
@@ -88,13 +88,13 @@ export const LoginForm: React.FC<Props> = ({
         <div className="my-6">
           <button
             // disabled={loading}
-            className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="w-full rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             type="submit"
           >
             Sign In
           </button>
         </div>
-        <div className="text-sm mt-20 font-sans text-gray-500 dark:text-gray-300">
+        <div className="mt-20 font-sans text-sm text-gray-500 dark:text-gray-300">
           <p className="space-x-1">
             <span>Not registered?</span>
             <Link
@@ -108,7 +108,7 @@ export const LoginForm: React.FC<Props> = ({
           </p>
         </div>
       </form>
-      <p className="text-center mt-2 text-gray-500 text-xs">
+      <p className="mt-2 text-center text-xs text-gray-500">
         &copy;2023 matiasdn. All rights reserved.
       </p>
     </div>

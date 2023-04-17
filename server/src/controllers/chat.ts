@@ -25,20 +25,14 @@ router.get("/", authenticate, async (req: AuthRequest, res: Response) => {
           include: [
             {
               model: User,
-              attributes: ["id"],
+              attributes: ["username"],
             },
           ],
         },
-
       ],
     });
     res.send(chats).status(200);
   }
-
-
 });
-
-
-
 
 module.exports = router;
