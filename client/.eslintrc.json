@@ -16,7 +16,6 @@
   ],
   "parserOptions": {
     "parser": "@typescript-eslint/parser",
-    "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true,
       "modules": true
@@ -29,13 +28,15 @@
   },
   "rules": {
     "prettier/prettier": [
-      "error",
+      "warn",
       {
         "endOfLine": "auto"
       }
     ],
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
+    "react-app/react-in-jsx-scope": "off",
+    "react-app/prop-types": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {

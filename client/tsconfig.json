@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "jsx": "react",
     "module": "ESNext",
-    "target": "ES5",
+    "target": "ESNext",
+    "lib": [
+      "ES2015",
+      "DOM"
+    ],
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -11,7 +15,7 @@
     "noUnusedParameters": false,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "src/**/*"

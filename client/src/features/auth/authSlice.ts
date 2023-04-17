@@ -1,16 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { loginUser } from "../../services/auth";
-import { AuthState, LoginData, User } from "./types";
+import { AuthInitialState, AuthState, LoginData } from "./types";
+import { removeTokenFromStorage } from "../../utils/localStorage";
 
-const initialState = {
-  user: null as User | null,
-  token: null as string | null,
+const initialState: AuthInitialState = {
+  user: null,
+  token: null,
 };
 
 export const login = createAsyncThunk(
-  "/login",
+  "auth/login",
   async (loginData: LoginData) => {
-    return (await loginUser(loginData)) as AuthState;
+    const { user, token } = (await loginUser(loginData)) as AuthState;
+    return { user, token };
   }
 );
 
@@ -22,33 +24,37 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
 
-      localStorage.removeItem("token");
+      removeTokenFromStorage();
+    },
+    setAuth(state, action) {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
-      state = action.payload;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
       localStorage.setItem("token", action.payload.token);
-
-      return state;
+      localStorage.setItem("username", action.payload.user.username);
     });
 
     builder.addCase(login.rejected, (state, action) => {
       state.user = null;
       state.token = null;
 
-      localStorage.removeItem("token");
+      removeTokenFromStorage();
     });
 
     builder.addCase(login.pending, (state, action) => {
       state.user = null;
       state.token = null;
 
-      localStorage.removeItem("token");
+      removeTokenFromStorage();
     });
   },
 });
 
-export const { logOut } = authSlice.actions;
+export const { logOut, setAuth } = authSlice.actions;
 
 export default authSlice.reducer;

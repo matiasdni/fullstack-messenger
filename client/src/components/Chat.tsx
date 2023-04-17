@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User } from "../features/auth/types";
+import { User } from "../features/users/types";
 import { socket } from "../socket";
 import { useAppSelector } from "../store";
 import { Avatar } from "./Avatar";

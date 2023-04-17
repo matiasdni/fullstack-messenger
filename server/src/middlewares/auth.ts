@@ -12,8 +12,8 @@ const authenticate = async (
   next: NextFunction
 ) => {
   const authHeader = req.header("Authorization");
-
   if (!authHeader) {
+    console.log("no auth header");
     return res.status(401).send({ error: "unauthorized" });
   }
 
@@ -22,6 +22,7 @@ const authenticate = async (
   try {
     const user = await getUserByToken(token);
     if (!user) {
+      console.log("no user");
       return res.status(401).send({ error: "Invalid token." });
     }
     req.user = user;

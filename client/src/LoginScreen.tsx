@@ -22,11 +22,10 @@ export const LoginScreen: React.FC = () => {
       navigate(location.state.from);
     } else navigate("/");
   };
-
   const handleRegister = async (username: string, password: string) => {};
 
   return (
-    <div className="min-h-screen min-w-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+    <div className="min-w-screen flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="min-w-[340px]">
         {currentForm === FormType.Login ? (
           <LoginForm

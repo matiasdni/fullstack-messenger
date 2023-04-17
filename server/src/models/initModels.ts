@@ -15,7 +15,7 @@ const setupAssociations = (): void => {
   User.belongsToMany(Chat, { through: UserChat, foreignKey: "user_id" });
 
   Message.belongsTo(Chat, { foreignKey: "chat_id" });
-  Chat.hasMany(Message, { foreignKey: "chat_id", as: "messages" });
+  Chat.hasMany(Message, { foreignKey: "chat_id" });
 };
 
 const initModels = (sequelize: Sequelize): void => {

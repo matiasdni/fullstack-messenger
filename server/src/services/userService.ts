@@ -13,11 +13,8 @@ export const generateToken = (user: User): string => {
 
 export const getUserByToken = async (token: string): Promise<User | null> => {
   try {
-    const decoded = jwt.verify(token, jwtSecret) as {
-      id: string;
-      username: string;
-    };
-    return await User.findByPk(decoded.id);
+    const decoded = jwt.verify(token, jwtSecret) as User;
+    return await User.findByPk(decoded.dataValues.id);
   } catch (error) {
     console.error(error);
     return null;
