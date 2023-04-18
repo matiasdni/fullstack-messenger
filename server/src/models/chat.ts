@@ -52,6 +52,56 @@ const initChat = (sequelize: Sequelize): void => {
     {
       modelName: "Chat",
       sequelize,
+      scopes: {
+        withUsers: {
+          attributes: ["id", "name", "description", "updatedAt"],
+          include: [
+            {
+              model: User,
+              attributes: ["id", "username"],
+              through: { attributes: [] },
+            },
+          ],
+        },
+        withMessages: {
+          attributes: ["id", "name", "description", "updatedAt"],
+          include: [
+            {
+              model: Message,
+              attributes: ["id", "content", "createdAt"],
+              order: [["createdAt", "DESC"]],
+              include: [
+                {
+                  model: User,
+                  attributes: ["username"],
+                },
+              ],
+            },
+          ],
+        },
+        withUsersAndMessages: {
+          attributes: ["id", "name", "description", "updatedAt"],
+          order: [["updatedAt", "DESC"]],
+          include: [
+            {
+              model: User,
+              attributes: ["id", "username"],
+              through: { attributes: [] },
+            },
+            {
+              model: Message,
+              attributes: ["id", "content", "createdAt"],
+              order: [["createdAt", "DESC"]],
+              include: [
+                {
+                  model: User,
+                  attributes: ["username"],
+                },
+              ],
+            },
+          ],
+        },
+      },
     }
   );
 };
