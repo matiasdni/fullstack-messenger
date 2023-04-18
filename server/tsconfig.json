@@ -3,7 +3,7 @@
     "target": "ESNext",
     "outDir": "build",
     "module": "CommonJS",
-    "moduleResolution": "Node",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,

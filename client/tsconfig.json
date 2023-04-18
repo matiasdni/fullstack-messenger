@@ -5,7 +5,9 @@
     "target": "ESNext",
     "lib": [
       "ES2015",
-      "DOM"
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
     ],
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
@@ -15,7 +17,8 @@
     "noUnusedParameters": false,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true
   },
   "include": [
     "src/**/*"
