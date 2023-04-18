@@ -7,14 +7,13 @@ import DarkModeToggle from "./components/DarkModeToggle";
 
 function App(): JSX.Element {
   return (
-    <div className="dark:bg-gray-900 bg-gray-100 h-screen w-screen">
+    <div className="h-screen w-screen bg-gray-100 dark:bg-gray-900 ">
       <DarkModeToggle />
       <Routes>
         <Route path="/" element={<PrivateRoute />}>
           <Route index element={<Home />} />
         </Route>
         <Route path="/register" element={<LoginScreen />} />
-        <Route path="/login" element={<LoginScreen />} />
         <Route path="/login" element={<LoginScreen />} />
       </Routes>
     </div>
