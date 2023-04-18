@@ -14,7 +14,7 @@ const ChatItem = ({ chat }) => {
   });
 
   const userNameInclude = (
-    <div>{`${Messages[0].User.username}: ${Messages[0].content}`}</div>
+    <span>{`${Messages[0].User.username}: ${Messages[0].content}`}</span>
   );
 
   const includeUsername = chat.Users.length > 1;
@@ -40,8 +40,10 @@ const ChatItem = ({ chat }) => {
 };
 
 const ChatList = () => {
-  const chats = useAppSelector(selectChats);
-
+  const chats = useAppSelector(selectChats) as Array<any>;
+  useEffect(() => {
+    console.log(chats);
+  }, []);
   return (
     <ul className="max-w-1/3 overflow-y-auto overflow-x-hidden">
       {chats.map((chat) => (
