@@ -35,7 +35,11 @@ export const Home = () => {
       // check if already subscribed
       chats.forEach((chat) => {
         const isSubscribed = socket.hasListeners(`message-${chat.id}`);
-        if (!isSubscribed) {
+        if (!isSubscribed && chat.id) {
+          // join chat room
+          socket.emit("join", chat.id);
+
+          // listen for events
           socket.on(`message-${chat.id}`, (data) => {
             console.log("message received");
             console.log(data);
@@ -66,7 +70,7 @@ export const Home = () => {
       });
     });
 
-    console.log(socket);
+    console.log("socket", socket);
   }, [activeChat, dispatch, token]);
 
   useEffect(() => {
