@@ -33,4 +33,23 @@ const authenticate = async (
   }
 };
 
+export const authenticateSocket = async (socket, next) => {
+  const token = socket.handshake.auth.token;
+  if (!token) {
+    return next(new Error("Authentication error"));
+  }
+
+  try {
+    const user = await getUserByToken(token);
+    if (!user) {
+      return next(new Error("Authentication error"));
+    }
+    socket.data.user = user;
+    next();
+  } catch (error) {
+    console.error(error);
+    return next(new Error("Authentication error"));
+  }
+};
+
 export default authenticate;
