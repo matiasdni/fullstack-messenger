@@ -37,7 +37,7 @@ export const Home = () => {
         const isSubscribed = socket.hasListeners(`message-${chat.id}`);
         if (!isSubscribed && chat.id) {
           // join chat room
-          socket.emit("join", chat.id);
+          socket.emit("join-room", chat.id);
 
           // listen for events
           socket.on(`message-${chat.id}`, (data) => {
