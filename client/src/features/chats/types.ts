@@ -1,22 +1,27 @@
 import { User } from "../users/types";
 
 export type Message = {
-  chatId: string;
+  id: string;
   content: string;
-  sender: string;
-  timestamp: number;
+  User: string;
+  createdAt: string;
 };
 
 export type Chat = {
   id: string;
   name: string;
-  messages: Message[];
+  description: string;
+  updatedAt: string;
+  Messages: Message[];
+  Users: User[];
 };
 
 export interface ChatState {
   chats: Chat[];
-  users: User[];
-  activeChat: string | null;
+  activeChat: Chat;
 }
 
-export type ChatsInitialState = Chat[];
+export type ChatsInitialState = {
+  chats: null | Chat[];
+  activeChat: null | Chat;
+};

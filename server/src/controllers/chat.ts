@@ -9,7 +9,6 @@ router.get("/", authenticate, async (req: AuthRequest, res: Response) => {
     const chats = await user.getChats({
       scope: "withUsersAndMessages",
     });
-    console.log(chats);
     res.send(chats).status(200);
   }
 });

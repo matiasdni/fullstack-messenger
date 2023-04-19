@@ -3,9 +3,8 @@ import { ChatState } from "./types";
 import { RootState } from "../../types";
 import { fetchChats } from "../../services/chats";
 
-const initialState: ChatState = {
-  chats: [],
-  users: [],
+const initialState = {
+  chats: null,
   activeChat: null,
 };
 
@@ -13,7 +12,8 @@ export const getChats = createAsyncThunk(
   "chats/getChats",
   async (token: string, { rejectWithValue }) => {
     try {
-      return await fetchChats(token);
+      const chats = await fetchChats(token);
+      return chats as ChatState;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -24,6 +24,9 @@ const chatsSlice = createSlice({
   name: "chats",
   initialState,
   reducers: {
+    setActiveChat: (state, action) => {
+      state.activeChat = action.payload;
+    },
     // addChat: (state, action: PayloadAction<Chat>) => {
     //   state.push(action.payload);
     // },
@@ -51,4 +54,8 @@ export const sendMessage = createAction<{
 }>("chats/sendMessage");
 
 export const selectChats = (state: RootState) => state.chats.chats;
+
+export const selectActiveChat = (state: RootState) => state.chats.activeChat;
+
+export const { setActiveChat } = chatsSlice.actions;
 export default chatsSlice.reducer;

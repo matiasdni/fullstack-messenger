@@ -1,23 +1,16 @@
-import React from "react";
 import { useAppSelector } from "../store";
 
-export type message = {
-  content: string;
-  date: Date;
-  author: string;
-};
-
-interface MessageProps {
-  message: message;
-}
-
-export const Message: React.FC<MessageProps> = ({ message }) => {
-  const { content, date, author } = message;
+export const Message = ({ message }) => {
+  const {
+    User: { username: author },
+    createdAt: date,
+    content,
+  } = message;
   const username = useAppSelector((state) => state.auth.user?.username);
 
-  const getTime = (message: message): string => {
-    const date = new Date(message.date);
-    return date
+  const getTime = (date): string => {
+    const time = new Date(date);
+    return time
       .toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
@@ -26,23 +19,23 @@ export const Message: React.FC<MessageProps> = ({ message }) => {
       .replace(".", ":");
   };
 
-  return author === username ? (
-    <div className="flex justify-end mb-2">
-      <div className="min-w-[20%] rounded py-2 px-3 bg-sky-200 dark:bg-sky-700">
-        <p className="text-sm mt-1">{content}</p>
-        <p className="text-right text-xs text-grey-dark mt-1">
-          {getTime(message)}
+  return message?.User.username === username ? (
+    <div className="mb-2 flex justify-end">
+      <div className="min-w-[20%] rounded bg-sky-200 px-3 py-2 dark:bg-sky-700">
+        <p className="mt-1 text-sm">{content}</p>
+        <p className="text-grey-dark mt-1  text-right text-xs">
+          {getTime(message.createdAt)}
         </p>
       </div>
     </div>
   ) : (
     <div>
-      <div className="flex mb-2">
-        <div className="min-w-[20%] rounded py-2 px-3 bg-gray-200 dark:bg-gray-700 bg-opacity-70">
-          <p className="text-sm text-teal">{author}</p>
-          <p className="text-sm mt-1">{content}</p>
-          <p className="text-right text-xs text-grey-dark mt-1">
-            {getTime(message)}
+      <div className="mb-2 flex">
+        <div className="min-w-[20%] rounded bg-gray-200 bg-opacity-70 px-3 py-2 dark:bg-gray-700">
+          <p className="text-teal text-sm">{message.User.username}</p>
+          <p className="mt-1 text-sm">{message.content}</p>
+          <p className="text-grey-dark mt-1 text-right text-xs">
+            {getTime(message.createdAt)}
           </p>
         </div>
       </div>
