@@ -10,11 +10,14 @@ export const Chat = () => {
   const [input, setInput] = useState<string>("");
   const user = useAppSelector((state) => state.auth.user) as User;
   const activeChat = useAppSelector(selectActiveChat);
+  const [messages, setMessages] = useState<any[]>([]);
 
   useEffect(() => {
+    setMessages(activeChat?.Messages);
+
     socket.on(`message-${activeChat?.id}`, (data) => {
       console.log("message received");
-      console.log(data);
+      setMessages((messages) => [...messages, data]);
     });
 
     return () => {
@@ -24,11 +27,12 @@ export const Chat = () => {
 
   const sendMessage = (e) => {
     e.preventDefault();
+    console.log("sending message");
     if (input.trim().length > 0) {
       try {
         socket.timeout(2000).emit("message", {
           content: input,
-          author: user?.username,
+          room: activeChat?.id,
         });
         setInput("");
       } catch (e) {
@@ -56,7 +60,7 @@ export const Chat = () => {
       {/*messages*/}
       <div className="px-3 py-2">
         <div className="overflow-y-auto overflow-x-hidden border-0">
-          {activeChat?.Messages.map((message, index) => (
+          {messages?.map((message, index) => (
             <Message key={index} message={message} />
           ))}
         </div>
