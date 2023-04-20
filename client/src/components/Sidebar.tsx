@@ -17,7 +17,7 @@ const ChatItem = ({ chat }) => {
   });
 
   const userNameInclude = (
-    <span>{`${messages[0].user.username}: ${messages[0].content}`}</span>
+    <span>{`${messages[0]?.user.username}: ${messages[0]?.content}`}</span>
   );
 
   const handleChatItemClick = () => {
@@ -45,7 +45,15 @@ const ChatItem = ({ chat }) => {
             <p className="text-xs">{time}</p>
           </div>
           <p className="truncate align-top text-sm">
-            {includeUsername ? userNameInclude : messages[0].content}
+            {messages[0] ? (
+              includeUsername ? (
+                userNameInclude
+              ) : (
+                messages[0].content
+              )
+            ) : (
+              <>No messages</>
+            )}
           </p>
         </div>
       </div>
@@ -54,10 +62,6 @@ const ChatItem = ({ chat }) => {
 };
 
 const ChatList = ({ chats }) => {
-  useEffect(() => {
-    console.log(chats);
-  }, [chats]);
-
   return (
     <ul className="overflow-y-auto overflow-x-hidden">
       {chats?.map((chat) => (
@@ -92,8 +96,9 @@ function SidebarHeader(props: { user: User; onClick: () => void }) {
   );
 }
 
-export const Sidebar = ({ chats }) => {
+export const Sidebar = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const allChats = useAppSelector((state) => state.chats.chats);
   const { user } = useAppSelector((state) => state.auth);
 
   const handleOpenModal = () => {
@@ -121,7 +126,7 @@ export const Sidebar = ({ chats }) => {
         )}
       <SidebarHeader user={user} onClick={handleOpenModal} />
       {/* chats list */}
-      <ChatList chats={chats} />
+      <ChatList chats={allChats} />
     </aside>
   );
 };

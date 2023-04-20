@@ -4,12 +4,7 @@ import { useAppDispatch, useAppSelector } from "../store";
 
 import { Sidebar } from "./Sidebar";
 import { Chat } from "./Chat";
-import {
-  getChats,
-  selectActiveChat,
-  selectChats,
-  setActiveChat,
-} from "../features/chats/chatsSlice";
+import { addMessage, getChats } from "../features/chats/chatsSlice";
 import DarkModeToggle from "./DarkModeToggle";
 import { Chat as ChatType } from "../features/chats/types";
 
@@ -24,20 +19,13 @@ const LoadingChat: React.FC = () => {
 
 export const Home = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [chatMessages, setChatMessages] = useState([]);
-  const { user, token } = useAppSelector((state) => state.auth);
-  const allChats = useAppSelector(selectChats);
-  const activeChat = useAppSelector(selectActiveChat);
+  const auth = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    dispatch(getChats(token)).then((action) => {
+    dispatch(getChats(auth.token)).then((action) => {
       const chats = action.payload as Array<ChatType>;
-
-      if (!activeChat) {
-        dispatch(setActiveChat(action.payload[1]));
-      }
 
       chats.forEach((chat) => {
         const isSubscribed = socket.hasListeners(`message-${chat.id}`);
@@ -47,8 +35,8 @@ export const Home = () => {
 
           // listen for events
           socket.on(`message-${chat.id}`, (data) => {
-            console.log("message received");
-            console.log(data);
+            console.log("message received", data, chat.id);
+            dispatch(addMessage({ chatId: chat.id, message: data }));
           });
 
           socket.on(`typing-${chat.id}`, (data) => {
@@ -77,7 +65,7 @@ export const Home = () => {
     });
 
     console.log("socket", socket);
-  }, [activeChat, dispatch, token]);
+  }, [dispatch, auth]);
 
   useEffect(() => {
     const onConnect = () => {
@@ -93,7 +81,7 @@ export const Home = () => {
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
 
-    socket.auth = { token };
+    socket.auth = { token: auth.token };
     socket.connect();
 
     setTimeout(() => {
@@ -104,19 +92,7 @@ export const Home = () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
     };
-  }, [token, user]);
-
-  useEffect(() => {
-    // chat events
-    const onChatMessage = (message) =>
-      setChatMessages(chatMessages.concat(message));
-
-    socket.on("message", onChatMessage);
-
-    return () => {
-      socket.off("chat-message", onChatMessage);
-    };
-  }, [chatMessages]);
+  }, [auth]);
 
   if (loading) {
     return <LoadingChat />;
@@ -127,7 +103,7 @@ export const Home = () => {
       <DarkModeToggle />
       <div className="flex-1">
         <div className="grid h-full grid-rows-1 sm:grid-cols-[1fr_5fr] md:grid-cols-auto-1fr">
-          <Sidebar chats={allChats} />
+          <Sidebar />
           <div className="relative overflow-hidden">
             <Chat />
           </div>

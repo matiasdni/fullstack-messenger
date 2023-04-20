@@ -3,7 +3,10 @@ import { User } from "../users/types";
 export type Message = {
   id: string;
   content: string;
-  user: string;
+  user: {
+    id: string;
+    username: string;
+  };
   createdAt: string;
 };
 

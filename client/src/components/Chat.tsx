@@ -2,27 +2,22 @@ import { useEffect, useState } from "react";
 import { socket } from "../socket";
 import { useAppSelector } from "../store";
 import { selectActiveChat } from "../features/chats/chatsSlice";
-import { Chat as ChatType } from "../features/chats/types";
+import { Chat as ChatType, Message } from "../features/chats/types";
 import { ChatHeader } from "./ChatHeader";
 import { MessageList } from "./MessageList";
 import { ChatInputForm } from "./ChatInputForm";
 
 export const Chat = () => {
   const activeChat: ChatType = useAppSelector(selectActiveChat);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     setMessages(activeChat?.messages);
 
-    socket.on(`message-${activeChat?.id}`, (data) => {
-      console.log("message received");
-      setMessages((messages) => [...messages, data]);
-    });
-
     return () => {
       socket.off("message");
     };
-  }, [activeChat]);
+  }, [activeChat.messages]);
 
   const sendMessage = (input) => {
     console.log("sending message");
@@ -43,7 +38,7 @@ export const Chat = () => {
       <ChatHeader activeChat={activeChat} />
 
       {/*messages*/}
-      <MessageList messages={messages} activeChatId={activeChat.id} />
+      <MessageList />
 
       {/*input*/}
       <ChatInputForm onSubmit={sendMessage} />
