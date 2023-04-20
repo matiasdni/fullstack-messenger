@@ -1,7 +1,6 @@
 import {
   Association,
   DataTypes,
-  HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
   Model,
   NonAttribute,
@@ -16,6 +15,7 @@ class User extends Model {
   declare username: string;
   declare password: string;
   declare messages: NonAttribute<Message>[] | Message[];
+  declare chats: NonAttribute<Chat>[] | Chat[];
 
   declare getMessages: HasManyGetAssociationsMixin<Message>;
 
@@ -62,6 +62,44 @@ const initUser = (sequelize: Sequelize): void => {
     {
       sequelize,
       modelName: "User",
+      scopes: {
+        chatsWithOrderedMessages: {
+          attributes: ["id", "username"],
+          plain: true,
+          nest: true,
+
+          include: [
+            {
+              model: Chat,
+              as: "chats",
+              through: { attributes: [] },
+              attributes: ["id", "name", "description", "updatedAt"],
+              order: [["updatedAt", "DESC"]],
+              include: [
+                {
+                  model: Message,
+                  as: "messages",
+                  attributes: ["id", "content", "createdAt"],
+                  order: [["createdAt", "ASC"]],
+                  include: [
+                    {
+                      model: User,
+                      as: "user",
+                      attributes: ["username"],
+                    },
+                  ],
+                },
+                {
+                  model: User,
+                  as: "users",
+                  through: { attributes: [] },
+                  attributes: ["id", "username"],
+                },
+              ],
+            },
+          ],
+        },
+      },
     }
   );
 };
