@@ -5,15 +5,16 @@ import { useAppSelector } from "../store";
 import { Avatar } from "./Avatar";
 import { Message } from "./Message";
 import { selectActiveChat } from "../features/chats/chatsSlice";
+import { Chat as ChatType } from "../features/chats/types";
 
 export const Chat = () => {
   const [input, setInput] = useState<string>("");
   const user = useAppSelector((state) => state.auth.user) as User;
-  const activeChat = useAppSelector(selectActiveChat);
+  const activeChat: ChatType = useAppSelector(selectActiveChat);
   const [messages, setMessages] = useState<any[]>([]);
 
   useEffect(() => {
-    setMessages(activeChat?.Messages);
+    setMessages(activeChat?.messages);
 
     socket.on(`message-${activeChat?.id}`, (data) => {
       console.log("message received");
@@ -42,8 +43,8 @@ export const Chat = () => {
   };
 
   return activeChat?.name ? (
-    <section className="flex h-full flex-col border">
-      <header className="bg-grey-lighter items-center justify-between border px-3 py-2">
+    <section className="absolute inset-0 flex h-full flex-col overflow-hidden border">
+      <header className="bg-grey-lighter border px-3 py-2">
         <div className="flex items-center">
           <figure className="h-10 w-10">
             <Avatar />
@@ -51,43 +52,38 @@ export const Chat = () => {
           <div className="ml-4">
             <p>{activeChat?.name}</p>
             <p className="text-xs">
-              {activeChat?.Users.map((user) => user.username).join(", ")}
+              {activeChat?.users.map((user) => user.username).join(", ")}
             </p>
           </div>
         </div>
       </header>
 
       {/*messages*/}
-      <div className="px-3 py-2">
-        <div className="overflow-y-auto overflow-x-hidden border-0">
-          {messages?.map((message, index) => (
-            <Message key={index} message={message} />
-          ))}
-        </div>
+      <div className="flex-1 overflow-y-auto px-3 py-2">
+        {messages?.map((message, index) => (
+          <Message key={index} message={message} />
+        ))}
       </div>
-      <div className="flex-1"></div>
 
       {/*input*/}
-      <div className="relative w-full">
-        <form
-          className="flex items-center justify-between bg-transparent p-3"
-          onSubmit={sendMessage}
+      <form
+        className="flex items-center justify-between bg-transparent p-3"
+        onSubmit={sendMessage}
+      >
+        <input
+          type="text"
+          className="focus:shadow-outline form-input w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 leading-normal focus:outline-none dark:border-gray-700 dark:bg-gray-700"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Type a message..."
+        />
+        <button
+          className="ml-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+          onClick={sendMessage}
         >
-          <input
-            type="text"
-            className="focus:shadow-outline form-input w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 leading-normal focus:outline-none dark:border-gray-700 dark:bg-gray-700"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type a message..."
-          />
-          <button
-            className="ml-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-            onClick={sendMessage}
-          >
-            Send
-          </button>
-        </form>
-      </div>
+          Send
+        </button>
+      </form>
     </section>
   ) : (
     <section className="flex flex-col border">
