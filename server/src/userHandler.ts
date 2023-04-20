@@ -1,8 +1,9 @@
 import { getChatById } from "./services/chatService";
 import { createMessage } from "./services/messageService";
 import { DataTypes } from "sequelize";
+import { Socket, io } from "socket.io";
 
-module.exports = (io, socket) => {
+module.exports = (io: socket.io, socket: Socket) => {
   const joinRoom = async (room: string) => {
     // check if room is valid
     if (await getChatById(room)) {
@@ -17,8 +18,8 @@ module.exports = (io, socket) => {
   const sendMessage = async ({ content: msg, room }) => {
     const { content, createdAt, id }: any = await createMessage(
       msg,
-      <typeof DataTypes.UUID>socket.data.user.id,
-      <typeof DataTypes.UUID>room
+      socket.data.user.id,
+      room
     );
 
     const returnedMessage = {
