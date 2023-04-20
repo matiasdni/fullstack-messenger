@@ -8,14 +8,22 @@ import { config } from "../config";
 const db: any = config.database;
 
 const setupAssociations = (): void => {
-  User.hasMany(Message, { foreignKey: "user_id" });
-  Message.belongsTo(User, { foreignKey: "user_id" });
+  User.hasMany(Message, { foreignKey: "user_id", as: "messages" });
+  Message.belongsTo(User, { foreignKey: "user_id", as: "user" });
 
-  Chat.belongsToMany(User, { through: UserChat, foreignKey: "chat_id" });
-  User.belongsToMany(Chat, { through: UserChat, foreignKey: "user_id" });
+  Chat.belongsToMany(User, {
+    through: UserChat,
+    foreignKey: "chat_id",
+    as: "users",
+  });
+  User.belongsToMany(Chat, {
+    through: UserChat,
+    foreignKey: "user_id",
+    as: "chats",
+  });
 
   Message.belongsTo(Chat, { foreignKey: "chat_id" });
-  Chat.hasMany(Message, { foreignKey: "chat_id" });
+  Chat.hasMany(Message, { foreignKey: "chat_id", as: "messages" });
 };
 
 const initModels = (sequelize: Sequelize): void => {
