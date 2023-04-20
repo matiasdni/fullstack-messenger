@@ -4,8 +4,8 @@ import React from "react";
 const Layout = () => {
   return (
     <>
-      <div className="container dark:bg-gray-900">
-        <main className="box-border h-full w-full">
+      <div className="dark:bg-gray-900">
+        <main className="container box-border dark:bg-gray-900">
           <Outlet />
         </main>
       </div>

@@ -1,6 +1,5 @@
 import { getChatById } from "./services/chatService";
-import jwt from "jsonwebtoken";
-import { createMessage, getMessages } from "./services/messageService";
+import { createMessage } from "./services/messageService";
 import { DataTypes } from "sequelize";
 
 module.exports = (io, socket) => {
@@ -15,24 +14,23 @@ module.exports = (io, socket) => {
     socket.leave(room);
   };
 
-  const sendMessage = async ({ content, room }) => {
-    const message: any = await createMessage(
-      content,
+  const sendMessage = async ({ content: msg, room }) => {
+    const { content, createdAt, id }: any = await createMessage(
+      msg,
       <typeof DataTypes.UUID>socket.data.user.id,
       <typeof DataTypes.UUID>room
     );
 
     const returnedMessage = {
-      content: message.content,
-      createdAt: message.createdAt,
-      id: message.id,
-      User: {
+      content,
+      createdAt,
+      id,
+      user: {
         id: socket.data.user.id,
         username: socket.data.user.username,
       },
     };
-
-    io.to(room).emit(`message-${room}`, returnedMessage);
+    io.to([room, socket.data.user.id]).emit(`message-${room}`, returnedMessage);
   };
 
   return {

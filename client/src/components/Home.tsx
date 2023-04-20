@@ -13,6 +13,15 @@ import {
 import DarkModeToggle from "./DarkModeToggle";
 import { Chat as ChatType } from "../features/chats/types";
 
+const LoadingChat: React.FC = () => {
+  return (
+    <div className="flex h-full flex-col items-center justify-center">
+      <div className="loader mb-4 h-12 w-12 rounded-full border-4 border-t-4 border-solid border-gray-200"></div>
+      <h2 className="text-center text-xl font-semibold">Loading chats...</h2>
+    </div>
+  );
+};
+
 export const Home = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [chatMessages, setChatMessages] = useState([]);
@@ -20,19 +29,16 @@ export const Home = () => {
   const allChats = useAppSelector(selectChats);
   const activeChat = useAppSelector(selectActiveChat);
   const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     dispatch(getChats(token)).then((action) => {
-      // set active chat if current value is null
-      console.log(activeChat);
+      const chats = action.payload as Array<ChatType>;
+
       if (!activeChat) {
         dispatch(setActiveChat(action.payload[1]));
       }
 
-      const chats = action.payload as Array<ChatType>;
-
-      // subscribe to all chats
-      // check if already subscribed
       chats.forEach((chat) => {
         const isSubscribed = socket.hasListeners(`message-${chat.id}`);
         if (!isSubscribed && chat.id) {
@@ -89,6 +95,11 @@ export const Home = () => {
 
     socket.auth = { token };
     socket.connect();
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
@@ -107,8 +118,13 @@ export const Home = () => {
     };
   }, [chatMessages]);
 
+  if (loading) {
+    return <LoadingChat />;
+  }
+
   return (
     <div className="flex h-screen flex-col overflow-hidden text-neutral-900 dark:text-neutral-300">
+      <DarkModeToggle />
       <div className="flex-1">
         <div className="grid h-full grid-rows-1 sm:grid-cols-[1fr_5fr] md:grid-cols-auto-1fr">
           <Sidebar chats={allChats} />

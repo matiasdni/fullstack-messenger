@@ -14,7 +14,9 @@ export const Message = ({ message }) => {
       .replace(".", ":");
   };
 
-  return message?.user.username === username ? (
+  console.log(message);
+
+  return message?.user?.username === username ? (
     <div className="mb-2 flex justify-end">
       <div className="min-w-[20%] rounded bg-sky-200 px-3 py-2 dark:bg-sky-700">
         <p className="mt-1 text-sm">{message.content}</p>
