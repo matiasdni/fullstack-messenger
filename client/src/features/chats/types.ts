@@ -3,7 +3,7 @@ import { User } from "../users/types";
 export type Message = {
   id: string;
   content: string;
-  User: string;
+  user: string;
   createdAt: string;
 };
 
@@ -12,8 +12,8 @@ export type Chat = {
   name: string;
   description: string;
   updatedAt: string;
-  Messages: Message[];
-  Users: User[];
+  messages: Message[];
+  users: User[];
 };
 
 export interface ChatState {
