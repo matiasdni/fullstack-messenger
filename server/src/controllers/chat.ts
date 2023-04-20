@@ -7,11 +7,10 @@ const router = require("express").Router();
 router.get("/", authenticate, async (req: AuthRequest, res: Response) => {
   const user = req.user;
   if (user) {
-    const user1: any = await User.scope("chatsWithOrderedMessages").findByPk(
-      user.dataValues.id
-    );
-    const chats = user1.get({ plain: true }).chats;
-    console.log(chats);
+    const returnedUser: any = await User.scope(
+      "chatsWithOrderedMessages"
+    ).findByPk(user.dataValues.id);
+    const chats = returnedUser.get({ plain: true }).chats;
     res.send(chats).status(200);
   }
 });
