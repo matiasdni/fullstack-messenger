@@ -34,9 +34,10 @@ export const Home = () => {
           socket.emit("join-room", chat.id);
 
           // listen for events
-          socket.on(`message-${chat.id}`, (data) => {
+          socket.on(`chat:message`, (data) => {
             console.log("message received", data, chat.id);
-            dispatch(addMessage({ chatId: chat.id, message: data }));
+            console.log(data);
+            dispatch(addMessage(data));
           });
 
           socket.on(`typing-${chat.id}`, (data) => {

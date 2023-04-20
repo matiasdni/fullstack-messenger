@@ -16,7 +16,7 @@ export const MessageList: React.FC = () => {
     } else {
       setSwitchedChat(false);
     }
-  }, [activeChat, prevActiveChatId]);
+  }, [activeChat.id, prevActiveChatId]);
 
   useEffect(() => {
     if (messagesEndRef.current && (switchedChat || prevActiveChatId === null)) {
@@ -25,7 +25,7 @@ export const MessageList: React.FC = () => {
         block: "end",
       });
     }
-  }, [prevActiveChatId, switchedChat]);
+  }, [prevActiveChatId, switchedChat, activeChat?.messages.length]);
 
   return (
     <div className="flex-1 overflow-y-auto px-3 py-2">

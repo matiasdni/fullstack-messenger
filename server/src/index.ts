@@ -4,6 +4,28 @@ import { Server, Socket } from "socket.io";
 import "./models/initModels";
 import { authenticateSocket } from "./middlewares/auth";
 
+export type newMessage = {
+  content: string;
+  room: string;
+};
+
+export interface ClientToServerEvents {
+  "join-room": (room: string) => void;
+  "leave-room": (room: string) => void;
+  sendMessage: (message: { content: string; room: string }) => void;
+}
+
+export interface ServerToClientEvents {
+  "chat:message": (message: newMessage) => void;
+}
+
+export interface SocketData {
+  user: {
+    id: string;
+    username: string;
+  };
+}
+
 const PORT = process.env.PORT || 3001;
 
 const server = http.createServer(app);

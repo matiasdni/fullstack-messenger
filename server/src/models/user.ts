@@ -3,7 +3,6 @@ import {
   DataTypes,
   HasManyGetAssociationsMixin,
   Model,
-  NonAttribute,
   Sequelize,
 } from "sequelize";
 import { Message } from "./message";
@@ -14,12 +13,13 @@ class User extends Model {
   declare id: string;
   declare username: string;
   declare password: string;
-  declare messages: NonAttribute<Message>[] | Message[];
-  declare chats: NonAttribute<Chat>[] | Chat[];
 
   declare getMessages: HasManyGetAssociationsMixin<Message>;
 
-  declare static associations: {
+  declare readonly messages?: Message[];
+  declare readonly chats?: Chat[];
+
+  static associations: {
     messages: Association<User, Message>;
     chats: Association<User, Chat>;
   };
@@ -66,10 +66,9 @@ const initUser = (sequelize: Sequelize): void => {
         chatsWithOrderedMessages: {
           attributes: ["id", "username"],
           plain: true,
-          nest: true,
-
           include: [
             {
+              all: true,
               model: Chat,
               as: "chats",
               through: { attributes: [] },

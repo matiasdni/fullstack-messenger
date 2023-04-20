@@ -1,6 +1,7 @@
 import { getUserByToken } from "../services/userService";
 import { NextFunction, Request, Response } from "express";
 import { User } from "../models/user";
+import { Socket } from "socket.io";
 
 export interface AuthRequest extends Request {
   user: User;
@@ -11,45 +12,39 @@ const authenticate = async (
   res: Response,
   next: NextFunction
 ) => {
-  const authHeader = req.header("Authorization");
-  if (!authHeader) {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token) {
     console.log("no auth header");
     return res.status(401).send({ error: "unauthorized" });
   }
 
-  const token = authHeader.replace("Bearer ", "");
-
-  try {
-    const user = await getUserByToken(token);
-    if (!user) {
-      console.log("no user");
-      return res.status(401).send({ error: "Invalid token." });
-    }
-    req.user = user;
-    next();
-  } catch (error) {
-    console.error(error);
-    res.status(401).send({ error: "Unable to authenticate user." });
+  const user = await getUserByToken(token);
+  if (!user) {
+    console.log("no user");
+    res.status(401).send({ error: "unauthorized" });
   }
+
+  if (user instanceof User) req.user = user;
+  next();
 };
 
-export const authenticateSocket = async (socket, next) => {
+export const authenticateSocket = async (
+  socket: Socket,
+  next: (err?: Error) => void
+) => {
   const token = socket.handshake.auth.token;
-  if (!token) {
-    return next(new Error("Authentication error"));
-  }
-
-  try {
-    const user = await getUserByToken(token);
-    if (!user) {
-      return next(new Error("Authentication error"));
-    }
-    socket.data.user = user;
-    next();
-  } catch (error) {
-    console.error(error);
-    return next(new Error("Authentication error"));
-  }
+  getUserByToken(token)
+    .then((user) => {
+      if (!token || !user) {
+        return next(new Error("unauthorized"));
+      }
+      socket.data.user = user;
+      next();
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 export default authenticate;

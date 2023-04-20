@@ -13,6 +13,7 @@ export const getChats = createAsyncThunk(
   async (token: string, { rejectWithValue }) => {
     try {
       const chats = await fetchChats(token);
+      console.log("chats", chats);
       return chats as ChatState;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -28,17 +29,13 @@ const chatsSlice = createSlice({
       state.activeChat = action.payload;
     },
     addMessage: (state, action) => {
-      const { chatId, message } = action.payload;
-
+      const { chatId } = action.payload;
       const chat: Chat = state.chats?.find((chat) => chat.id === chatId);
-      if (chat) {
-        const messageToAdd = {
-          ...message,
-          user: {
-            username: message.user.username,
-          },
-        };
-        chat.messages = [...chat.messages, messageToAdd];
+      const existingMessage = chat?.messages?.find(
+        (message) => message.id === action.payload.id
+      );
+      if (chat && !existingMessage) {
+        chat.messages = [...chat.messages, action.payload];
         if (state.activeChat?.id === chatId) {
           console.log("adding message to active chat");
           state.activeChat.messages = chat.messages;

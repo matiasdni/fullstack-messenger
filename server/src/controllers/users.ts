@@ -5,7 +5,14 @@ import authenticate, { AuthRequest } from "../middlewares/auth";
 
 const router = require("express").Router();
 
-router.post("/register", async (req, res) => {
+interface RegisterRequest extends Request {
+  body: {
+    username: string;
+    password: string;
+  };
+}
+
+router.post("/register", async (req: RegisterRequest, res: Response) => {
   const { username, password } = req.body;
   const user = await createUser(username, password);
   res.status(201).json(user);
