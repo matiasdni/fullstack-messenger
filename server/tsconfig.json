@@ -4,6 +4,9 @@
     "outDir": "build",
     "module": "CommonJS",
     "moduleResolution": "NodeNext",
+    "lib": [
+      "ESNext"
+    ],
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
@@ -11,7 +14,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "esModuleInterop": true,
-    "skipLibCheck": true,
     "strict": true
   },
   "include": [
