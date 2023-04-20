@@ -1,25 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "outDir": "build",
+    "target": "es2022",
     "module": "CommonJS",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "node",
     "lib": [
-      "ESNext"
+      "es2022",
     ],
-    "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "strict": true
-  },
-  "include": [
-    "./src"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  }
 }
