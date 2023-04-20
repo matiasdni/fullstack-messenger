@@ -26,7 +26,7 @@ export const Home = () => {
       // set active chat if current value is null
       console.log(activeChat);
       if (!activeChat) {
-        dispatch(setActiveChat(action.payload[0]));
+        dispatch(setActiveChat(action.payload[1]));
       }
 
       const chats = action.payload as Array<ChatType>;
@@ -108,16 +108,17 @@ export const Home = () => {
   }, [chatMessages]);
 
   return (
-    <div className="flex h-full flex-col text-neutral-900 dark:text-neutral-300">
-      <div className="m-auto grid h-full min-w-fit grid-cols-5 grid-rows-1">
-        <div className="col-span-1">
+    <div className="flex h-screen flex-col overflow-hidden text-neutral-900 dark:text-neutral-300">
+      <div className="flex-1">
+        <div className="grid h-full grid-rows-1 sm:grid-cols-[1fr_5fr] md:grid-cols-auto-1fr">
           <Sidebar chats={allChats} />
+          <div className="relative overflow-hidden">
+            <Chat />
+          </div>
         </div>
-        <div className="col-span-4 row-span-2">
-          <Chat />
-        </div>
+
+        <DarkModeToggle />
       </div>
-      <DarkModeToggle />
     </div>
   );
 };
