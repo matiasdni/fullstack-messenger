@@ -12,7 +12,7 @@ import { User } from "./user";
 import { Message } from "./message";
 
 class Chat extends Model {
-  declare id: number;
+  declare id: string;
   declare name: string;
   declare description: CreationOptional<string>;
 

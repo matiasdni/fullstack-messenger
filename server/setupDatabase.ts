@@ -18,7 +18,7 @@ async function main() {
 
     // Create sample users
     const user1 = await createUser("test", "test");
-    const user2 = await createUser("user2", "password2");
+    const user2 = await createUser("test2", "test");
 
     // Create the general chat
     const generalChat = await createChat(
@@ -31,9 +31,9 @@ async function main() {
     await addUserToChat(user2, generalChat);
 
     // Create sample messages in the general chat
-    await createMessage("Hello, everyone!", user1, generalChat);
-    await createMessage("Hey!", user2, generalChat);
-    await createMessage("How is your day going?", user1, generalChat);
+    await createMessage("Hello, everyone!", user1.id, generalChat.id);
+    await createMessage("Hey!", user2.id, generalChat.id);
+    await createMessage("How is your day going?", user1.id, generalChat.id);
 
     // Create another chat
     const anotherChat = await createChat("Another Chat", "Another sample chat");
@@ -43,12 +43,12 @@ async function main() {
     await addUserToChat(user2, anotherChat);
 
     // Create sample messages in the another chat
-    await createMessage("Welcome to another chat!", user1, anotherChat);
-    await createMessage("Thanks for the invite!", user2, anotherChat);
+    await createMessage("Welcome to another chat!", user1.id, anotherChat.id);
+    await createMessage("Thanks for the invite!", user2.id, anotherChat.id);
     await createMessage(
       "Let's discuss something interesting!",
-      user1,
-      anotherChat
+      user1.id,
+      anotherChat.id
     );
 
     console.log("Sample data has been added to the database.");
