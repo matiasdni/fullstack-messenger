@@ -1,10 +1,9 @@
 import http from "http";
 import app from "./server";
 import { Server, Socket } from "socket.io";
-import jwt from "jsonwebtoken";
 import "./models/initModels";
-import { jwtSecret } from "./config";
 import { authenticateSocket } from "./middlewares/auth";
+
 const PORT = process.env.PORT || 3001;
 
 const server = http.createServer(app);
