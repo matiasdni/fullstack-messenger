@@ -7,9 +7,6 @@
       "es2022",
     ],
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": true
