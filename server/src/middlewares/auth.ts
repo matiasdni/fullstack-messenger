@@ -1,7 +1,7 @@
 import { getUserByToken } from "../services/userService";
 import { NextFunction, Request, Response } from "express";
 import { User } from "../models/user";
-import { Socket } from "socket.io";
+import { mySocket } from "../listeners/types";
 
 export interface AuthRequest extends Request {
   user: User;
@@ -30,7 +30,7 @@ const authenticate = async (
 };
 
 export const authenticateSocket = async (
-  socket: Socket,
+  socket: mySocket,
   next: (err?: Error) => void
 ) => {
   const token = socket.handshake.auth.token;
@@ -39,7 +39,7 @@ export const authenticateSocket = async (
       if (!token || !user) {
         return next(new Error("unauthorized"));
       }
-      socket.data.user = user;
+      socket.user = user;
       next();
     })
     .catch((err) => {
