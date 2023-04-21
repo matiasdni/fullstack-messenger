@@ -7,6 +7,7 @@ import { Chat } from "./Chat";
 import { addMessage, getChats } from "../features/chats/chatsSlice";
 import DarkModeToggle from "./DarkModeToggle";
 import { Chat as ChatType } from "../features/chats/types";
+import { logOut } from "../features/auth/authSlice";
 
 const LoadingChat: React.FC = () => {
   return (
@@ -30,6 +31,9 @@ export const Home = () => {
       chats.forEach((chat) => {
         const isSubscribed = socket.hasListeners(`message-${chat.id}`);
         if (!isSubscribed && chat.id) {
+          socket.onAny((event, ...args) => {
+            console.log(event, args);
+          });
           // join chat room
           socket.emit("join-room", chat.id);
 
@@ -79,8 +83,16 @@ export const Home = () => {
       console.log("socketio disconnected");
     };
 
+    const onConnectError = (err: Error) => {
+      console.log("socketio connect error", err);
+      if (err.message === "unauthorized") {
+        dispatch(logOut());
+      }
+    };
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
+    socket.on("connect_error", onConnectError);
 
     socket.auth = { token: auth.token };
     socket.connect();
@@ -92,6 +104,7 @@ export const Home = () => {
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
+      socket.off("connect_error", onConnectError);
     };
   }, [auth]);
 
