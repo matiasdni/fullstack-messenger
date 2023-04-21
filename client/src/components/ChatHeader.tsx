@@ -1,4 +1,4 @@
-import { Avatar } from "./Avatar";
+import { Avatar } from "./common/Avatar";
 import { Chat as ChatType } from "../features/chats/types";
 import React from "react";
 

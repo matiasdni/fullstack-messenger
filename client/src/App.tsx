@@ -1,9 +1,9 @@
 import React from "react";
 import { Route, Routes } from "react-router";
 import { Home } from "./components/Home";
-import { LoginScreen } from "./LoginScreen";
-import PrivateRoute from "./components/PrivateRoute";
-import Layout from "./components/Layout";
+import { LoginScreen } from "./components/LoginScreen";
+import PrivateRoute from "./components/common/PrivateRoute";
+import Layout from "./components/common/Layout";
 
 function App(): JSX.Element {
   return (

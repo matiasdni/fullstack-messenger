@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
-import { Avatar } from "./Avatar";
-import { Modal } from "./Modal";
+import { Avatar } from "./common/Avatar";
+import { Modal } from "./common/Modal";
 import { createPortal } from "react-dom";
 import { User } from "../features/users/types";
 import { selectActiveChat, setActiveChat } from "../features/chats/chatsSlice";
