@@ -1,112 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { socket } from "../socket";
-import { useAppDispatch, useAppSelector } from "../store";
+import { useAppSelector } from "../store";
 
 import { Sidebar } from "./Sidebar";
 import { Chat } from "./Chat";
-import { addMessage, getChats } from "../features/chats/chatsSlice";
-import DarkModeToggle from "./DarkModeToggle";
-import { Chat as ChatType } from "../features/chats/types";
-import { logOut } from "../features/auth/authSlice";
-
-const LoadingChat: React.FC = () => {
-  return (
-    <div className="flex h-full flex-col items-center justify-center">
-      <div className="loader mb-4 h-12 w-12 rounded-full border-4 border-t-4 border-solid border-gray-200"></div>
-      <h2 className="text-center text-xl font-semibold">Loading chats...</h2>
-    </div>
-  );
-};
+import DarkModeToggle from "./common/DarkModeToggle";
+import { LoadingChat } from "./common/LoadingChat";
+import { useSocketEvents } from "../hooks/UseSocketEvents";
 
 export const Home = () => {
-  const [isConnected, setIsConnected] = useState(socket.connected);
   const auth = useAppSelector((state) => state.auth);
-  const dispatch = useAppDispatch();
+  const chats = useAppSelector((state) => state.chats.chats);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    dispatch(getChats(auth.token)).then((action) => {
-      const chats = action.payload as Array<ChatType>;
-
-      chats.forEach((chat) => {
-        const isSubscribed = socket.hasListeners(`message-${chat.id}`);
-        if (!isSubscribed && chat.id) {
-          socket.onAny((event, ...args) => {
-            console.log(event, args);
-          });
-          // join chat room
-          socket.emit("join-room", chat.id);
-
-          // listen for events
-          socket.on(`chat:message`, (data) => {
-            console.log("message received", data, chat.id);
-            console.log(data);
-            dispatch(addMessage(data));
-          });
-
-          socket.on(`typing-${chat.id}`, (data) => {
-            console.log("typing received");
-            console.log(data);
-          });
-
-          socket.on(`stop-typing-${chat.id}`, (data) => {
-            console.log("stop typing received");
-            console.log(data);
-          });
-
-          socket.on(`seen-${chat.id}`, (data) => {
-            console.log("seen received");
-            console.log(data);
-          });
-
-          return () => {
-            socket.off(`message-${chat.id}`);
-            socket.off(`typing-${chat.id}`);
-            socket.off(`stop-typing-${chat.id}`);
-            socket.off(`seen-${chat.id}`);
-          };
-        }
-      });
-    });
-
-    console.log("socket", socket);
-  }, [dispatch, auth]);
+  useSocketEvents(chats, auth);
 
   useEffect(() => {
-    const onConnect = () => {
-      setIsConnected(true);
-      console.log("socketio connected");
-    };
-
-    const onDisconnect = () => {
-      setIsConnected(false);
-      console.log("socketio disconnected");
-    };
-
-    const onConnectError = (err: Error) => {
-      console.log("socketio connect error", err);
-      if (err.message === "unauthorized") {
-        dispatch(logOut());
-      }
-    };
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("connect_error", onConnectError);
-
-    socket.auth = { token: auth.token };
-    socket.connect();
-
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("connect_error", onConnectError);
-    };
-  }, [auth]);
+  }, []);
 
   if (loading) {
     return <LoadingChat />;
@@ -122,8 +34,6 @@ export const Home = () => {
             <Chat />
           </div>
         </div>
-
-        <DarkModeToggle />
       </div>
     </div>
   );

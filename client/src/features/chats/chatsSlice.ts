@@ -1,5 +1,5 @@
-import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Chat, ChatState, Message } from "./types";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { ChatState } from "./types";
 import { RootState } from "../../types";
 import { fetchChats } from "../../services/chats";
 
@@ -30,16 +30,26 @@ const chatsSlice = createSlice({
     },
     addMessage: (state, action) => {
       const { chatId } = action.payload;
-      const chat: Chat = state.chats?.find((chat) => chat.id === chatId);
-      const existingMessage = chat?.messages?.find(
+      const chatIndex = state.chats?.findIndex((chat) => chat.id === chatId);
+
+      if (chatIndex === -1) {
+        return;
+      }
+
+      const chat = state.chats[chatIndex];
+
+      const existingMessage = chat.messages.some(
         (message) => message.id === action.payload.id
       );
-      if (chat && !existingMessage) {
-        chat.messages = [...chat.messages, action.payload];
-        if (state.activeChat?.id === chatId) {
-          console.log("adding message to active chat");
-          state.activeChat.messages = chat.messages;
-        }
+
+      if (existingMessage) {
+        return;
+      }
+
+      chat.messages.push(action.payload);
+
+      if (state.activeChat?.id === chatId) {
+        state.activeChat.messages = chat.messages;
       }
     },
   },
@@ -51,14 +61,9 @@ const chatsSlice = createSlice({
   },
 });
 
-export const addMessage = createAction<{
-  chatId: string;
-  message: Message;
-}>("chats/addMessage");
-
 export const selectChats = (state: RootState) => state.chats.chats;
 
 export const selectActiveChat = (state: RootState) => state.chats.activeChat;
 
-export const { setActiveChat } = chatsSlice.actions;
+export const { setActiveChat, addMessage } = chatsSlice.actions;
 export default chatsSlice.reducer;

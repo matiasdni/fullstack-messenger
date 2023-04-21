@@ -4,24 +4,31 @@ import { useAppDispatch } from "../store";
 import { login } from "../features/auth/authSlice";
 import { isFulfilled } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router";
+import { getChats } from "../features/chats/chatsSlice";
 
-interface Props {
-  onRegisterClick: () => void;
-}
-
-export const LoginForm: React.FC<Props> = ({ onRegisterClick }) => {
+export const LoginForm = ({ onRegisterClick }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(login({ username, password })).then((action) => {
-      if (isFulfilled(action)) {
-        navigate("/");
-      }
-    });
+    dispatch(login({ username, password }))
+      .then((action) => {
+        if (isFulfilled(action)) {
+          dispatch(getChats(action.payload.token)).then((action) => {
+            if (isFulfilled(action)) {
+              navigate("/");
+            }
+          });
+        } else {
+          throw new Error("Login failed");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
