@@ -15,6 +15,7 @@ class Chat extends Model {
   declare id: string;
   declare name: string;
   declare description: CreationOptional<string>;
+  declare chat_type: "private" | "group";
 
   declare static associations: {
     users: Association<Chat, User>;
@@ -42,11 +43,25 @@ const initChat = (sequelize: Sequelize): void => {
       },
       name: {
         type: DataTypes.STRING(16),
-        allowNull: false,
+        allowNull: true,
+        validate: {
+          // allow null only if chat is private
+          isPrivateGroup(value: string) {
+            if (this.chat_type === "group" && value === null) {
+              throw new Error("Group chat must have a name");
+            }
+          },
+        },
       },
       description: {
         type: DataTypes.STRING(32),
         allowNull: true,
+      },
+      chat_type: {
+        type: DataTypes.ENUM,
+        values: ["private", "group"],
+        allowNull: false,
+        defaultValue: "private",
       },
     },
     {

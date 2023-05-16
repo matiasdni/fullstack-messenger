@@ -23,7 +23,8 @@ async function main() {
     // Create the general chat
     const generalChat = await createChat(
       "General",
-      "A general chat for all users"
+      "A general chat for all users",
+      "group"
     );
 
     // Add users to the general chat
@@ -36,7 +37,11 @@ async function main() {
     await createMessage("How is your day going?", user1.id, generalChat.id);
 
     // Create another chat
-    const anotherChat = await createChat("Another Chat", "Another sample chat");
+    const anotherChat = await createChat(
+      "Another Chat",
+      "Another sample chat",
+      "group"
+    );
 
     // Add users to the another chat
     await addUserToChat(user1, anotherChat);

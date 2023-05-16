@@ -20,8 +20,12 @@ export async function addUserToChat(user: User, chat: Chat) {
   await chat.addUser(user);
 }
 
-export async function createChat(name: string, description?: string) {
-  return await Chat.create({ name, description });
+export async function createChat(
+  name: string,
+  description?: string,
+  chat_type?: string
+) {
+  return await Chat.create({ name, description, chat_type });
 }
 
 export async function getChatById(id: string) {
