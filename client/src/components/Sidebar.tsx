@@ -9,15 +9,15 @@ import { selectActiveChat, setActiveChat } from "../features/chats/chatsSlice";
 const ChatItem = ({ chat }) => {
   const dispatch = useAppDispatch();
   const activeChat = useAppSelector(selectActiveChat);
-  const { name, updatedAt, messages } = chat;
-  const date = new Date(updatedAt);
-  const time = date.toLocaleTimeString("fi-FI", {
+  const { name, messages } = chat;
+  const lastMessage = messages[messages.length - 1];
+  const time = new Date(lastMessage.createdAt).toLocaleTimeString("fi-FI", {
     hour: "2-digit",
     minute: "2-digit",
   });
 
   const userNameInclude = (
-    <span>{`${messages[0]?.user.username}: ${messages[0]?.content}`}</span>
+    <span>{`${lastMessage?.user.username}: ${lastMessage?.content}`}</span>
   );
 
   const handleChatItemClick = () => {
@@ -49,7 +49,7 @@ const ChatItem = ({ chat }) => {
               includeUsername ? (
                 userNameInclude
               ) : (
-                messages[0].content
+                lastMessage.content
               )
             ) : (
               <>No messages</>
