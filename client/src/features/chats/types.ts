@@ -17,7 +17,7 @@ export type Chat = {
   updatedAt: string;
   messages: Message[];
   users: User[];
-};
+} | null;
 
 export interface ChatState {
   chats: Chat[];
