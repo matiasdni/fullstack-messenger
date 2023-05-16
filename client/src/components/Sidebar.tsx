@@ -107,6 +107,7 @@ export const Sidebar = () => {
 
   const handleCreateChat = (e) => {
     e.preventDefault();
+    console.log("open new chat");
   };
 
   return (
