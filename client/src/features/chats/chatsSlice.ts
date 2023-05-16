@@ -13,7 +13,6 @@ export const getChats = createAsyncThunk(
   async (token: string, { rejectWithValue }) => {
     try {
       const chats = await fetchChats(token);
-      console.log("chats", chats);
       return chats as ChatState;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -42,21 +41,17 @@ const chatsSlice = createSlice({
         (message) => message.id === action.payload.id
       );
 
-      if (existingMessage) {
-        return;
-      }
-
-      chat.messages.push(action.payload);
-
-      if (state.activeChat?.id === chatId) {
-        state.activeChat.messages = chat.messages;
+      if (!existingMessage) {
+        chat.messages.push(action.payload);
+        if (state.activeChat?.id === chatId) {
+          state.activeChat.messages = chat.messages;
+        }
       }
     },
   },
   extraReducers: (builder) => {
     builder.addCase(getChats.fulfilled, (state, action) => {
       state.chats = action.payload;
-      state.activeChat = action.payload[0];
     });
   },
 });
