@@ -39,7 +39,7 @@ const SearchListItem = ({ user, handleCloseModal }) => {
       </div>
 
       <UserActionButton
-        label="Start chat"
+        label="Message"
         color="blue"
         action="start:chat"
         userId={user.id}
