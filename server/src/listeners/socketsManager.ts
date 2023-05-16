@@ -2,10 +2,8 @@ import { io } from "../server";
 import { mySocket } from "./types";
 
 const onConnection = (socket: mySocket) => {
-  const { joinRoom, sendMessage, leaveRoom } = require("./userHandler")(
-    io,
-    socket
-  );
+  const { joinRoom, sendMessage, leaveRoom, searchUser } =
+    require("./userHandler")(io, socket);
   const { user } = socket;
 
   if (!user) return;
@@ -22,6 +20,7 @@ const onConnection = (socket: mySocket) => {
   socket.on("join-room", joinRoom);
   socket.on("message", sendMessage);
   socket.on("leave-room", leaveRoom);
+  socket.on("search:user", searchUser);
 
   socket.on("disconnect", () => {
     console.log("User disconnected: ", user.username);

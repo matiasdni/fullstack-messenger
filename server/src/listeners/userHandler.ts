@@ -1,7 +1,9 @@
 import { getChatById } from "../services/chatService";
 import { createMessage } from "../services/messageService";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import { mySocket, newMessage } from "./types";
+import { Op } from "sequelize";
+import { User } from "../models/user";
 
 module.exports = (io: Server, socket: mySocket) => {
   const joinRoom = async (room: string) => {
@@ -38,9 +40,27 @@ module.exports = (io: Server, socket: mySocket) => {
     }
   };
 
+  const searchUser = async (username: string) => {
+    const users = await User.findAll({
+      where: {
+        username: {
+          [Op.like]: `%${username}%`,
+        },
+        id: {
+          [Op.ne]: socket.user?.id,
+        },
+      },
+      attributes: ["id", "username"],
+      limit: 5,
+    });
+
+    socket.emit("search:user", users);
+  };
+
   return {
     joinRoom,
     sendMessage,
     leaveRoom,
+    searchUser,
   };
 };
