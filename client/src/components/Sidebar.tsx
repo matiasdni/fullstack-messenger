@@ -105,11 +105,6 @@ export const Sidebar = () => {
   const allChats = useAppSelector((state) => state.chats.chats);
   const { user } = useAppSelector((state) => state.auth);
 
-  const handleCreateChat = (e) => {
-    e.preventDefault();
-    console.log("open new chat");
-  };
-
   return (
     <div>
       <aside className="flex flex-col border">
