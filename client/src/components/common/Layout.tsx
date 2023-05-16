@@ -8,6 +8,7 @@ const Layout = () => {
         <main className="container box-border dark:bg-gray-900">
           <Outlet />
         </main>
+        <div id="modal" />
       </div>
     </>
   );
