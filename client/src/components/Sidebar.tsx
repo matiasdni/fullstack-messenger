@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
 import { Avatar } from "./common/Avatar";
 import { Modal } from "./common/Modal";
-import { createPortal } from "react-dom";
 import { User } from "../features/users/types";
 import { selectActiveChat, setActiveChat } from "../features/chats/chatsSlice";
 
@@ -26,7 +25,7 @@ const ChatItem = ({ chat }) => {
 
   const includeUsername = chat.users?.length > 1;
 
-  const isActive = chat.id === activeChat.id;
+  const isActive = chat.id === activeChat?.id;
   const activeChatClass = isActive ? "bg-gray-200 dark:bg-gray-800" : "";
 
   return (
@@ -71,18 +70,23 @@ const ChatList = ({ chats }) => {
   );
 };
 
-function SidebarHeader(props: { user: User; onClick: () => void }) {
+interface SidebarHeaderProps {
+  user: User;
+  openModal: () => void;
+}
+
+function SidebarHeader({ user, openModal }: SidebarHeaderProps) {
   return (
     <header className="flex cursor-default flex-row items-center gap-2 bg-gray-200 px-3 py-2 dark:bg-gray-800">
       <div className="h-10 w-10">
         <Avatar />
       </div>
       <h1 className="w-auto text-center text-xl">
-        Welcome <span>{props.user?.username}</span>
+        Welcome <span>{user?.username}</span>
       </h1>
       {/* plus icon to add room/group */}
       <div className="flex-grow"></div>
-      <div className="cursor-pointer" onClick={props.onClick}>
+      <div className="cursor-pointer" onClick={openModal}>
         <svg
           viewBox="0 0 1024 1024"
           fill="currentColor"
@@ -101,32 +105,18 @@ export const Sidebar = () => {
   const allChats = useAppSelector((state) => state.chats.chats);
   const { user } = useAppSelector((state) => state.auth);
 
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
   const handleCreateChat = (e) => {
     e.preventDefault();
   };
 
   return (
-    <aside className="flex flex-col border">
-      {openModal &&
-        createPortal(
-          <Modal
-            openModal={handleOpenModal}
-            handleCloseModal={handleCloseModal}
-            handleCreateChat={handleCreateChat}
-            cancelBtnRef={null}
-          />,
-          document.body
-        )}
-      <SidebarHeader user={user} onClick={handleOpenModal} />
-      {/* chats list */}
-      <ChatList chats={allChats} />
-    </aside>
+    <div>
+      <aside className="flex flex-col border">
+        <SidebarHeader user={user} openModal={() => setOpenModal(true)} />
+        {/* chats list */}
+        <ChatList chats={allChats} />
+      </aside>
+      {openModal && <Modal handleCloseModal={() => setOpenModal(false)} />}
+    </div>
   );
 };
