@@ -2,8 +2,8 @@ import { Avatar } from "./common/Avatar";
 import { Chat as ChatType } from "../features/chats/types";
 import React from "react";
 
-interface ChatHeaderProps {
-  activeChat: ChatType | null;
+export interface ChatHeaderProps {
+  activeChat?: ChatType | null;
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({ activeChat }) => {
