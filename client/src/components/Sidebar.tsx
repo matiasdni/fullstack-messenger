@@ -45,7 +45,7 @@ const ChatItem = ({ chat }) => {
           <Avatar />
         </figure>
         <div className="ml-2 flex w-full flex-col justify-center overflow-hidden">
-          <div className="flex w-full grow flex-row flex-nowrap items-center justify-between whitespace-nowrap">
+          <div className="flex w-full flex-row flex-wrap items-center justify-between whitespace-nowrap">
             <p className="font-bold">{nameToDisplay}</p>
             <div className="flex flex-row items-center gap-2"></div>
             <p className="text-xs">{time}</p>
@@ -94,30 +94,44 @@ interface SidebarHeaderProps {
   openModal: () => void;
 }
 
-function SidebarHeader({ user, openModal }: SidebarHeaderProps) {
+const SidebarHeader = ({ user, openModal }: SidebarHeaderProps) => {
   return (
-    <header className="flex cursor-default flex-row items-center gap-2 bg-gray-200 px-3 py-2 dark:bg-gray-800">
-      <div className="h-10 w-10">
-        <Avatar />
-      </div>
-      <h1 className="w-auto text-center text-xl">
-        Welcome <span>{user?.username}</span>
-      </h1>
-      {/* plus icon to add room/group */}
-      <div className="flex-grow"></div>
-      <div className="cursor-pointer" onClick={openModal}>
-        <svg
-          viewBox="0 0 1024 1024"
-          fill="currentColor"
-          className="flex h-6 w-6 items-baseline justify-center pt-1 align-text-bottom text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+    <header className="grid grid-rows-2 gap-2 bg-gray-200 px-3 py-2 dark:bg-gray-800">
+      <div className="grid grid-cols-3 items-center">
+        <div className="col-span-2 flex items-center">
+          <div className="h-10 w-10">
+            <Avatar />
+          </div>
+          <div className="w-3"></div>
+          <h1 className="text-center text-xl">
+            Welcome, <span>{user?.username}</span>
+          </h1>
+        </div>
+
+        <div
+          className="col-start-3 cursor-pointer justify-self-end"
+          onClick={openModal}
         >
-          <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" />
-          <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" />
-        </svg>
+          <svg
+            viewBox="0 0 1024 1024"
+            fill="currentColor"
+            className="h-6 w-6 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+          >
+            <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" />
+            <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" />
+          </svg>
+        </div>
       </div>
+      <input
+        className="cursor-pointer rounded border-2 border-gray-300 px-3 py-1"
+        type="text"
+        placeholder="Create a new chat..."
+        onFocus={openModal}
+        readOnly
+      />
     </header>
   );
-}
+};
 
 export const Sidebar = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -125,7 +139,7 @@ export const Sidebar = () => {
   const { user } = useAppSelector((state) => state.auth);
 
   return (
-    <div className="max-w-[520px] overflow-x-hidden">
+    <div className="max-w-[520px] overflow-y-auto overflow-x-hidden">
       <aside className="flex flex-col border">
         <SidebarHeader user={user} openModal={() => setOpenModal(true)} />
         {/* chats list */}
