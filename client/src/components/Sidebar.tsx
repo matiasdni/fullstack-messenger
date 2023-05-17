@@ -7,10 +7,12 @@ import { selectActiveChat, setActiveChat } from "../features/chats/chatsSlice";
 
 const ChatItem = ({ chat }) => {
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
   const activeChat = useAppSelector(selectActiveChat);
   const { name, messages } = chat;
-  const lastMessage = messages[messages.length - 1];
-  const time = new Date(lastMessage.createdAt).toLocaleTimeString("fi-FI", {
+  const lastMessage =
+    messages?.length > 0 ? messages[messages?.length - 1] : null;
+  const time = new Date(lastMessage?.createdAt).toLocaleTimeString("fi-FI", {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -28,6 +30,11 @@ const ChatItem = ({ chat }) => {
   const isActive = chat.id === activeChat?.id;
   const activeChatClass = isActive ? "bg-gray-200 dark:bg-gray-800" : "";
 
+  const nameToDisplay =
+    chat.chat_type === "group"
+      ? name
+      : chat.users.find((u) => u.id !== user.id).username;
+
   return (
     <li
       className={`cursor-pointer border-b border-gray-300 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700 ${activeChatClass}`}
@@ -39,12 +46,12 @@ const ChatItem = ({ chat }) => {
         </figure>
         <div className="ml-2 flex w-full flex-col justify-center overflow-hidden">
           <div className="flex w-full grow flex-row flex-nowrap items-center justify-between whitespace-nowrap">
-            <p className="font-bold">{name}</p>
+            <p className="font-bold">{nameToDisplay}</p>
             <div className="flex flex-row items-center gap-2"></div>
             <p className="text-xs">{time}</p>
           </div>
           <p className="truncate align-top text-sm">
-            {messages[0] ? (
+            {messages?.length > 0 ? (
               includeUsername ? (
                 userNameInclude
               ) : (
@@ -61,9 +68,21 @@ const ChatItem = ({ chat }) => {
 };
 
 const ChatList = ({ chats }) => {
+  const sortedChats = chats
+    .map((chat) => ({
+      ...chat,
+    }))
+    .sort((a, b) => {
+      // handle case where messages is undefined
+      if (!a.messages || !b.messages) return 0;
+      const aDate = new Date(a.messages[a.messages.length - 1]?.createdAt);
+      const bDate = new Date(b.messages[b.messages.length - 1]?.createdAt);
+      return bDate.getTime() - aDate.getTime();
+    });
+
   return (
     <ul className="overflow-y-auto overflow-x-hidden">
-      {chats?.map((chat) => (
+      {sortedChats?.map((chat) => (
         <ChatItem key={chat.id} chat={chat} />
       ))}
     </ul>
@@ -106,7 +125,7 @@ export const Sidebar = () => {
   const { user } = useAppSelector((state) => state.auth);
 
   return (
-    <div>
+    <div className="max-w-[520px] overflow-x-hidden">
       <aside className="flex flex-col border">
         <SidebarHeader user={user} openModal={() => setOpenModal(true)} />
         {/* chats list */}
