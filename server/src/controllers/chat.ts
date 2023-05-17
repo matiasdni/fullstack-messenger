@@ -14,7 +14,7 @@ router.get("/", authenticate, async (req: AuthRequest, res: Response) => {
         model: Chat,
         as: "chats",
         through: { attributes: [] },
-        attributes: ["id", "name", "description", "updatedAt"],
+        attributes: ["id", "name", "description", "updatedAt", "chat_type"],
         order: [["updatedAt", "DESC"]],
         include: [
           {
