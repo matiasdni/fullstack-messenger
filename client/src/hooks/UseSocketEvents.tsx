@@ -1,10 +1,15 @@
-import { useAppDispatch } from "../store";
+import { useAppDispatch, useAppSelector } from "../store";
 import { useEffect } from "react";
 import { socket } from "../socket";
-import { addMessage } from "../features/chats/chatsSlice";
+import {
+  addChat,
+  addMessage,
+  setActiveChat,
+} from "../features/chats/chatsSlice";
 
 export const useSocketEvents = (chats, auth) => {
   const dispatch = useAppDispatch();
+  const chatsState = useAppSelector((state) => state.chats);
 
   useEffect(() => {
     const onConnect = () => {
@@ -17,33 +22,54 @@ export const useSocketEvents = (chats, auth) => {
 
     const setUpChatListeners = (chatId) => {
       const messageEvent = `chat:message`;
-      const typingEvent = `typing-${chatId}`;
-      const stopTypingEvent = `stop-typing-${chatId}`;
-      const seenEvent = `seen-${chatId}`;
 
       socket.emit("join-room", chatId);
 
       socket.on(messageEvent, (data) => {
-        dispatch(addMessage(data));
+        console.log("message received", data);
+        const chat = chatsState.chats.find((chat) => chat.id === data.chatId);
+        if (!chat) {
+          socket.emit("get:chatById", data.chatId);
+        } else {
+          dispatch(addMessage(data));
+        }
       });
 
-      socket.on(typingEvent, (data) => {
-        console.log(data);
+      socket.on("get:chatById", (data) => {
+        const existingChat = chatsState.chats.find(
+          (chat) => chat.id === data.id
+        );
+        if (!existingChat) {
+          dispatch(addChat(data));
+          console.log("add new chat to store");
+        } else {
+          console.log("chat already exists in store");
+        }
       });
 
-      socket.on(stopTypingEvent, (data) => {
+      socket.on("get:chatByUserId", (data) => {
         console.log(data);
+        const existingChat = chatsState.chats.find(
+          (chat) => chat.id === data.id
+        );
+        if (!existingChat) {
+          dispatch(addChat(data));
+          console.log("add new chat to store");
+        } else {
+          console.log("chat already exists in store");
+        }
+        setActiveChat(data);
       });
 
-      socket.on(seenEvent, (data) => {
-        console.log(data);
+      socket.on("join-room", (chatId) => {
+        socket.emit("join-room", chatId);
       });
 
       return () => {
-        socket.off(messageEvent);
-        socket.off(typingEvent);
-        socket.off(stopTypingEvent);
-        socket.off(seenEvent);
+        socket.off("get:chat");
+        socket.off("get:chatById");
+        socket.off("get:chatByUserId");
+        socket.off("join-room");
       };
     };
 
