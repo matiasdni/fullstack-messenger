@@ -41,16 +41,14 @@ const SearchListItem = ({ user, handleCloseModal }) => {
       <UserActionButton
         label="Message"
         color="blue"
-        action="start:chat"
+        action="get:chatByUserId"
         userId={user.id}
-        handleCloseModal={handleCloseModal}
       />
       <UserActionButton
         label="Add friend"
         color="gray"
         action="add:friend"
         userId={user.id}
-        handleCloseModal={handleCloseModal}
       />
 
       <StatusIndicator online={user.online} />
@@ -103,23 +101,18 @@ function UserSearchForm(props: {
   );
 }
 
-const UserActionButton = ({
-  label,
-  color,
-  action,
-  userId,
-  handleCloseModal,
-}) => (
-  <button
-    className={`ml-2 text-sm font-medium text-${color}-500 dark:text-${color}-300`}
-    onClick={() => {
-      socket.emit(action, userId);
-      handleCloseModal();
-    }}
-  >
-    {label}
-  </button>
-);
+const UserActionButton = ({ label, color, action, userId }) => {
+  return (
+    <button
+      className={`ml-2 text-sm font-medium text-${color}-500 dark:text-${color}-300`}
+      onClick={() => {
+        socket.emit(action, userId);
+      }}
+    >
+      {label}
+    </button>
+  );
+};
 
 export const Modal = ({ handleCloseModal }) => {
   const [visible, setVisible] = useState(false);
