@@ -1,8 +1,6 @@
 /** @type {import("tailwindcss").Config} */
 /** @type {import("@tailwindcss/forms")} */
-/** @type {DefaultColors} */
-
-const colors = require("tailwindcss/colors");
+/** @type {import("@tailwindcss/typography")} */
 
 module.exports = {
   darkMode: "class",
@@ -65,6 +63,62 @@ module.exports = {
         "3/5": "60%",
         "4/5": "80%",
         "1/6": "16.666667%",
+      },
+      animation: {
+        "fade-in-down": "fadeInDown .35s ease-out forwards",
+        "fade-out-up": "fadeOutUp .45s ease-out forwards",
+        "fade-in": "fadeIn ease-in-out forwards .15s",
+        "fade-out": "fadeOut .2s ease-in-out forwards",
+        "bg-fade-in": "bgFadeIn ease-in-out forwards 0.1s",
+        "bg-fade-out": "bgFadeOut .2s ease-in-out forwards",
+      },
+      keyframes: {
+        fadeInDown: {
+          from: {
+            opacity: "0",
+            transform: "translate3d(0, -10%, 0)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translate3d(0, 0, 0)",
+          },
+        },
+        fadeOutUp: {
+          from: {
+            opacity: "1",
+            transform: "translate3d(0, 0, 0)",
+          },
+          to: {
+            opacity: "0",
+            transform: "translate3d(0, -25%, 0)",
+          },
+        },
+        fadeIn: {
+          from: {
+            opacity: "0",
+          },
+          to: {
+            opacity: "1",
+          },
+        },
+        fadeOut: {
+          from: {
+            opacity: "1",
+          },
+          to: {
+            opacity: "0",
+          },
+        },
+        bgFadeIn: {
+          from: { opacity: "0" },
+          to: { opacity: ".25" },
+        },
+        bgFadeOut: {
+          from: { opacity: ".25" },
+          to: {
+            opacity: "0",
+          },
+        },
       },
     },
   },
