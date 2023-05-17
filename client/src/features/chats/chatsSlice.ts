@@ -13,7 +13,10 @@ export const getChats = createAsyncThunk(
   async (token: string, { rejectWithValue }) => {
     try {
       const chats = await fetchChats(token);
-      return chats as ChatState;
+      return chats.filter((chat) => {
+        if (chat.chat_type === "group") return true;
+        return chat.messages.length > 0;
+      }) as ChatState;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -27,6 +30,10 @@ const chatsSlice = createSlice({
     setActiveChat: (state, action) => {
       state.activeChat = action.payload;
     },
+    addChat: (state, action) => {
+      if (state.chats.some((chat) => chat.id === action.payload.id)) return;
+      state.chats.push(action.payload);
+    },
     addMessage: (state, action) => {
       const { chatId } = action.payload;
       const chatIndex = state.chats?.findIndex((chat) => chat.id === chatId);
@@ -37,12 +44,12 @@ const chatsSlice = createSlice({
 
       const chat = state.chats[chatIndex];
 
-      const existingMessage = chat.messages.some(
+      const existingMessage = chat.messages?.some(
         (message) => message.id === action.payload.id
       );
 
       if (!existingMessage) {
-        chat.messages.push(action.payload);
+        chat.messages?.push(action.payload);
         if (state.activeChat?.id === chatId) {
           state.activeChat.messages = chat.messages;
         }
@@ -52,6 +59,12 @@ const chatsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getChats.fulfilled, (state, action) => {
       state.chats = action.payload;
+      // Sort chats by last message date
+      state.chats = state.chats?.sort((a, b) => {
+        const aDate = new Date(a.updatedAt);
+        const bDate = new Date(b.updatedAt);
+        return bDate.getTime() - aDate.getTime();
+      });
     });
   },
 });
@@ -60,5 +73,5 @@ export const selectChats = (state: RootState) => state.chats.chats;
 
 export const selectActiveChat = (state: RootState) => state.chats.activeChat;
 
-export const { setActiveChat, addMessage } = chatsSlice.actions;
+export const { setActiveChat, addMessage, addChat } = chatsSlice.actions;
 export default chatsSlice.reducer;
