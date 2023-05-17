@@ -13,6 +13,7 @@ interface Chats {
   description: string;
   createdAt: string;
   updatedAt: string;
+  chat_type: string;
 }
 
 export const createChat = async (chatData: ChatDetails): Promise<Chats> => {

@@ -12,11 +12,12 @@ export type Message = {
 
 export type Chat = {
   id: string;
-  name: string;
-  description: string;
+  name?: string;
+  description?: string;
   updatedAt: string;
   messages: Message[];
   users: User[];
+  chat_type: string;
 } | null;
 
 export interface ChatState {
