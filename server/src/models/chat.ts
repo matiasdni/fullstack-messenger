@@ -45,7 +45,6 @@ const initChat = (sequelize: Sequelize): void => {
         type: DataTypes.STRING(16),
         allowNull: true,
         validate: {
-          // allow null only if chat is private
           isPrivateGroup(value: string) {
             if (this.chat_type === "group" && value === null) {
               throw new Error("Group chat must have a name");
@@ -67,56 +66,6 @@ const initChat = (sequelize: Sequelize): void => {
     {
       modelName: "Chat",
       sequelize,
-      scopes: {
-        withUsers: {
-          attributes: ["id", "name", "description", "updatedAt", "chat_type"],
-          include: [
-            {
-              model: User,
-              attributes: ["id", "username"],
-              through: { attributes: [] },
-            },
-          ],
-        },
-        withMessages: {
-          attributes: ["id", "name", "description", "updatedAt", "chat_type"],
-          include: [
-            {
-              model: Message,
-              attributes: ["id", "content", "createdAt"],
-              order: [["createdAt", "DESC"]],
-              include: [
-                {
-                  model: User,
-                  attributes: ["username"],
-                },
-              ],
-            },
-          ],
-        },
-        withUsersAndMessages: {
-          attributes: ["id", "name", "description", "updatedAt", "chat_type"],
-          order: [["updatedAt", "DESC"]],
-          include: [
-            {
-              model: User,
-              attributes: ["id", "username"],
-              through: { attributes: [] },
-            },
-            {
-              model: Message,
-              attributes: ["id", "content", "createdAt"],
-              order: [["createdAt", "DESC"]],
-              include: [
-                {
-                  model: User,
-                  attributes: ["username"],
-                },
-              ],
-            },
-          ],
-        },
-      },
     }
   );
 };
