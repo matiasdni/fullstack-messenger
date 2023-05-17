@@ -69,7 +69,7 @@ const initChat = (sequelize: Sequelize): void => {
       sequelize,
       scopes: {
         withUsers: {
-          attributes: ["id", "name", "description", "updatedAt"],
+          attributes: ["id", "name", "description", "updatedAt", "chat_type"],
           include: [
             {
               model: User,
@@ -79,7 +79,7 @@ const initChat = (sequelize: Sequelize): void => {
           ],
         },
         withMessages: {
-          attributes: ["id", "name", "description", "updatedAt"],
+          attributes: ["id", "name", "description", "updatedAt", "chat_type"],
           include: [
             {
               model: Message,
@@ -95,7 +95,7 @@ const initChat = (sequelize: Sequelize): void => {
           ],
         },
         withUsersAndMessages: {
-          attributes: ["id", "name", "description", "updatedAt"],
+          attributes: ["id", "name", "description", "updatedAt", "chat_type"],
           order: [["updatedAt", "DESC"]],
           include: [
             {
