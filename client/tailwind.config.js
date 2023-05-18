@@ -67,7 +67,7 @@ module.exports = {
       animation: {
         "fade-in-down": "fadeInDown .35s ease-out forwards",
         "fade-out-up": "fadeOutUp .45s ease-out forwards",
-        "fade-in": "fadeIn ease-in-out forwards .15s",
+        "fade-in": "fadeIn ease-in-out forwards .3s",
         "fade-out": "fadeOut .2s ease-in-out forwards",
         "bg-fade-in": "bgFadeIn ease-in-out forwards 0.1s",
         "bg-fade-out": "bgFadeOut .2s ease-in-out forwards",
@@ -123,5 +123,9 @@ module.exports = {
     },
   },
   variants: {},
-  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],
+  plugins: [
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/typography"),
+    require("@tailwindcss/container-queries"),
+  ],
 };
