@@ -2,19 +2,12 @@ import "./src/models/initModels";
 import { createUser } from "./src/services/userService";
 import { addUserToChat, createChat } from "./src/services/chatService";
 import { createMessage } from "./src/services/messageService";
-import { sequelize } from "./src/models/initModels";
+import { initModels, sequelize } from "./src/models/initModels";
 
 async function main() {
   try {
-    // Test the connection to the database
-    await sequelize.authenticate();
-    console.log(
-      "Connection to the database has been established successfully."
-    );
-
-    // Sync the models with the database
+    await initModels();
     await sequelize.sync({ force: true });
-    console.log("All models were synchronized successfully.");
 
     // Create sample users
     const user1 = await createUser("test", "test");
