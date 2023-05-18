@@ -1,7 +1,7 @@
 import cors from "cors";
 import { authenticateSocket } from "./middlewares/auth";
 import onConnection from "./listeners/socketsManager";
-import { mySocket } from "./listeners/types";
+
 const http = require("http");
 const express = require("express");
 const { Server } = require("socket.io");
