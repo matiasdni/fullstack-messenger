@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
 import { Chat, initChat } from "./chat";
+import { Pool } from "pg";
 import { initUser, User } from "./user";
 import { initMessage, Message } from "./message";
 import { initUserChat, UserChat } from "./userChat";
@@ -26,21 +27,57 @@ const setupAssociations = (): void => {
   Chat.hasMany(Message, { foreignKey: "chat_id", as: "messages" });
 };
 
-const initModels = (sequelize: Sequelize): void => {
-  initChat(sequelize);
-  initUser(sequelize);
-  initMessage(sequelize);
-  initUserChat(sequelize);
-
-  setupAssociations();
-};
-
-export const sequelize = new Sequelize(db.database, db.username, db.password, {
+const sequelize = new Sequelize(db.database, db.username, db.password, {
   host: db.host,
   port: db.port,
   dialect: db.dialect,
   logging: false,
-  sync: {},
+  sync: {
+    alter: true,
+  },
 });
 
-initModels(sequelize);
+const createDatabase = async (): Promise<void> => {
+  const pool = new Pool({
+    user: db.username,
+    host: db.host,
+    password: db.password,
+    port: db.port,
+  });
+
+  try {
+    console.log(`creating database ${db.database}`);
+    await pool.query(`CREATE DATABASE ${db.database};`);
+    console.log(`database ${db.database} created.`);
+  } catch (err: any) {
+    if (err.code === "42P04") {
+      console.log(`database ${db.database} already exists.`);
+    } else {
+      console.error("error creating database", err);
+      throw err;
+    }
+  } finally {
+    await pool.end();
+  }
+};
+
+const initModels = async (): Promise<void> => {
+  await createDatabase();
+
+  try {
+    await sequelize.authenticate();
+    console.log("connected to database");
+
+    initChat(sequelize);
+    initUser(sequelize);
+    initMessage(sequelize);
+    initUserChat(sequelize);
+
+    setupAssociations();
+  } catch (error) {
+    console.error("connection error", error);
+    throw error;
+  }
+};
+
+export { initModels, sequelize, User, Message, Chat, UserChat };
