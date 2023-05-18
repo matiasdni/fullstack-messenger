@@ -8,8 +8,8 @@ export interface ChatHeaderProps {
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({ activeChat }) => {
   return (
-    <header className="bg-grey-lighter border px-3 py-2">
-      <div className="flex items-center">
+    <header className="bg-grey-lighter border-b-2 border-gray-300 dark:border-gray-700">
+      <div className="flex items-center p-4">
         <figure className="h-10 w-10">
           <Avatar />
         </figure>
