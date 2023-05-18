@@ -12,12 +12,8 @@ export const config = {
       : process.env.PROD_DB_PASSWORD,
     database: isDevelopment ? process.env.DB_NAME : process.env.PROD_DB_NAME,
     host: isDevelopment ? process.env.DB_HOST : process.env.PROD_DB_HOST,
-    port: Number(
-      isDevelopment ? process.env.DB_PORT : process.env.PROD_DB_PORT
-    ),
-    dialect: isDevelopment
-      ? process.env.DB_DIALECT
-      : process.env.PROD_DB_DIALECT || "postgres",
+    port: Number(process.env.DB_PORT),
+    dialect: process.env.DB_DIALECT,
   },
   jwt: {
     secret: process.env.JWT_SECRET || "secret",
