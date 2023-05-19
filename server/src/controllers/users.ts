@@ -1,36 +1,35 @@
 import { Request, Response } from "express";
-import { User } from "../models/user";
-import { createUser, deleteUser } from "../services/userService";
+import { createUser, getAllUsers, getUserById } from "../services/userService";
 import authenticate, { AuthRequest } from "../middlewares/auth";
+import { validateUserData } from "../middlewares/validationMiddleware";
 
 const router = require("express").Router();
 
-interface RegisterRequest extends Request {
-  body: {
-    username: string;
-    password: string;
-  };
-}
+router.post(
+  "/register",
+  validateUserData,
+  async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+    const user = await createUser(username, password);
+    res.status(201).json(user);
+  }
+);
 
-router.post("/register", async (req: RegisterRequest, res: Response) => {
-  const { username, password } = req.body;
-  const user = await createUser(username, password);
-  res.status(201).json(user);
-});
-
-router.get("/", authenticate, async (req: Request, res: Response) => {
-  const users = await User.findAll();
+router.get("/", async (req: Request, res: Response) => {
+  const users = await getAllUsers();
   res.status(200).json(users);
 });
 
-router.delete("/:id", authenticate, async (req: AuthRequest, res: Response) => {
-  const user = req.user;
-  if (user && user.id === String(req.params.id)) {
-    await deleteUser(user);
-    res.status(204).json({ message: "User deleted" });
-  } else {
-    res.status(401).json({ message: "Unauthorized" });
+router.get("/:id", async (req: Request, res: Response) => {
+  const user = await getUserById(req.params.id);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
   }
+  res.status(200).json(user);
+});
+
+router.delete("/:id", authenticate, async (req: AuthRequest, res: Response) => {
+  // implement again later
 });
 
 module.exports = router;
