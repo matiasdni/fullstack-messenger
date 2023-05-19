@@ -5,6 +5,7 @@ import { User } from "../features/users/types";
 import { selectActiveChat, setActiveChat } from "../features/chats/chatsSlice";
 import { Modal } from "./common/Modal";
 import { UserSearchModal } from "./UserSearchModal";
+import { GroupForm } from "./GroupForm";
 
 const ChatItem = ({ chat }) => {
   const dispatch = useAppDispatch();
@@ -96,55 +97,67 @@ interface SidebarHeaderProps {
 
 const SidebarHeader = ({ user }: SidebarHeaderProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState<boolean>(false);
 
-  const handleClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleOpen = () => {
-    setIsModalOpen(true);
+  const handleGroupModalClose = () => {
+    setIsGroupModalOpen(false);
   };
 
   return (
     <>
-      <header>
-        <div className="grid grid-rows-2 gap-2 bg-gray-200 px-3 py-2 dark:bg-gray-800">
-          <div className="grid grid-cols-3 items-center">
-            <div className="col-span-2 flex items-center">
-              <div className="h-10 w-10">
-                <Avatar />
-              </div>
-              <div className="w-3"></div>
-              <h1 className="text-center text-xl">
-                Welcome, <span>{user?.username}</span>
-              </h1>
+      <div className="grid grid-rows-2 gap-2 bg-gray-200 px-3 py-2 dark:bg-gray-800">
+        <div className="grid grid-cols-3 items-center">
+          <div className="col-span-2 flex items-center">
+            <div className="h-10 w-10">
+              <Avatar />
             </div>
-
-            <div
-              className="col-start-3 cursor-pointer justify-self-end"
-              onClick={handleOpen}
-            >
-              <svg
-                viewBox="0 0 1024 1024"
-                fill="currentColor"
-                className="h-6 w-6 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              >
-                <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" />
-                <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" />
-              </svg>
-            </div>
+            <div className="w-3"></div>
+            <h1 className="text-center text-xl">
+              Welcome, <span>{user?.username}</span>
+            </h1>
           </div>
-          <button
-            className="w-full cursor-pointer rounded border-2 border-gray-300 px-3 py-1 text-left dark:border-gray-700"
-            onClick={handleOpen}
+
+          <div
+            className="col-start-3 cursor-pointer justify-self-end"
+            onClick={() => {
+              setIsGroupModalOpen(true);
+            }}
           >
-            Start a new chat...
-          </button>
+            <svg
+              viewBox="0 0 1024 1024"
+              fill="currentColor"
+              className="h-6 w-6 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            >
+              <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" />
+              <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" />
+            </svg>
+          </div>
         </div>
-      </header>
+        <button
+          className="w-full cursor-pointer rounded border-2 border-gray-300 px-3 py-1 text-left dark:border-gray-700"
+          onClick={() => {
+            setIsModalOpen(true);
+          }}
+        >
+          Start a new chat...
+        </button>
+      </div>
       {isModalOpen && (
-        <Modal handleCloseModal={handleClose}>
-          <UserSearchModal handleCloseModal={handleClose} />
+        <Modal
+          handleCloseModal={() => {
+            setIsModalOpen(false);
+          }}
+        >
+          <UserSearchModal />
+        </Modal>
+      )}
+      {isGroupModalOpen && (
+        <Modal handleCloseModal={handleGroupModalClose}>
+          <GroupForm
+            handleCloseModal={() => {
+              setIsGroupModalOpen(false);
+            }}
+          />
         </Modal>
       )}
     </>
@@ -156,12 +169,10 @@ export const Sidebar = () => {
   const { user } = useAppSelector((state) => state.auth);
 
   return (
-    <div className="h-full max-w-[520px] overflow-y-auto overflow-x-hidden border border-r-0">
-      <aside className="flex flex-col">
-        <SidebarHeader user={user} />
-        {/* chats list */}
-        <ChatList chats={allChats} />
-      </aside>
+    <div className="flex h-full max-w-[520px] flex-col overflow-y-auto overflow-x-hidden border border-r-0">
+      <SidebarHeader user={user} />
+      {/* chats list */}
+      <ChatList chats={allChats} />
     </div>
   );
 };
