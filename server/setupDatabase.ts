@@ -31,7 +31,7 @@ async function main() {
 
     // Create another chat
     const anotherChat = await createChat(
-      "Another Chat",
+      "Another chat",
       "Another sample chat",
       "group"
     );
@@ -40,7 +40,6 @@ async function main() {
     await addUserToChat(user1, anotherChat);
     await addUserToChat(user2, anotherChat);
 
-    // Create sample messages in the another chat
     await createMessage("Welcome to another chat!", user1.id, anotherChat.id);
     await createMessage("Thanks for the invite!", user2.id, anotherChat.id);
     await createMessage(
@@ -48,6 +47,23 @@ async function main() {
       user1.id,
       anotherChat.id
     );
+
+    const anotherChat2 = await createChat(
+      "test is not in this chat",
+      "Anothe",
+      "group"
+    );
+
+    const anotherChat3 = await createChat(
+      "test2 is not in this chat",
+      "Another sample c",
+      "group"
+    );
+
+    await addUserToChat(user2, anotherChat2);
+    await addUserToChat(user1, anotherChat3);
+
+    // Create sample messages in the another chat
 
     console.log("Sample data has been added to the database.");
   } catch (error) {
