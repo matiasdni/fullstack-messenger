@@ -32,10 +32,10 @@ export async function getChatById(id: string) {
   return await Chat.findByPk(id);
 }
 
-export async function getChats(user: User) {
+export async function getUserChats(user: User) {
   return await user.getChats();
 }
 
-export async function getUsers(chat: Chat) {
+export async function getChatUsers(chat: Chat) {
   return await chat.getUsers();
 }
