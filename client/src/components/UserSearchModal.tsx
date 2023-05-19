@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { socket } from "../socket";
 
-export const UserSearchModal = ({ handleCloseModal }) => {
+export const UserSearchModal = () => {
   const [results, setResults] = useState([]);
 
   const handleSubmit = (e) => {
@@ -24,12 +24,12 @@ export const UserSearchModal = ({ handleCloseModal }) => {
   return (
     <>
       <UserSearchForm onSubmit={handleSubmit} />
-      <SearchResults results={results} handleCloseModal={handleCloseModal} />
+      <SearchResults results={results} />
     </>
   );
 };
 
-const SearchListItem = ({ user, handleCloseModal }) => {
+const SearchListItem = ({ user }) => {
   const StatusIndicator = ({ online }) => {
     return (
       <>
@@ -83,17 +83,13 @@ const SearchListItem = ({ user, handleCloseModal }) => {
   );
 };
 
-const SearchResults = ({ results, handleCloseModal }) => {
+const SearchResults = ({ results }) => {
   return (
     <div className="px-4 pb-4 pt-5 text-gray-900 dark:text-gray-300 sm:p-6 sm:pb-4">
       <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
         <ul className="flex flex-col">
           {results.map((user) => (
-            <SearchListItem
-              key={user.id}
-              user={user}
-              handleCloseModal={handleCloseModal}
-            />
+            <SearchListItem key={user.id} user={user} />
           ))}
         </ul>
       </div>
@@ -101,7 +97,7 @@ const SearchResults = ({ results, handleCloseModal }) => {
   );
 };
 
-function UserSearchForm({ onSubmit }: { onSubmit: (e) => void }) {
+const UserSearchForm = ({ onSubmit }: { onSubmit: (e) => void }) => {
   const [username, setUsername] = useState("");
 
   return (
@@ -124,7 +120,7 @@ function UserSearchForm({ onSubmit }: { onSubmit: (e) => void }) {
       </div>
     </form>
   );
-}
+};
 
 const UserActionButton = ({ label, color, action, userId }) => {
   return (
