@@ -2,15 +2,6 @@ import { User } from "../models/user";
 import jwt from "jsonwebtoken";
 import { jwtSecret } from "../config";
 
-export const generateToken = (user: User): string => {
-  const payload = {
-    id: user.id,
-    username: user.username,
-  };
-
-  return jwt.sign(payload, jwtSecret, { expiresIn: "1d" });
-};
-
 export const getUserByToken = async (token: string): Promise<User | null> => {
   try {
     const decoded = jwt.verify(token, jwtSecret) as User;
@@ -25,21 +16,19 @@ export async function createUser(username: string, password: string) {
   return await User.create({ username, password });
 }
 
-export async function authenticateUser(username: string, password: string) {
-  const user = await User.findOne({ where: { username } });
-  return user && (await user.comparePassword(password)) ? user : null;
-}
-
 export async function getUserById(id: string) {
-  return await User.findByPk(id);
+  return await User.findByPk(id, { attributes: { exclude: ["password"] } });
 }
 
 export async function getUserByUsername(username: string) {
   return await User.findOne({ where: { username } });
 }
 
-export async function getUsers() {
-  return await User.findAll();
+export async function getAllUsers() {
+  return await User.findAll({
+    attributes: { exclude: ["password"] },
+    order: [["username", "ASC"]],
+  });
 }
 
 export async function updateUser(
@@ -51,9 +40,8 @@ export async function updateUser(
   if (user) {
     user.username = username;
     user.password = password;
-    await user.save();
+    return await user.save();
   }
-  return user;
 }
 
 export async function deleteUser(user: User) {
