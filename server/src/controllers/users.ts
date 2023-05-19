@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { createUser, getAllUsers, getUserById } from "../services/userService";
 import authenticate, { AuthRequest } from "../middlewares/auth";
 import { validateUserData } from "../middlewares/validationMiddleware";
+import { Chat, Message, User } from "../models/initModels";
+import { Op } from "sequelize";
 
 const router = require("express").Router();
 
@@ -27,6 +29,46 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
   res.status(200).json(user);
 });
+
+router.get(
+  "/:id/chats",
+  authenticate,
+  async (req: AuthRequest, res: Response) => {
+    const chats = await Chat.findAll({
+      include: [
+        {
+          model: User,
+          as: "users",
+          where: { id: req.user.id },
+          attributes: ["id", "username"],
+          through: { attributes: [] },
+        },
+        {
+          model: Message,
+          as: "messages",
+          include: [
+            {
+              model: User,
+              as: "user",
+              attributes: ["username"],
+            },
+          ],
+        },
+      ],
+      where: {
+        [Op.or]: [
+          { chat_type: "group" },
+          {
+            chat_type: "private",
+            "$messages.id$": { [Op.ne]: null },
+          },
+        ],
+      },
+    });
+
+    res.json(chats);
+  }
+);
 
 router.delete("/:id", authenticate, async (req: AuthRequest, res: Response) => {
   // implement again later
