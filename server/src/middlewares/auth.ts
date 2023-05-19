@@ -16,16 +16,16 @@ const authenticate = async (
 
   if (!token) {
     console.log("no auth header");
-    return res.status(401).send({ error: "unauthorized" });
+    return res.status(401).json({ error: "unauthorized" });
   }
 
   const user = await getUserByToken(token);
   if (!user) {
-    console.log("no user");
-    res.status(401).send({ error: "unauthorized" });
+    console.log("token not valid");
+    return res.status(401).send({ error: "unauthorized" });
   }
 
-  if (user instanceof User) req.user = user;
+  req.user = user;
   next();
 };
 
