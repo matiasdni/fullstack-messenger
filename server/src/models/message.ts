@@ -1,5 +1,4 @@
 import {
-  Association,
   BelongsToCreateAssociationMixin,
   BelongsToGetAssociationMixin,
   DataTypes,
@@ -21,11 +20,6 @@ class Message extends Model {
 
   declare getChat: BelongsToGetAssociationMixin<Chat>;
   declare setChat: BelongsToCreateAssociationMixin<Chat>;
-
-  declare static associations: {
-    user: Association<Message, User>;
-    chat: Association<Message, Chat>;
-  };
 }
 
 const initMessage = (sequelize: Sequelize): void => {
@@ -44,14 +38,28 @@ const initMessage = (sequelize: Sequelize): void => {
       },
       user_id: {
         type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: User,
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
       chat_id: {
         type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: Chat,
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
     },
     {
       modelName: "Message",
+      tableName: "message",
       sequelize,
+      underscored: true,
     }
   );
 };

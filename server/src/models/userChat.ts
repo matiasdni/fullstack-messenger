@@ -14,16 +14,28 @@ const initUserChat = (sequelize: Sequelize): void => {
         type: DataTypes.UUID,
         allowNull: false,
         primaryKey: true,
+        references: {
+          model: User,
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
       chat_id: {
         type: DataTypes.UUID,
         allowNull: false,
         primaryKey: true,
+        references: {
+          model: Chat,
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
     },
     {
-      modelName: "UserChat",
       sequelize,
+      tableName: "user_chat",
+      underscored: true,
+      timestamps: false,
     }
   );
 };

@@ -1,5 +1,4 @@
 import {
-  Association,
   CreationOptional,
   DataTypes,
   HasManyCreateAssociationMixin,
@@ -15,12 +14,6 @@ class Chat extends Model {
   declare id: string;
   declare name: string;
   declare description: CreationOptional<string>;
-  declare chat_type: "private" | "group";
-
-  declare static associations: {
-    users: Association<Chat, User>;
-    messages: Association<Chat, Message>;
-  };
 
   declare users: NonAttribute<User>[] | User[];
   declare messages: NonAttribute<Message>[] | Message[];
@@ -69,6 +62,7 @@ const initChat = (sequelize: Sequelize): void => {
     },
     {
       modelName: "Chat",
+      tableName: "chat",
       sequelize,
     }
   );

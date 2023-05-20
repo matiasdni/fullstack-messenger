@@ -1,5 +1,4 @@
 import {
-  Association,
   DataTypes,
   HasManyGetAssociationsMixin,
   Model,
@@ -13,20 +12,13 @@ class User extends Model {
   declare id: string;
   declare username: string;
   declare password: string;
+  declare readonly messages: Message[];
+  declare readonly chats: Chat[];
 
   declare getMessages: HasManyGetAssociationsMixin<Message>;
-
-  declare readonly messages?: Message[];
-  declare readonly chats?: Chat[];
-
-  static associations: {
-    messages: Association<User, Message>;
-    chats: Association<User, Chat>;
-  };
-
   declare getChats: HasManyGetAssociationsMixin<Chat>;
 
-  public async comparePassword(password: string): Promise<boolean> {
+  async comparePassword(password: string): Promise<boolean> {
     return await bcrypt.compare(password, this.password);
   }
 }
@@ -62,43 +54,8 @@ const initUser = (sequelize: Sequelize): void => {
     {
       sequelize,
       modelName: "User",
-      scopes: {
-        chatsWithOrderedMessages: {
-          attributes: ["id", "username"],
-          plain: true,
-          include: [
-            {
-              all: true,
-              model: Chat,
-              as: "chats",
-              through: { attributes: [] },
-              attributes: ["id", "name", "description", "updatedAt"],
-              order: [["updatedAt", "DESC"]],
-              include: [
-                {
-                  model: Message,
-                  as: "messages",
-                  attributes: ["id", "content", "createdAt"],
-                  order: [["createdAt", "ASC"]],
-                  include: [
-                    {
-                      model: User,
-                      as: "user",
-                      attributes: ["username"],
-                    },
-                  ],
-                },
-                {
-                  model: User,
-                  as: "users",
-                  through: { attributes: [] },
-                  attributes: ["id", "username"],
-                },
-              ],
-            },
-          ],
-        },
-      },
+      tableName: "user",
+      underscored: true,
     }
   );
 };
