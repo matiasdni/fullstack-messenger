@@ -1,33 +1,28 @@
 import axios from "axios";
+import { Chat } from "../features/chats/types";
 
 const BASE_URL = "/api/chat";
 
-interface ChatDetails {
-  name: string;
-  description: string;
-}
-
-interface Chats {
-  id: number;
-  name: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  chat_type: string;
-}
-
-export const createChat = async (chatData: ChatDetails): Promise<Chats> => {
-  const response = await axios.post(BASE_URL, chatData);
-  if (response.status === 200) return response.data;
-  else throw new Error("Chats creation failed");
-};
-
-export async function fetchChats(token: string) {
-  const response = await axios.get(BASE_URL, {
+export const newChat = async (chatData, token): Promise<Chat> => {
+  const response = await axios.post(BASE_URL, chatData, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data;
-}
+
+  if (response.status === 200) return response.data;
+  else throw new Error("chat creation failed");
+};
+
+export const fetchChatById = async (chatId, token): Promise<Chat> => {
+  const response = await axios.get(`${BASE_URL}/${chatId}`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.status === 200) return response.data;
+  else throw new Error("chat creation failed");
+};
