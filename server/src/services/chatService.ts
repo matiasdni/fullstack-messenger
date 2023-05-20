@@ -7,7 +7,7 @@ export async function addUserToChat(user: User, chat: Chat) {
   await chat.addUser(user);
 }
 
-export async function findAllWithIds(ids: UserChat[]) {
+export async function findChats(ids: UserChat[]) {
   return await Chat.findAll({
     where: {
       id: ids.map((chat: any) => chat.chat_id),

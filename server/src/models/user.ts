@@ -18,8 +18,8 @@ class User extends Model {
   declare getMessages: HasManyGetAssociationsMixin<Message>;
   declare getChats: HasManyGetAssociationsMixin<Chat>;
 
-  async comparePassword(password: string): Promise<boolean> {
-    return await bcrypt.compare(password, this.password);
+  comparePassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
   }
 }
 

@@ -4,10 +4,11 @@ import {
   getAllUsers,
   getUserById,
   searchUsers,
-  userChats,
 } from "../services/userService";
 import authenticate, { AuthRequest } from "../middlewares/auth";
 import { validateUserData } from "../middlewares/validationMiddleware";
+import { findChats } from "../services/chatService";
+import { getChatIds } from "../services/userChatService";
 
 const router = require("express").Router();
 
@@ -38,7 +39,8 @@ router.get(
   "/:id/chats",
   authenticate,
   async (req: AuthRequest, res: Response) => {
-    const chats = await userChats(req.params.id);
+    const chatIds = await getChatIds(req.params.id);
+    const chats = await findChats(chatIds);
     res.json(chats);
   }
 );
