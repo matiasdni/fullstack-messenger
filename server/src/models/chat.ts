@@ -30,6 +30,10 @@ class Chat extends Model {
 
   declare addUser: HasManyCreateAssociationMixin<User, "id">;
   declare addMessage: HasManyCreateAssociationMixin<Message, "chat_id">;
+
+  addUsers(users: User[]): Promise<void> {
+    return Promise.all(users.map((user) => this.addUser(user))).then(() => {});
+  }
 }
 
 const initChat = (sequelize: Sequelize): void => {
@@ -42,7 +46,7 @@ const initChat = (sequelize: Sequelize): void => {
         allowNull: false,
       },
       name: {
-        type: DataTypes.STRING(16),
+        type: DataTypes.STRING(64),
         allowNull: true,
         validate: {
           isPrivateGroup(value: string) {
