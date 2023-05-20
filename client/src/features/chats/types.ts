@@ -10,22 +10,17 @@ export type Message = {
   createdAt: string;
 };
 
-export type Chat = {
+export interface Chat {
   id: string;
   name?: string;
   description?: string;
   updatedAt: string;
-  messages: Message[];
-  users: User[];
+  messages?: Message[];
+  users?: User[];
   chat_type: string;
-} | null;
-
-export interface ChatState {
-  chats: Chat[];
-  activeChat: Chat;
 }
 
-export type ChatsInitialState = {
-  chats: null | Chat[];
-  activeChat: null | Chat;
+export type ChatState = {
+  chats: Chat[];
+  activeChatId: null | string;
 };
