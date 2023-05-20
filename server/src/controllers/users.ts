@@ -70,6 +70,29 @@ router.get(
   }
 );
 
+router.post(
+  "/search",
+  authenticate,
+  async (req: AuthRequest, res: Response) => {
+    const { name } = req.body;
+
+    const users = await User.findAll({
+      where: {
+        username: {
+          [Op.like]: `%${name}%`,
+        },
+        id: {
+          [Op.ne]: req.user?.id,
+        },
+      },
+      attributes: ["id", "username"],
+      limit: 5,
+    });
+
+    res.status(200).json(users);
+  }
+);
+
 router.delete("/:id", authenticate, async (req: AuthRequest, res: Response) => {
   // implement again later
 });
