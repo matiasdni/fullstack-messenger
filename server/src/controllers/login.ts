@@ -18,7 +18,7 @@ router.post("/", async (req: Request, res: Response) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  const passwordCorrect = await user.comparePassword(password)
+  const passwordCorrect = await user.comparePassword(password);
 
   if (!passwordCorrect) {
     return res.status(404).json({ message: "Invalid password" });
@@ -29,7 +29,6 @@ router.post("/", async (req: Request, res: Response) => {
     user: {
       id: user.id,
       username: user.username,
-      role: null,
     },
   });
 });
