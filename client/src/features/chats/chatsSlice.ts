@@ -1,24 +1,53 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { ChatState } from "./types";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../types";
-import { fetchChats } from "../../services/chats";
+import { fetchUserChats } from "../../services/user";
+import { PrivateChat } from "../../components/UserSearchModal";
+import { GroupChat } from "../../components/GroupForm";
+import { fetchChatById, newChat } from "../../services/chats";
+import { Chat } from "./types";
 
 const initialState = {
-  chats: null,
-  activeChat: null,
+  chats: [] as Chat[],
+  activeChatId: null as string | null,
 };
+
+export enum ChatType {
+  Group = "group",
+  Private = "private",
+}
 
 export const getChats = createAsyncThunk(
   "chats/getChats",
-  async (token: string, { rejectWithValue }) => {
+  async (token: string, { rejectWithValue, getState }) => {
     try {
-      const chats = await fetchChats(token);
-      return chats.filter((chat) => {
-        if (chat.chat_type === "group") return true;
-        return chat.messages.length > 0;
-      }) as ChatState;
+      const userId = (getState() as RootState).auth.user.id;
+      return await fetchUserChats(userId, token);
     } catch (error) {
       return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const createChat = createAsyncThunk(
+  "chats/createChat",
+  async (chatData: PrivateChat | GroupChat, { rejectWithValue, getState }) => {
+    const token = (getState() as RootState).auth.token;
+    try {
+      return await newChat(chatData, token);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const getChatById = createAsyncThunk(
+  "chats/getChatById",
+  async (chatId: string, { rejectWithValue, getState }) => {
+    const token = (getState() as RootState).auth.token;
+    try {
+      return await fetchChatById(chatId, token);
+    } catch (error) {
+      return rejectWithValue(error);
     }
   }
 );
@@ -27,8 +56,8 @@ const chatsSlice = createSlice({
   name: "chats",
   initialState,
   reducers: {
-    setActiveChat: (state, action) => {
-      state.activeChat = action.payload;
+    setActiveChat: (state, action: PayloadAction<string>) => {
+      state.activeChatId = action.payload;
     },
     addChat: (state, action) => {
       if (state.chats.some((chat) => chat.id === action.payload.id)) return;
@@ -50,9 +79,6 @@ const chatsSlice = createSlice({
 
       if (!existingMessage) {
         chat.messages?.push(action.payload);
-        if (state.activeChat?.id === chatId) {
-          state.activeChat.messages = chat.messages;
-        }
       }
     },
   },
@@ -66,12 +92,32 @@ const chatsSlice = createSlice({
         return bDate.getTime() - aDate.getTime();
       });
     });
+    builder.addCase(createChat.fulfilled, (state, action) => {
+      if (!state.chats?.some((chat) => chat.id === action.payload.id)) {
+        state.chats?.push(action.payload);
+      }
+    });
+    builder.addCase(getChatById.fulfilled, (state, action) => {
+      // If chat is already in state, update it
+      const chatIndex = state.chats?.findIndex(
+        (chat) => chat.id === action.payload.id
+      );
+      if (chatIndex !== -1) {
+        state.chats[chatIndex] = action.payload;
+      } else {
+        state.chats.push(action.payload);
+      }
+    });
   },
 });
 
 export const selectChats = (state: RootState) => state.chats.chats;
 
-export const selectActiveChat = (state: RootState) => state.chats.activeChat;
+export const selectActiveChat = (state: RootState) => {
+  const activeChatId = state.chats.activeChatId;
+  if (!activeChatId) return null;
+  return state.chats.chats.find((chat) => chat.id === activeChatId);
+};
 
 export const { setActiveChat, addMessage, addChat } = chatsSlice.actions;
 export default chatsSlice.reducer;
