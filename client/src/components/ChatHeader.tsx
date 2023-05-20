@@ -16,7 +16,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ activeChat }) => {
         <div className="ml-4">
           <p>{activeChat?.name}</p>
           <p className="text-xs">
-            {activeChat?.users.map((user) => user.username).join(", ")}
+            {activeChat?.users?.map((user) => user.username).join(", ")}
           </p>
         </div>
       </div>
