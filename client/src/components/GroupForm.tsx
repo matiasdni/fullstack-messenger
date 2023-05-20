@@ -109,7 +109,6 @@ const AddUsers = () => {
 
 export const GroupForm = (props: { handleCloseModal: () => void }) => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.auth.user);
   const [groupName, setGroupName] = useState<string>("");
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [groupDescription, setGroupDescription] = useState<string>("");
