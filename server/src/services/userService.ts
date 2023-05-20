@@ -1,6 +1,9 @@
 import { User } from "../models/user";
 import jwt from "jsonwebtoken";
 import { jwtSecret } from "../config";
+import { Op } from "sequelize";
+import { getChatIds } from "./userChatService";
+import { Chat } from "../models/chat";
 
 export const getUserByToken = async (token: string): Promise<User | null> => {
   try {
@@ -11,6 +14,17 @@ export const getUserByToken = async (token: string): Promise<User | null> => {
     return null;
   }
 };
+
+export async function userChats(userId: string) {
+  return await Chat.findAll({
+    where: {
+      id: {
+        [Op.in]: await getChatIds(userId),
+      },
+    },
+    attributes: ["id", "name", "description", "chat_type"],
+  });
+}
 
 export async function createUser(username: string, password: string) {
   return await User.create({ username, password });
@@ -25,33 +39,20 @@ export async function getUserByUsername(username: string) {
 }
 
 export async function getAllUsers() {
+  return await User.findAll();
+}
+
+export async function searchUsers(username: string, req: any) {
   return await User.findAll({
-    attributes: { exclude: ["password"] },
-    order: [["username", "ASC"]],
+    where: {
+      username: {
+        [Op.like]: `%${username}%`,
+      },
+      id: {
+        [Op.ne]: req.user?.id,
+      },
+    },
+    attributes: ["id", "username"],
+    limit: 5,
   });
-}
-
-export async function updateUser(
-  id: string,
-  username: string,
-  password: string
-) {
-  const user = await User.findByPk(id);
-  if (user) {
-    user.username = username;
-    user.password = password;
-    return await user.save();
-  }
-}
-
-export async function deleteUser(user: User) {
-  await user.destroy();
-}
-
-export async function deleteUserById(id: string) {
-  const user = await User.findByPk(id);
-  if (user) {
-    await user.destroy();
-  }
-  return user;
 }
