@@ -24,7 +24,7 @@ const ChatItem = ({ chat }) => {
   );
 
   const handleChatItemClick = () => {
-    dispatch(setActiveChat(chat));
+    dispatch(setActiveChat(chat.id));
   };
 
   const includeUsername = chat.users?.length > 1;
@@ -35,7 +35,7 @@ const ChatItem = ({ chat }) => {
   const nameToDisplay =
     chat.chat_type === "group"
       ? name
-      : chat.users.find((u) => u.id !== user.id).username;
+      : chat.users?.find((u) => u.id !== user.id)?.username;
 
   return (
     <li
@@ -70,22 +70,10 @@ const ChatItem = ({ chat }) => {
 };
 
 const ChatList = ({ chats }) => {
-  const sortedChats = chats
-    .map((chat) => ({
-      ...chat,
-    }))
-    .sort((a, b) => {
-      // handle case where messages is undefined
-      if (!a.messages || !b.messages) return 0;
-      const aDate = new Date(a.messages[a.messages.length - 1]?.createdAt);
-      const bDate = new Date(b.messages[b.messages.length - 1]?.createdAt);
-      return bDate.getTime() - aDate.getTime();
-    });
-
   return (
     <ul className="overflow-y-auto overflow-x-hidden">
-      {sortedChats?.map((chat) => (
-        <ChatItem key={chat.id} chat={chat} />
+      {chats?.map((chat) => (
+        <ChatItem key={chat?.id} chat={chat} />
       ))}
     </ul>
   );
@@ -172,7 +160,22 @@ export const Sidebar = () => {
     <div className="flex h-full max-w-[520px] flex-col overflow-y-auto overflow-x-hidden border border-r-0">
       <SidebarHeader user={user} />
       {/* chats list */}
-      <ChatList chats={allChats} />
+      <ChatList
+        chats={allChats
+          .map((chat) => ({
+            ...chat,
+          }))
+          .sort((a, b) => {
+            const aLastMessage = a.messages[a.messages.length - 1];
+            const bLastMessage = b.messages[b.messages.length - 1];
+            if (!aLastMessage) return 1;
+            if (!bLastMessage) return -1;
+            return (
+              new Date(bLastMessage.createdAt).getTime() -
+              new Date(aLastMessage.createdAt).getTime()
+            );
+          })}
+      />
     </div>
   );
 };
