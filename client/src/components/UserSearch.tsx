@@ -100,15 +100,13 @@ const UserSearchForm = ({ setResults }) => {
   const [username, setUsername] = useState("");
   const token = useAppSelector((state) => state.auth.token);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const username = e.target.username.value;
 
     if (username) {
-      searchUsersByName(username, token).then((res) => {
-        console.log(res.data);
-        setResults(res.data);
-      });
+      const users = await searchUsersByName(username, token);
+      setResults(users);
     }
   };
 
