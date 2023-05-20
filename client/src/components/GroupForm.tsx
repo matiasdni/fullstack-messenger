@@ -1,16 +1,21 @@
 import { useAppDispatch, useAppSelector } from "../store";
 import React, { useState } from "react";
 import { User } from "../features/users/types";
+import { ChatType, createChat } from "../features/chats/chatsSlice";
+
+export type GroupChat = {
+  name: string;
+  description?: string;
+  users?: User[];
+  chat_type: ChatType.Group;
+};
 
 export const GroupForm = (props: { handleCloseModal: () => void }) => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const [groupName, setGroupName] = useState<string>("");
   const [selectedUsers, setSelectedUsers] = useState<User[]>([user]);
-
-  const handleGroupNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGroupName(e.target.value);
-  };
+  const [groupDescription, setGroupDescription] = useState<string>("");
 
   const handleUserSelect = (user: User) => {
     setSelectedUsers((prev) => [...prev, user]);
@@ -20,8 +25,15 @@ export const GroupForm = (props: { handleCloseModal: () => void }) => {
     setSelectedUsers((prev) => prev.filter((u) => u.id !== user.id));
   };
 
-  const handleCreateGroup = () => {
-    // dispatch(createGroup({ name: groupName, users: selectedUsers }));
+  const handleCreateGroup = async () => {
+    const chat: GroupChat = {
+      name: groupName,
+      description: groupDescription,
+      users: selectedUsers,
+      chat_type: ChatType.Group,
+    };
+
+    await dispatch(createChat(chat));
     props.handleCloseModal();
   };
 
@@ -37,9 +49,17 @@ export const GroupForm = (props: { handleCloseModal: () => void }) => {
         placeholder="Group name"
         className="rounded-md border border-gray-300 p-2 dark:border-gray-700"
         value={groupName}
-        onChange={handleGroupNameChange}
+        onChange={(e) => setGroupName(e.target.value)}
       />
 
+      <p className="text-sm">Description</p>
+      <input
+        type="text"
+        placeholder="Group name"
+        className="rounded-md border border-gray-300 p-2 dark:border-gray-700"
+        value={groupDescription}
+        onChange={(e) => setGroupDescription(e.target.value)}
+      />
       <p className="text-sm">Add users</p>
       <input
         type="text"
