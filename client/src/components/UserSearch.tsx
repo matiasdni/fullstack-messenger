@@ -3,7 +3,29 @@ import { useAppDispatch, useAppSelector } from "../store";
 import { ChatType, createChat } from "../features/chats/chatsSlice";
 import { searchUsersByName } from "../services/user";
 
-export const UserSearchModal = () => {
+const StatusIndicator = ({ online }) => {
+  return (
+    <>
+      {online ? (
+        <div className="flex flex-row items-center">
+          <div className="flex h-2 w-2 items-center justify-center rounded-full bg-green-400" />
+          <p className="ml-2 text-xs font-medium text-gray-500 dark:text-gray-300">
+            Online
+          </p>
+        </div>
+      ) : (
+        <div className="flex flex-row items-center">
+          <div className="flex h-2 w-2 items-center justify-center rounded-full bg-red-400" />
+          <p className="ml-2 text-xs font-medium text-gray-500 dark:text-gray-300">
+            Offline
+          </p>
+        </div>
+      )}
+    </>
+  );
+};
+
+export const UserSearch = () => {
   const [results, setResults] = useState([]);
 
   return (
@@ -31,28 +53,6 @@ const SearchListItem = ({ user }) => {
       users: [user.id, currentUser.id],
     };
     dispatch(createChat(chat));
-  };
-
-  const StatusIndicator = ({ online }) => {
-    return (
-      <>
-        {online ? (
-          <div className="flex flex-row items-center">
-            <div className="flex h-2 w-2 items-center justify-center rounded-full bg-green-400" />
-            <p className="ml-2 text-xs font-medium text-gray-500 dark:text-gray-300">
-              Online
-            </p>
-          </div>
-        ) : (
-          <div className="flex flex-row items-center">
-            <div className="flex h-2 w-2 items-center justify-center rounded-full bg-red-400" />
-            <p className="ml-2 text-xs font-medium text-gray-500 dark:text-gray-300">
-              Offline
-            </p>
-          </div>
-        )}
-      </>
-    );
   };
 
   return (
@@ -86,7 +86,9 @@ const SearchResults = ({ results }) => {
       <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
         <ul className="flex flex-col">
           {results.map((user) => (
-            <SearchListItem key={user.id} user={user} />
+            <li>
+              <SearchListItem key={user.id} user={user} />
+            </li>
           ))}
         </ul>
       </div>
@@ -96,7 +98,6 @@ const SearchResults = ({ results }) => {
 
 const UserSearchForm = ({ setResults }) => {
   const [username, setUsername] = useState("");
-
   const token = useAppSelector((state) => state.auth.token);
 
   const handleSubmit = (e) => {

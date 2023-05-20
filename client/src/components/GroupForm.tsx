@@ -14,7 +14,7 @@ export const GroupForm = (props: { handleCloseModal: () => void }) => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const [groupName, setGroupName] = useState<string>("");
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([user]);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [groupDescription, setGroupDescription] = useState<string>("");
 
   const handleUserSelect = (user: User) => {
@@ -55,7 +55,7 @@ export const GroupForm = (props: { handleCloseModal: () => void }) => {
       <p className="text-sm">Description</p>
       <input
         type="text"
-        placeholder="Group name"
+        placeholder="Description"
         className="rounded-md border border-gray-300 p-2 dark:border-gray-700"
         value={groupDescription}
         onChange={(e) => setGroupDescription(e.target.value)}

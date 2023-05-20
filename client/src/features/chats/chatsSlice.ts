@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../types";
 import { fetchUserChats } from "../../services/user";
-import { PrivateChat } from "../../components/UserSearchModal";
+import { PrivateChat } from "../../components/UserSearch";
 import { GroupChat } from "../../components/GroupForm";
 import { fetchChatById, newChat } from "../../services/chats";
 import { Chat } from "./types";

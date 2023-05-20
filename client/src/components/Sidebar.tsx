@@ -4,7 +4,7 @@ import { Avatar } from "./common/Avatar";
 import { User } from "../features/users/types";
 import { selectActiveChat, setActiveChat } from "../features/chats/chatsSlice";
 import { Modal } from "./common/Modal";
-import { UserSearchModal } from "./UserSearchModal";
+import { UserSearch } from "./UserSearch";
 import { GroupForm } from "./GroupForm";
 
 const ChatItem = ({ chat }) => {
@@ -136,7 +136,7 @@ const SidebarHeader = ({ user }: SidebarHeaderProps) => {
             setIsModalOpen(false);
           }}
         >
-          <UserSearchModal />
+          <UserSearch />
         </Modal>
       )}
       {isGroupModalOpen && (
