@@ -8,9 +8,9 @@ const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 
-const loginRouter = require("./controllers/login");
-const usersRouter = require("./controllers/users");
-const chatRouter = require("./controllers/chat");
+const loginRouter = require("./controllers/loginController");
+const usersRouter = require("./controllers/userController");
+const chatRouter = require("./controllers/chatController");
 
 export const io = new Server(server, {
   cors: {
