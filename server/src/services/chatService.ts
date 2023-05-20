@@ -1,20 +1,6 @@
 import { Chat } from "../models/chat";
 import { User } from "../models/user";
-
-export const GENERAL_CHAT_ID = "your-unique-general-chat-id";
-
-export const findOrCreateGeneralChat = async (): Promise<Chat> => {
-  const generalChat = await Chat.findOrCreate({
-    where: { id: GENERAL_CHAT_ID },
-    defaults: {
-      id: GENERAL_CHAT_ID,
-      name: "general",
-      description: "A general chat room for all users",
-    },
-  });
-
-  return generalChat[0];
-};
+import { Message } from "../models/message";
 
 export async function addUserToChat(user: User, chat: Chat) {
   await chat.addUser(user);
@@ -28,14 +14,34 @@ export async function createChat(
   return await Chat.create({ name, description, chat_type });
 }
 
+export const createChatWithUsers = async (chatData: any) => {
+  const chat = await Chat.create(chatData);
+  await chat.addUsers(chatData.users);
+  await chat.reload({
+    include: [
+      {
+        model: User,
+        as: "users",
+        attributes: ["id", "username"],
+        through: { attributes: [] },
+      },
+      {
+        model: Message,
+        as: "messages",
+        attributes: ["id", "content", "createdAt", "updatedAt"],
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "username"],
+          },
+        ],
+      },
+    ],
+  });
+  return chat;
+};
+
 export async function getChatById(id: string) {
   return await Chat.findByPk(id);
-}
-
-export async function getUserChats(user: User) {
-  return await user.getChats();
-}
-
-export async function getChatUsers(chat: Chat) {
-  return await chat.getUsers();
 }
