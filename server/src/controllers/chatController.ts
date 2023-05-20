@@ -9,7 +9,7 @@ import { Message } from "../models/message";
 const router = require("express").Router();
 
 const validateChatData = async (req: Request, res: Response, next: any) => {
-  const { name, description, chat_type, users } = req.body;
+  const { chat_type, users } = req.body;
   if (chat_type === "private") {
     // check if private chat with these users id already exists
     const existingChat = await Chat.findOne({
