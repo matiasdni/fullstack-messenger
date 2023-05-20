@@ -1,4 +1,5 @@
 import axios from "axios";
+import { User } from "../features/users/types";
 
 const BASE_URL = "/api/users";
 
@@ -14,8 +15,11 @@ export const getUserById = async (id: string) => {
   return await axios.get(`${BASE_URL}/${id}`);
 };
 
-export const searchUsersByName = async (name: string, token) => {
-  return await axios.post(
+export const searchUsersByName = async (
+  name: string,
+  token
+): Promise<User[]> => {
+  const response = await axios.post(
     `${BASE_URL}/search`,
     { name },
     {
@@ -25,6 +29,7 @@ export const searchUsersByName = async (name: string, token) => {
       },
     }
   );
+  return response.data;
 };
 
 export async function fetchUserChats(id: string, token: string) {
