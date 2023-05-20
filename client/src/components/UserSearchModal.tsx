@@ -1,35 +1,38 @@
 import React, { useState } from "react";
-import { socket } from "../socket";
+import { useAppDispatch, useAppSelector } from "../store";
+import { ChatType, createChat } from "../features/chats/chatsSlice";
+import { searchUsersByName } from "../services/user";
 
 export const UserSearchModal = () => {
   const [results, setResults] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const username = e.target.username.value;
-
-    if (username) {
-      socket.once("search:user", (user) => {
-        if (user) {
-          console.log(user);
-          setResults(user);
-        } else {
-          console.log("user does not exist");
-        }
-      });
-      socket.emit("search:user", username);
-    }
-  };
-
   return (
     <>
-      <UserSearchForm onSubmit={handleSubmit} />
+      <UserSearchForm setResults={setResults} />
       <SearchResults results={results} />
     </>
   );
 };
 
+export type PrivateChat = {
+  name: string;
+  chat_type: ChatType.Private;
+  users: [string, string];
+};
+
 const SearchListItem = ({ user }) => {
+  const currentUser = useAppSelector((state) => state.auth.user);
+  const dispatch = useAppDispatch();
+
+  const handleMessageClick = () => {
+    const chat: PrivateChat = {
+      name: `${user.username}-${currentUser.username}`,
+      chat_type: ChatType.Private,
+      users: [user.id, currentUser.id],
+    };
+    dispatch(createChat(chat));
+  };
+
   const StatusIndicator = ({ online }) => {
     return (
       <>
@@ -65,18 +68,12 @@ const SearchListItem = ({ user }) => {
         </p>
       </div>
 
-      <UserActionButton
-        label="Message"
-        color="blue"
-        action="get:chatByUserId"
-        userId={user.id}
-      />
-      <UserActionButton
-        label="Add friend"
-        color="gray"
-        action="add:friend"
-        userId={user.id}
-      />
+      <button
+        className={`ml-2 text-sm font-medium text-gray-500 dark:text-gray-300`}
+        onClick={handleMessageClick}
+      >
+        Message
+      </button>
 
       <StatusIndicator online={user.online} />
     </li>
@@ -97,11 +94,25 @@ const SearchResults = ({ results }) => {
   );
 };
 
-const UserSearchForm = ({ onSubmit }: { onSubmit: (e) => void }) => {
+const UserSearchForm = ({ setResults }) => {
   const [username, setUsername] = useState("");
 
+  const token = useAppSelector((state) => state.auth.token);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const username = e.target.username.value;
+
+    if (username) {
+      searchUsersByName(username, token).then((res) => {
+        console.log(res.data);
+        setResults(res.data);
+      });
+    }
+  };
+
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={handleSubmit}>
       <div className="px-4 pb-4 pt-5 text-gray-900 dark:text-gray-300 sm:p-6 sm:pb-4">
         <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
           <h3 className="text-lg font-medium leading-6">Start a new chat</h3>
@@ -119,18 +130,5 @@ const UserSearchForm = ({ onSubmit }: { onSubmit: (e) => void }) => {
         </div>
       </div>
     </form>
-  );
-};
-
-const UserActionButton = ({ label, color, action, userId }) => {
-  return (
-    <button
-      className={`ml-2 text-sm font-medium text-${color}-500 dark:text-${color}-300`}
-      onClick={() => {
-        socket.emit(action, userId);
-      }}
-    >
-      {label}
-    </button>
   );
 };

@@ -14,6 +14,19 @@ export const getUserById = async (id: string) => {
   return await axios.get(`${BASE_URL}/${id}`);
 };
 
+export const searchUsersByName = async (name: string, token) => {
+  return await axios.post(
+    `${BASE_URL}/search`,
+    { name },
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 export async function fetchUserChats(id: string, token: string) {
   const response = await axios.get(`${BASE_URL}/${id}/chats`, {
     withCredentials: true,
