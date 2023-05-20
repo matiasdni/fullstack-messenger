@@ -29,7 +29,6 @@ export const useSocketEvents = (chats, auth) => {
       console.log("message received", data);
       const chat = chats.find((chat) => chat.id === data.chatId);
       if (!chat) {
-        socket.emit("join-room", data.chatId);
         await dispatch(getChatById(data.chatId));
       } else {
         dispatch(addMessage(data));
