@@ -40,7 +40,7 @@ export const Modal = ({ children, handleCloseModal }) => {
 
   return createPortal(
     <div
-      className={`fixed inset-0 z-10 h-full w-full overflow-y-auto ${
+      className={`fixed inset-0 z-10 flex h-full w-full items-center justify-center overflow-hidden bg-transparent ${
         isAnimating ? "animate-fade-out" : "animate-fade-in"
       }`}
     >
@@ -49,23 +49,20 @@ export const Modal = ({ children, handleCloseModal }) => {
           isAnimating ? "animate-bg-fade-out" : "animate-bg-fade-in"
         }`}
       />
-      <div className=" px-4 pb-20 pt-4 text-center sm:block sm:p-0">
-        <span className="hidden sm:inline-block sm:h-screen sm:align-middle" />
-        <div
-          ref={ref}
-          className={`inline-block transform overflow-hidden rounded-lg bg-white shadow-md dark:bg-gray-800 dark:shadow-xl sm:my-8 sm:w-full sm:max-w-lg sm:align-middle ${
-            isAnimating ? "animate-fade-out-up" : "animate-fade-in-down"
-          }`}
-          role="dialog"
-          onAnimationEnd={() => {
-            if (isAnimating) {
-              setVisible(false);
-              handleCloseModal();
-            }
-          }}
-        >
-          {children}
-        </div>
+      <div
+        ref={ref}
+        className={`transform rounded-lg bg-white shadow-md dark:bg-gray-800 dark:shadow-xl sm:w-full sm:max-w-lg ${
+          isAnimating ? "animate-fade-out-up" : "animate-fade-in-down"
+        }`}
+        onAnimationEnd={() => {
+          if (isAnimating) {
+            setVisible(false);
+            handleCloseModal();
+          }
+        }}
+        role="dialog"
+      >
+        {children}
       </div>
     </div>,
     document.getElementById("modal")

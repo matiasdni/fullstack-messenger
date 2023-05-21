@@ -18,7 +18,10 @@ const AddUsers: FC = () => {
   const [search, setSearch] = useState<string>("");
   const [options, setOptions] = useState<User[]>([]);
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const token = useAppSelector((state) => state.auth.token);
+  const {
+    user: { id: userId },
+    token,
+  } = useAppSelector((state) => state.auth);
   const cache = useRef<{ [key: string]: User[] }>({});
 
   const fetchData = () => {
@@ -43,41 +46,41 @@ const AddUsers: FC = () => {
     debouncedSearch();
   }, [search]);
 
+  const handleUserSelect = (user) => {
+    console.log(user);
+    setSelected([...selected, user]);
+  };
+
   useEffect(() => {
-    if (isFocused) {
-      fetchData();
-    }
-  }, [isFocused]);
+    console.log(selected);
+    setOptions(options.filter((u) => !selected.find((s) => s.id === u.id)));
+  }, [selected]);
 
-  const handleUserSelect = (user: User) => {
-    setSelected((prevSelected) => [...prevSelected, user]);
-  };
-
-  const handleUserDeselect = (user: User) => {
-    setSelected((prevSelected) => prevSelected.filter((u) => u.id !== user.id));
-  };
+  const filteredOptions = options.filter(
+    (user) => !selected.find((u) => u.id === user.id) && user.id !== userId
+  );
 
   return (
-    <>
+    <div className="flex flex-col">
       <p className="text-sm">Add users</p>
-      <div className="w-full">
-        <Combobox>
-          <Combobox.Input
-            className="w-full rounded-md border border-gray-300 p-2 dark:border-gray-700"
-            placeholder="Search users"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onBlur={() => setIsFocused(false)}
-            onFocus={() => setIsFocused(true)}
-          />
-          <div className="absolute z-10 w-full rounded-md bg-white shadow-lg dark:bg-gray-800">
+      <Combobox
+        multiple={true}
+        // value={selected}
+        onChange={(e) => handleUserSelect(e)}
+      >
+        <Combobox.Input
+          className="w-full rounded-md border border-gray-300 p-2 dark:border-gray-700"
+          placeholder="Search users"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onBlur={() => setIsFocused(false)}
+          onFocus={() => setIsFocused(true)}
+        />
+        <div className="z-10 mt-2 max-h-60 w-full">
+          <div className="rounded-md bg-white shadow-lg dark:bg-gray-800">
             <Combobox.Options>
               {options.map((user) => (
-                <Combobox.Option
-                  key={user.id}
-                  onSelect={() => handleUserSelect(user)}
-                  value={user.username}
-                >
+                <Combobox.Option value={user} key={user.id}>
                   <div className="cursor-pointer flex-row items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700">
                     <div className="flex flex-row items-center">
                       <img
@@ -89,17 +92,14 @@ const AddUsers: FC = () => {
                         {user.username}
                       </p>
                     </div>
-                    {selected.find((u) => u.id === user.id) && (
-                      <span className="text-green-500">Added</span>
-                    )}
                   </div>
                 </Combobox.Option>
               ))}
             </Combobox.Options>
           </div>
-        </Combobox>
-      </div>
-    </>
+        </div>
+      </Combobox>
+    </div>
   );
 };
 
@@ -152,7 +152,9 @@ export const GroupForm = (props: { handleCloseModal: () => void }) => {
         value={groupDescription}
         onChange={(e) => setGroupDescription(e.target.value)}
       />
-      <AddUsers />
+      <div className={`relative flex-1`}>
+        <AddUsers />
+      </div>
 
       <div className="flex flex-col gap-2">
         <p className="text-sm">Selected users</p>
