@@ -37,10 +37,6 @@ const initUser = (sequelize: Sequelize): void => {
         type: DataTypes.STRING,
         unique: true,
         allowNull: false,
-        get(this: User) {
-          const value = this.getDataValue("username");
-          return value ? value.toLowerCase() : value;
-        },
       },
       password: {
         type: DataTypes.STRING,
