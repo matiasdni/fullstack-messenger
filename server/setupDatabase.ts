@@ -7,10 +7,22 @@ import { Chat, initModels, sequelize, User } from "./src/models/initModels";
 // sample data with different real names and passwords
 const sampleUsers = [
   { username: "Alice", password: "password1" },
-  { username: "Bob", password: "password2" },
-  { username: "Charlie", password: "password3" },
-  { username: "Dave", password: "password4" },
-  { username: "Eve", password: "password5" },
+  { username: "Alice01", password: "password2" },
+  { username: "AliceInWonderland", password: "password3" },
+  { username: "Alicia", password: "password4" },
+  { username: "Alison", password: "password5" },
+  { username: "Bob", password: "password6" },
+  { username: "BobTheBuilder", password: "password7" },
+  { username: "Bobby", password: "password8" },
+  { username: "Charlie", password: "password9" },
+  { username: "CharlieBrown", password: "password10" },
+  { username: "Charlize", password: "password11" },
+  { username: "Dave", password: "password12" },
+  { username: "David", password: "password13" },
+  { username: "DaveGrohl", password: "password14" },
+  { username: "Eve", password: "password15" },
+  { username: "Evelyn", password: "password16" },
+  { username: "EveningStar", password: "password17" },
 ];
 
 async function main() {
