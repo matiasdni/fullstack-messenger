@@ -2,7 +2,7 @@
   "name": "fullstackproject",
   "version": "0.1.0",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "@headlessui/react": "^1.7.14",
     "@reduxjs/toolkit": "1.9.3",
