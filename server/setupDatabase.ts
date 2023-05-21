@@ -2,7 +2,16 @@ import "./src/models/initModels";
 import { createUser } from "./src/services/userService";
 import { addUserToChat, createChat } from "./src/services/chatService";
 import { createMessage } from "./src/services/messageService";
-import { initModels, sequelize } from "./src/models/initModels";
+import { Chat, initModels, sequelize, User } from "./src/models/initModels";
+
+// sample data with different real names and passwords
+const sampleUsers = [
+  { username: "Alice", password: "password1" },
+  { username: "Bob", password: "password2" },
+  { username: "Charlie", password: "password3" },
+  { username: "Dave", password: "password4" },
+  { username: "Eve", password: "password5" },
+];
 
 async function main() {
   try {
@@ -12,6 +21,10 @@ async function main() {
     // Create sample users
     const user1 = await createUser("test", "test");
     const user2 = await createUser("test2", "test");
+
+    const users = await User.bulkCreate(sampleUsers, {
+      returning: true,
+    });
 
     // Create the general chat
     const generalChat = await createChat(
@@ -30,7 +43,7 @@ async function main() {
     await createMessage("How is your day going?", user1.id, generalChat.id);
 
     // Create another chat
-    const anotherChat = await createChat(
+    const anotherChat: Chat = await createChat(
       "Another chat",
       "Another sample chat",
       "group"
@@ -47,7 +60,6 @@ async function main() {
       user1.id,
       anotherChat.id
     );
-
     const anotherChat2 = await createChat(
       "test is not in this chat",
       "Anothe",
