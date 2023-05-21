@@ -4,6 +4,11 @@ import { jwtSecret } from "../config";
 import { Op } from "sequelize";
 import { getChatIds } from "./userChatService";
 import { Chat } from "../models/chat";
+import { Request as ExpressRequest } from "express";
+
+interface Request extends ExpressRequest {
+  user?: User;
+}
 
 export const getUserByToken = async (token: string): Promise<User | null> => {
   try {
@@ -42,11 +47,23 @@ export async function getAllUsers() {
   return await User.findAll();
 }
 
-export async function searchUsers(username: string, req: any) {
+export async function searchUsers(
+  username: string,
+  req: Request
+): Promise<User[]> {
+  if (!username) {
+    throw new Error("Username is required");
+  }
+
+  // Check if user is authenticated
+  if (!req.user) {
+    throw new Error("User is not authenticated");
+  }
+
   return await User.findAll({
     where: {
       username: {
-        [Op.like]: `%${username}%`,
+        [Op.iLike]: `%${username}%`,
       },
       id: {
         [Op.ne]: req.user?.id,
