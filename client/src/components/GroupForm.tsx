@@ -1,8 +1,10 @@
 import { useAppDispatch, useAppSelector } from "../store";
-import React, { useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { User } from "../features/users/types";
 import { ChatType, createChat } from "../features/chats/chatsSlice";
+import { Combobox } from "@headlessui/react";
 import { searchUsersByName } from "../services/user";
+import { debounce } from "../utils/debounce";
 
 export type GroupChat = {
   name: string;
@@ -11,97 +13,91 @@ export type GroupChat = {
   chat_type: ChatType.Group;
 };
 
-const AddUsers = () => {
+const AddUsers: FC = () => {
+  const [selected, setSelected] = useState<User[]>([]);
   const [search, setSearch] = useState<string>("");
   const [options, setOptions] = useState<User[]>([]);
-  const [displayOptions, setDisplayOptions] = useState<boolean>(false);
+  const [isFocused, setIsFocused] = useState<boolean>(false);
   const token = useAppSelector((state) => state.auth.token);
   const cache = useRef<{ [key: string]: User[] }>({});
 
-  const debounce = (func: () => void, delay: number) => {
-    let timer: NodeJS.Timeout;
-    return () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        func();
-      }, delay);
-    };
+  const fetchData = () => {
+    if (search) {
+      if (search in cache.current) {
+        console.log("cached");
+        setOptions(cache.current[search]);
+      } else {
+        console.log("searching");
+        searchUsersByName(search, token).then((res: User[]) => {
+          cache.current[search] = res;
+          setOptions(res);
+        });
+      }
+    } else {
+      setOptions([]);
+    }
   };
 
   useEffect(() => {
-    const debouncedSearch = debounce(() => {
-      if (search) {
-        if (search in cache.current) {
-          console.log("cached");
-          setOptions(cache.current[search]);
-        } else {
-          console.log("searching");
-          searchUsersByName(search, token).then((res: User[]) => {
-            cache.current[search] = res;
-            setOptions(res);
-          });
-        }
-      } else {
-        setOptions([]);
-      }
-    }, 500);
-
+    const debouncedSearch = debounce(fetchData, 500);
     debouncedSearch();
   }, [search]);
 
-  const handleUserSelect = (user: User) => {};
+  useEffect(() => {
+    if (isFocused) {
+      fetchData();
+    }
+  }, [isFocused]);
+
+  const handleUserSelect = (user: User) => {
+    setSelected((prevSelected) => [...prevSelected, user]);
+  };
+
+  const handleUserDeselect = (user: User) => {
+    setSelected((prevSelected) => prevSelected.filter((u) => u.id !== user.id));
+  };
 
   return (
     <>
       <p className="text-sm">Add users</p>
-      <input
-        type="text"
-        placeholder="Search users"
-        className="rounded-md border border-gray-300 p-2 dark:border-gray-700"
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-        }}
-        onBlur={() => {
-          setDisplayOptions(false);
-        }}
-        onFocus={() => {
-          setDisplayOptions(true);
-        }}
-      />
-      <div className="relative">
-        <div className="absolute z-10 w-full rounded-md bg-white shadow-lg dark:bg-gray-800">
-          {displayOptions &&
-            options.map((user) => (
-              <div
-                key={user.id}
-                className="flex cursor-pointer flex-row items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                onClick={() => {
-                  setDisplayOptions(false);
-                }}
-              >
-                <div className="flex flex-row items-center">
-                  <img
-                    className="inline-block h-8 w-8 rounded-full"
-                    src={`https://avatars.dicebear.com/api/identicon/${user.username}.svg`}
-                    alt=""
-                  />
-                  <p className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                    {user.username}
-                  </p>
-                </div>
-                <button
-                  className="rounded-md bg-blue-500 px-2 py-1 text-white hover:bg-blue-600"
-                  onClick={() => {
-                    setDisplayOptions(false);
-                    handleUserSelect(user);
-                  }}
+      <div className="w-full">
+        <Combobox>
+          <Combobox.Input
+            className="w-full rounded-md border border-gray-300 p-2 dark:border-gray-700"
+            placeholder="Search users"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onBlur={() => setIsFocused(false)}
+            onFocus={() => setIsFocused(true)}
+          />
+          <div className="absolute z-10 w-full rounded-md bg-white shadow-lg dark:bg-gray-800">
+            <Combobox.Options>
+              {options.map((user) => (
+                <Combobox.Option
+                  key={user.id}
+                  onSelect={() => handleUserSelect(user)}
+                  value={user.username}
                 >
-                  Add
-                </button>
-              </div>
-            ))}
-        </div>
+                  <div className="cursor-pointer flex-row items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <div className="flex flex-row items-center">
+                      <img
+                        className="inline-block h-8 w-8 rounded-full"
+                        src={`https://avatars.dicebear.com/api/identicon/${user.username}.svg`}
+                        alt=""
+                      />
+                      <p className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {user.username}
+                      </p>
+                    </div>
+                    {selected.find((u) => u.id === user.id) && (
+                      <span className="text-green-500">Added</span>
+                    )}
+                  </div>
+                </Combobox.Option>
+              ))}
+            </Combobox.Options>
+          </div>
+        </Combobox>
       </div>
     </>
   );
@@ -136,7 +132,7 @@ export const GroupForm = (props: { handleCloseModal: () => void }) => {
   return (
     <form
       onSubmit={(e) => e.preventDefault()}
-      className=" flex flex-col gap-2 p-4"
+      className="flex flex-col gap-2 p-4"
     >
       <h1 className="text-xl">Create group</h1>
       <p className="text-sm">Group name</p>
