@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { createChatWithUsers } from "../services/chatService";
+import { createChatWithUsers, createGroupChat } from "../services/chatService";
 import { Chat } from "../models/chat";
 import { User } from "../models/user";
 import authenticate from "../middlewares/auth";
-import { io } from "../server";
 import { Message } from "../models/message";
+import { io } from "../server";
 
 const router = require("express").Router();
 
@@ -39,12 +39,22 @@ router.post(
   async (req: any, res: Response) => {
     try {
       const { name, description, chat_type, users } = req.body;
-      const chat = await createChatWithUsers({
-        name,
-        description,
-        chat_type,
-        users,
-      });
+
+      const chat =
+        chat_type === "private"
+          ? await createChatWithUsers({
+              name,
+              description,
+              chat_type,
+              users,
+            })
+          : await createGroupChat({
+              name,
+              description,
+              chat_type,
+              users,
+            });
+
       console.log("chat created", chat);
       res.status(200).json(chat);
 

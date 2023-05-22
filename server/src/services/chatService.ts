@@ -3,6 +3,11 @@ import { User } from "../models/user";
 import { Message } from "../models/message";
 import { UserChat } from "../models/userChat";
 
+interface UserData {
+  id: string;
+  username: string;
+}
+
 export async function addUserToChat(user: User, chat: Chat) {
   await chat.addUser(user);
 }
@@ -53,6 +58,46 @@ export const createChatWithUsers = async (chatData: {
 }) => {
   const chat = await Chat.create(chatData);
   await chat.addUsers(chatData.users);
+  await chat.reload({
+    include: [
+      {
+        model: User,
+        as: "users",
+        attributes: ["id", "username"],
+        through: { attributes: [] },
+      },
+      {
+        model: Message,
+        as: "messages",
+        attributes: ["id", "content", "createdAt", "updatedAt"],
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "username"],
+          },
+        ],
+      },
+    ],
+  });
+  return chat;
+};
+
+export const createGroupChat = async (chatData: {
+  name: string;
+  chat_type: string;
+  users: UserData[];
+  description?: string;
+}) => {
+  const { name, description, chat_type, users } = chatData;
+  const chat = await Chat.create({ name, description, chat_type });
+  const foundUsers = await User.findAll({
+    where: {
+      id: users.map((user) => user.id),
+    },
+  });
+  await chat.addUsers(foundUsers);
+
   await chat.reload({
     include: [
       {
