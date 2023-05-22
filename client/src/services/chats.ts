@@ -1,9 +1,18 @@
 import axios from "axios";
 import { Chat } from "../features/chats/types";
+import { User } from "../features/users/types";
 
 const BASE_URL = "/api/chat";
 
-export const newChat = async (chatData, token): Promise<Chat> => {
+interface chatData {
+  name: string;
+  type: string;
+  users: User[];
+  description?: string;
+}
+
+export const newChat = async (chatData: chatData, token): Promise<Chat> => {
+  console.log("chatData", chatData);
   const response = await axios.post(BASE_URL, chatData, {
     withCredentials: true,
     headers: {
