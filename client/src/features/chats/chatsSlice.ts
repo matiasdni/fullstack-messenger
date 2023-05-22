@@ -1,9 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../types";
 import { fetchUserChats } from "../../services/user";
-import { PrivateChat } from "../../components/UserSearch";
-import { GroupChat } from "../../components/GroupForm";
-import { fetchChatById, newChat } from "../../services/chats";
+import { chatData, fetchChatById, newChat } from "../../services/chats";
 import { Chat } from "./types";
 
 const initialState = {
@@ -30,7 +28,7 @@ export const getChats = createAsyncThunk(
 
 export const createChat = createAsyncThunk(
   "chats/createChat",
-  async (chatData: PrivateChat | GroupChat, { rejectWithValue, getState }) => {
+  async (chatData: chatData, { rejectWithValue, getState }) => {
     const token = (getState() as RootState).auth.token;
     try {
       return await newChat(chatData, token);

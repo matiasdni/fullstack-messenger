@@ -4,9 +4,9 @@ import { User } from "../features/users/types";
 
 const BASE_URL = "/api/chat";
 
-interface chatData {
+export interface chatData {
   name: string;
-  type: string;
+  chat_type: string;
   users: User[];
   description?: string;
 }

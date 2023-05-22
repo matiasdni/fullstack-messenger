@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
 import { ChatType, createChat } from "../features/chats/chatsSlice";
 import { searchUsersByName } from "../services/user";
+import { chatData } from "../services/chats";
 
 const StatusIndicator = ({ online }) => {
   return (
@@ -47,7 +48,7 @@ const SearchListItem = ({ user }) => {
   const dispatch = useAppDispatch();
 
   const handleMessageClick = () => {
-    const chat: PrivateChat = {
+    const chat: chatData = {
       name: `${user.username}-${currentUser.username}`,
       chat_type: ChatType.Private,
       users: [user.id, currentUser.id],

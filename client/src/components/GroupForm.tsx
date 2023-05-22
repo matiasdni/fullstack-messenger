@@ -5,13 +5,7 @@ import { ChatType, createChat } from "../features/chats/chatsSlice";
 import { searchUsersByName } from "../services/user";
 import AsyncSelect from "react-select/async";
 import OptionTypeBase from "react-select";
-
-export type GroupChat = {
-  name: string;
-  description?: string;
-  users?: User[];
-  chat_type: ChatType.Group;
-};
+import { chatData } from "../services/chats";
 
 interface UserOption extends OptionTypeBase {
   label: string;
@@ -108,7 +102,7 @@ export const GroupForm = (props: { handleCloseModal: () => void }) => {
 
   const handleCreateGroup = async () => {
     console.log(selectedUsers);
-    const chat: GroupChat = {
+    const chat: chatData = {
       name: groupName,
       description: groupDescription,
       users: selectedUsers,
