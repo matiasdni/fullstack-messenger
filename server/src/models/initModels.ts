@@ -5,6 +5,7 @@ import { initUser, User } from "./user";
 import { initMessage, Message } from "./message";
 import { initUserChat, UserChat } from "./userChat";
 import { config } from "../config";
+import { initInvitation, Invitation } from "./Invitation";
 
 const db: any = config.database;
 
@@ -25,6 +26,21 @@ const setupAssociations = (): void => {
 
   Message.belongsTo(Chat, { foreignKey: "chat_id" });
   Chat.hasMany(Message, { foreignKey: "chat_id", as: "messages" });
+
+  Invitation.belongsTo(User, {
+    foreignKey: "senderId",
+    as: "sender",
+  });
+
+  Invitation.belongsTo(User, {
+    foreignKey: "recipientId",
+    as: "recipient",
+  });
+
+  Invitation.belongsTo(Chat, {
+    foreignKey: "groupId",
+    as: "group",
+  });
 };
 
 const sequelize = new Sequelize(db.database, db.username, db.password, {
@@ -72,6 +88,7 @@ const initModels = async (): Promise<void> => {
     initUser(sequelize);
     initMessage(sequelize);
     initUserChat(sequelize);
+    initInvitation(sequelize);
 
     setupAssociations();
   } catch (error) {
