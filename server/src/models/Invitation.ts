@@ -1,39 +1,30 @@
 import {
   CreationOptional,
   DataTypes,
+  ForeignKey,
+  InferAttributes,
+  InferCreationAttributes,
   Model,
-  Optional,
   Sequelize,
 } from "sequelize";
-
-interface InvitationAttributes {
-  id: DataTypes.DataType;
-  groupId: DataTypes.DataType;
-  senderId: DataTypes.DataType;
-  recipientId: DataTypes.DataType;
-  status: DataTypes.EnumDataType<string>;
-  createdAt: DataTypes.DateDataType;
-  updatedAt: DataTypes.DateDataType;
-}
-
-interface InvitationCreationAttributes
-  extends Optional<InvitationAttributes, "id"> {}
+import { User } from "./user";
+import { Chat } from "./chat";
 
 class Invitation extends Model<
-  InvitationAttributes,
-  InvitationCreationAttributes
+  InferAttributes<Invitation>,
+  InferCreationAttributes<Invitation>
 > {
-  declare id: CreationOptional<DataTypes.DataType>;
-  declare senderId: DataTypes.DataType;
-  declare groupId: DataTypes.DataType;
-  declare receiverId: DataTypes.DataType;
-  declare status: DataTypes.EnumDataType<string>;
+  declare id: CreationOptional<string>;
+  declare status: CreationOptional<string>;
+  declare senderId: ForeignKey<User["id"]>;
+  declare groupId: ForeignKey<Chat["id"]>;
+  declare recipientId: ForeignKey<User["id"]>;
 
   declare readonly createdAt: CreationOptional<Date>;
   declare readonly updatedAt: CreationOptional<Date>;
 }
 
-const initInvitation = (sequelize: Sequelize): void => {
+const initInvitation = (sequelize: Sequelize): typeof Invitation =>
   Invitation.init(
     {
       id: {
@@ -41,30 +32,6 @@ const initInvitation = (sequelize: Sequelize): void => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false,
-      },
-      senderId: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-          model: "users",
-          key: "id",
-        },
-      },
-      groupId: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-          model: "chats",
-          key: "id",
-        },
-      },
-      recipientId: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-          model: "users",
-          key: "id",
-        },
       },
       status: {
         type: DataTypes.ENUM,
@@ -89,4 +56,5 @@ const initInvitation = (sequelize: Sequelize): void => {
       underscored: true,
     }
   );
-};
+
+export { initInvitation, Invitation };
