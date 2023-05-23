@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
-import { createChatWithUsers } from "../services/chatService";
 import { Chat } from "../models/chat";
 import { User } from "../models/user";
 import authenticate from "../middlewares/auth";
 import { Message } from "../models/message";
 import { io } from "../server";
-import { type } from "os";
 
 const router = require("express").Router();
 
@@ -25,7 +23,7 @@ export interface ChatData {
 
 const validateChatData = async (
   req: Request,
-  res: Response<Chat | typeof JSON | undefined>,
+  res: Response,
   next: any
 ): Promise<void> => {
   const { chat_type, userIds } = req.body as ChatData;
@@ -60,14 +58,12 @@ router.post(
     try {
       const { name, description, chat_type, userIds } = req.body as ChatData;
 
-      const chat = await createChatWithUsers({
-        name,
-        description,
-        chat_type,
-        userIds,
+      const chat = await Chat.create({
+        name: name,
+        description: description,
+        chat_type: chat_type,
       });
 
-      console.log("chat created", chat);
       res.status(200).json(chat);
 
       const currentUser = req.user;

@@ -41,6 +41,16 @@ const setupAssociations = (): void => {
     foreignKey: "groupId",
     as: "group",
   });
+
+  User.hasMany(Invitation, {
+    foreignKey: "senderId",
+    as: "sentInvitations",
+  });
+
+  User.hasMany(Invitation, {
+    foreignKey: "recipientId",
+    as: "receivedInvitations",
+  });
 };
 
 const sequelize = new Sequelize(db.database, db.username, db.password, {

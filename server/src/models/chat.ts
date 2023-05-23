@@ -24,7 +24,7 @@ class Chat extends Model {
   declare addUser: HasManyCreateAssociationMixin<User, "id">;
   declare addMessage: HasManyCreateAssociationMixin<Message, "chat_id">;
 
-  addUsers(userIds: string[]): Chat {
+  addUsers(userIds: string[]): void {
     userIds.map(async (id) => {
       return await User.findByPk(id).then((user) => {
         if (user) {
@@ -32,7 +32,6 @@ class Chat extends Model {
         }
       });
     });
-    return this;
   }
 }
 
