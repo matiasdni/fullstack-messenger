@@ -9,10 +9,12 @@ const initialState = {
   activeChatId: null as string | null,
 };
 
-export enum ChatType {
-  Group = "group",
-  Private = "private",
+export enum ChatTypeEnum {
+  group,
+  private,
 }
+
+export type ChatType = keyof typeof ChatTypeEnum;
 
 export const getChats = createAsyncThunk(
   "chats/getChats",
