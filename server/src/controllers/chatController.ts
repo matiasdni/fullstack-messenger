@@ -1,16 +1,37 @@
 import { Request, Response } from "express";
-import { createChatWithUsers, createGroupChat } from "../services/chatService";
+import { createChatWithUsers } from "../services/chatService";
 import { Chat } from "../models/chat";
 import { User } from "../models/user";
 import authenticate from "../middlewares/auth";
 import { Message } from "../models/message";
 import { io } from "../server";
+import { type } from "os";
 
 const router = require("express").Router();
 
-const validateChatData = async (req: Request, res: Response, next: any) => {
-  const { chat_type, users } = req.body;
-  if (chat_type === "private") {
+export enum ChatTypeEnum {
+  group,
+  private,
+}
+
+export type ChatType = keyof typeof ChatTypeEnum;
+
+export interface ChatData {
+  name: string;
+  chat_type: ChatType;
+  userIds: string[];
+  description?: string;
+}
+
+const validateChatData = async (
+  req: Request,
+  res: Response<Chat | typeof JSON | undefined>,
+  next: any
+): Promise<void> => {
+  const { chat_type, userIds } = req.body as ChatData;
+  if (chat_type !== "private") {
+    next();
+  } else {
     // check if private chat with these users id already exists
     const existingChat = await Chat.findOne({
       where: { chat_type },
@@ -20,16 +41,15 @@ const validateChatData = async (req: Request, res: Response, next: any) => {
           as: "users",
           attributes: ["id"],
           through: { attributes: [] },
-          where: { id: users },
+          where: { id: userIds },
         },
       ],
     });
 
     if (existingChat) {
-      return res.status(200).json(existingChat);
+      res.status(200).json(existingChat);
     }
   }
-  next();
 };
 
 router.post(
@@ -38,28 +58,20 @@ router.post(
   validateChatData,
   async (req: any, res: Response) => {
     try {
-      const { name, description, chat_type, users } = req.body;
+      const { name, description, chat_type, userIds } = req.body as ChatData;
 
-      const chat =
-        chat_type === "private"
-          ? await createChatWithUsers({
-              name,
-              description,
-              chat_type,
-              users,
-            })
-          : await createGroupChat({
-              name,
-              description,
-              chat_type,
-              users,
-            });
+      const chat = await createChatWithUsers({
+        name,
+        description,
+        chat_type,
+        userIds,
+      });
 
       console.log("chat created", chat);
       res.status(200).json(chat);
 
       const currentUser = req.user;
-      const otherUserId = users.filter((id: number) => id !== currentUser.id);
+      const otherUserId = userIds.filter((id: string) => id !== currentUser.id);
       const otherUser = await User.findOne({
         where: { id: otherUserId },
       });
