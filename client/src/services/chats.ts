@@ -1,13 +1,13 @@
 import axios from "axios";
 import { Chat } from "../features/chats/types";
-import { User } from "../features/users/types";
+import { ChatType } from "../features/chats/chatsSlice";
 
 const BASE_URL = "/api/chat";
 
 export interface chatData {
   name: string;
-  chat_type: string;
-  users: User[];
+  chat_type: ChatType;
+  userIds: string[];
   description?: string;
 }
 
