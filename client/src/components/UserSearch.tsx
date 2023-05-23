@@ -37,12 +37,6 @@ export const UserSearch = () => {
   );
 };
 
-export type PrivateChat = {
-  name: string;
-  chat_type: ChatType.Private;
-  users: [string, string];
-};
-
 const SearchListItem = ({ user }) => {
   const currentUser = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
@@ -50,8 +44,8 @@ const SearchListItem = ({ user }) => {
   const handleMessageClick = () => {
     const chat: chatData = {
       name: `${user.username}-${currentUser.username}`,
-      chat_type: ChatType.Private,
-      users: [user.id, currentUser.id],
+      chat_type: "private",
+      userIds: [user.id, currentUser.id],
     };
     dispatch(createChat(chat));
   };

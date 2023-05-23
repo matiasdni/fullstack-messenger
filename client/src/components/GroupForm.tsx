@@ -9,14 +9,14 @@ import { chatData } from "../services/chats";
 
 interface UserOption extends OptionTypeBase {
   label: string;
-  value: User;
+  value: string;
   avatar: string;
 }
 
 const userToOption = (user: User): UserOption =>
   ({
     label: user.username,
-    value: user,
+    value: user.id,
   } as UserOption);
 
 const formatOptionLabel = ({ value, label, avatar }) => (
@@ -97,20 +97,19 @@ const AddUsers = ({ setSelectedUsers }) => {
 export const GroupForm = (props: { handleCloseModal: () => void }) => {
   const dispatch = useAppDispatch();
   const [groupName, setGroupName] = useState<string>("");
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [groupDescription, setGroupDescription] = useState<string>("");
 
   const handleCreateGroup = async () => {
     console.log(selectedUsers);
-    const chat: chatData = {
+    const data: chatData = {
       name: groupName,
       description: groupDescription,
-      users: selectedUsers,
-      chat_type: ChatType.Group,
+      userIds: selectedUsers,
+      chat_type: "group",
     };
-
-    const action = await dispatch(await createChat(chat));
-    if (createChat.fulfilled.match(action)) {
+    const action = await dispatch(createChat(data));
+    if (action.meta.requestStatus === "fulfilled") {
       console.log("Group created");
       console.log(action.payload);
     }
