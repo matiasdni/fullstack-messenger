@@ -24,8 +24,15 @@ class Chat extends Model {
   declare addUser: HasManyCreateAssociationMixin<User, "id">;
   declare addMessage: HasManyCreateAssociationMixin<Message, "chat_id">;
 
-  addUsers(users: User[]): Promise<void> {
-    return Promise.all(users.map((user) => this.addUser(user))).then(() => {});
+  addUsers(userIds: string[]): Chat {
+    userIds.map(async (id) => {
+      return await User.findByPk(id).then((user) => {
+        if (user) {
+          return this.addUser(user);
+        }
+      });
+    });
+    return this;
   }
 }
 
