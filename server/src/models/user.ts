@@ -7,16 +7,17 @@ import {
 import { Message } from "./message";
 import bcrypt from "bcrypt";
 import { Chat } from "./chat";
+import { Invitation } from "./Invitation";
 
 class User extends Model {
   declare id: string;
   declare username: string;
   declare password: string;
-  declare readonly messages: Message[];
-  declare readonly chats: Chat[];
 
   declare getMessages: HasManyGetAssociationsMixin<Message>;
   declare getChats: HasManyGetAssociationsMixin<Chat>;
+  declare getSentInvitations: HasManyGetAssociationsMixin<Invitation>;
+  declare getReceivedInvitations: HasManyGetAssociationsMixin<Invitation>;
 
   comparePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
@@ -41,10 +42,6 @@ const initUser = (sequelize: Sequelize): void => {
       password: {
         type: DataTypes.STRING,
         allowNull: false,
-        set(this: User, value: string) {
-          const hash = bcrypt.hashSync(value, 10);
-          this.setDataValue("password", hash);
-        },
       },
     },
     {
@@ -52,6 +49,11 @@ const initUser = (sequelize: Sequelize): void => {
       modelName: "User",
       tableName: "user",
       underscored: true,
+      hooks: {
+        beforeCreate: (user: User) => {
+          user.password = bcrypt.hashSync(user.password, 10);
+        },
+      },
     }
   );
 };
