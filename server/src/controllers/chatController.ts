@@ -5,7 +5,6 @@ import { User } from "../models/user";
 import authenticate from "../middlewares/auth";
 import { Message } from "../models/message";
 import { io } from "../server";
-import { type } from "os";
 
 const router = require("express").Router();
 
@@ -51,33 +50,30 @@ const validateChatData = async (
   }
 };
 
-router.post(
-  "/",
-  authenticate,
-  validateChatData,
-  async (req: any, res: Response) => {
-    const { name, description, chat_type, userIds } = req.body as ChatData;
+router.use(authenticate);
 
-    const chat = await createChatWithUsers({
-      name,
-      description,
-      chat_type,
-      userIds,
-    });
+router.post("/", validateChatData, async (req: any, res: Response) => {
+  const { name, description, chat_type, userIds } = req.body as ChatData;
 
-    console.log("chat created", chat);
-    res.status(200).json(chat);
+  const chat = await createChatWithUsers({
+    name,
+    description,
+    chat_type,
+    userIds,
+  });
 
-    const currentUser = req.user;
-    const otherUserId = userIds.filter((id: string) => id !== currentUser.id);
-    const otherUser = await User.findOne({
-      where: { id: otherUserId },
-    });
+  console.log("chat created", chat);
+  res.status(200).json(chat);
 
-    io.to(currentUser.id).emit("join-room", chat.id);
-    io.to(otherUser?.id).emit("join-room", chat.id);
-  }
-);
+  const currentUser = req.user;
+  const otherUserId = userIds.filter((id: string) => id !== currentUser.id);
+  const otherUser = await User.findOne({
+    where: { id: otherUserId },
+  });
+
+  io.to(currentUser.id).emit("join-room", chat.id);
+  io.to(otherUser?.id).emit("join-room", chat.id);
+});
 
 router.get("/:id", async (req: any, res: Response) => {
   try {
