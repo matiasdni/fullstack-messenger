@@ -14,6 +14,7 @@ class Chat extends Model {
   declare id: string;
   declare name: string;
   declare description: CreationOptional<string>;
+  declare chat_type: string;
 
   declare users: NonAttribute<User>[] | User[];
   declare messages: NonAttribute<Message>[] | Message[];
@@ -24,14 +25,17 @@ class Chat extends Model {
   declare addUser: HasManyCreateAssociationMixin<User, "id">;
   declare addMessage: HasManyCreateAssociationMixin<Message, "chat_id">;
 
-  addUsers(userIds: string[]): void {
-    userIds.map(async (id) => {
-      return await User.findByPk(id).then((user) => {
-        if (user) {
-          return this.addUser(user);
-        }
-      });
-    });
+  async addUsers(userIds: string[]): Promise<Chat> {
+    await Promise.all(
+      userIds.map(async (id) => {
+        return await User.findByPk(id).then((user) => {
+          if (user) {
+            return this.addUser(user);
+          }
+        });
+      })
+    );
+    return this;
   }
 }
 
