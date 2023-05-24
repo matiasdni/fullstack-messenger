@@ -85,45 +85,6 @@ export const createChatWithUsers = async (
   });
 };
 
-// export const createGroupChat = async (chatData: {
-//   name: string;
-//   chat_type: string;
-//   users: UserData[];
-//   description?: string;
-// }) => {
-//   const { name, description, chat_type, users } = chatData;
-//   const chat = await Chat.create({ name, description, chat_type });
-//   const foundUsers = await User.findAll({
-//     where: {
-//       id: users.map((user) => user.id),
-//     },
-//   });
-//   await chat.addUsers(foundUsers);
-//
-//   await chat.reload({
-//     include: [
-//       {
-//         model: User,
-//         as: "users",
-//         attributes: ["id", "username"],
-//         through: { attributes: [] },
-//       },
-//       {
-//         model: Message,
-//         as: "messages",
-//         attributes: ["id", "content", "createdAt", "updatedAt"],
-//         include: [
-//           {
-//             model: User,
-//             as: "user",
-//             attributes: ["id", "username"],
-//           },
-//         ],
-//       },
-//     ],
-//   });
-// };
-
 export async function getChatById(id: string) {
   return await Chat.findByPk(id);
 }
