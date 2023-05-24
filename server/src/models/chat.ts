@@ -14,6 +14,7 @@ class Chat extends Model {
   declare id: string;
   declare name: string;
   declare description: CreationOptional<string>;
+  declare chat_type: string;
 
   declare users: NonAttribute<User>[] | User[];
   declare messages: NonAttribute<Message>[] | Message[];
