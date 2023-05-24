@@ -63,10 +63,11 @@ router.post("/", validateChatData, async (req: any, res: Response) => {
   });
 
   console.log("chat created", chat);
+
   res.status(200).json(chat);
 
   const currentUser = req.user;
-  const otherUserId = userIds.filter((id: string) => id !== currentUser.id);
+  const otherUserId = userIds.find((id: string) => id !== currentUser.id);
   const otherUser = await User.findOne({
     where: { id: otherUserId },
   });
