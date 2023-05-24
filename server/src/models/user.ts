@@ -2,6 +2,7 @@ import {
   DataTypes,
   HasManyGetAssociationsMixin,
   Model,
+  NonAttribute,
   Sequelize,
 } from "sequelize";
 import { Message } from "./message";
@@ -12,8 +13,9 @@ class User extends Model {
   declare id: string;
   declare username: string;
   declare password: string;
-  declare readonly messages: Message[];
-  declare readonly chats: Chat[];
+
+  declare chats: NonAttribute<User>[] | User[];
+  declare messages: NonAttribute<Message>[] | Message[];
 
   declare getMessages: HasManyGetAssociationsMixin<Message>;
   declare getChats: HasManyGetAssociationsMixin<Chat>;
