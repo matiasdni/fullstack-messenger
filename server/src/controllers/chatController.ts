@@ -29,26 +29,25 @@ const validateChatData = async (
   next: any
 ): Promise<void> => {
   const { chat_type, userIds } = req.body as ChatData;
-  if (chat_type !== "private") {
-    next();
-  } else {
-    // check if private chat with these users id already exists
-    const existingChat = await Chat.findOne({
-      where: { chat_type },
-      include: [
-        {
-          model: User,
-          as: "users",
-          attributes: ["id"],
-          through: { attributes: [] },
-          where: { id: userIds },
-        },
-      ],
-    });
 
-    if (existingChat) {
-      res.status(200).json(existingChat);
-    }
+  // check if private chat with these users id already exists
+  const existingChat = await Chat.findOne({
+    where: { chat_type },
+    include: [
+      {
+        model: User,
+        as: "users",
+        attributes: ["id"],
+        through: { attributes: [] },
+        where: { id: userIds },
+      },
+    ],
+  });
+
+  if (existingChat) {
+    res.status(200).json(existingChat);
+  } else {
+    next();
   }
 };
 
@@ -57,30 +56,26 @@ router.post(
   authenticate,
   validateChatData,
   async (req: any, res: Response) => {
-    try {
-      const { name, description, chat_type, userIds } = req.body as ChatData;
+    const { name, description, chat_type, userIds } = req.body as ChatData;
 
-      const chat = await createChatWithUsers({
-        name,
-        description,
-        chat_type,
-        userIds,
-      });
+    const chat = await createChatWithUsers({
+      name,
+      description,
+      chat_type,
+      userIds,
+    });
 
-      console.log("chat created", chat);
-      res.status(200).json(chat);
+    console.log("chat created", chat);
+    res.status(200).json(chat);
 
-      const currentUser = req.user;
-      const otherUserId = userIds.filter((id: string) => id !== currentUser.id);
-      const otherUser = await User.findOne({
-        where: { id: otherUserId },
-      });
+    const currentUser = req.user;
+    const otherUserId = userIds.filter((id: string) => id !== currentUser.id);
+    const otherUser = await User.findOne({
+      where: { id: otherUserId },
+    });
 
-      io.to(currentUser.id).emit("join-room", chat.id);
-      io.to(otherUser?.id).emit("join-room", chat.id);
-    } catch (error) {
-      res.status(500).json(error);
-    }
+    io.to(currentUser.id).emit("join-room", chat.id);
+    io.to(otherUser?.id).emit("join-room", chat.id);
   }
 );
 
