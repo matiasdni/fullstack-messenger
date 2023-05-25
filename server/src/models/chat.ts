@@ -12,16 +12,17 @@ import {
 import { User } from "./user";
 import { Message } from "./message";
 import { ForeignKey } from "sequelize";
+import { Invite } from "./Invite";
 
 class Chat extends Model {
   declare id: string;
   declare name: string;
   declare description: CreationOptional<string>;
   declare chat_type: "group" | "private";
-  declare owner_id: ForeignKey<User["id"]>;
 
-  declare users: NonAttribute<User>[] | User[];
-  declare messages: NonAttribute<Message>[] | Message[];
+  declare users: NonAttribute<User>[];
+  declare messages: NonAttribute<Message>[];
+  declare invites: NonAttribute<Invite>[];
 
   declare getUsers: HasManyGetAssociationsMixin<User>;
   declare getMessages: HasManyGetAssociationsMixin<Message>;
@@ -32,16 +33,11 @@ class Chat extends Model {
   declare addUser: HasManyAddAssociationMixin<User, "id">;
   declare removeUser: HasManyRemoveAssociationMixin<User, "id">;
 
-  async addUsers(userIds: string[]): Promise<Chat> {
-    await Promise.all(
-      userIds.map(async (id) => {
-        return await User.findByPk(id).then((user) => {
-          if (user) {
-            return this.addUser(user);
-          }
-        });
-      })
-    );
+  declare addInvites: HasManyAddAssociationMixin<Invite[], "id">;
+  declare removeInvites: HasManyRemoveAssociationMixin<Invite[], "id">;
+
+  async addUsers(users: User[]): Promise<Chat> {
+    await Promise.all(users.map(async (user) => await this.addUser(user)));
     return this;
   }
 }
@@ -69,13 +65,8 @@ const initChat = (sequelize: Sequelize): void => {
         allowNull: false,
         defaultValue: "private",
       },
-      owner_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-      },
     },
     {
-      modelName: "Chat",
       tableName: "chat",
       sequelize,
     }
