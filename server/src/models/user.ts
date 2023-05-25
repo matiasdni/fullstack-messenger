@@ -43,15 +43,13 @@ const initUser = (sequelize: Sequelize): void => {
       password: {
         type: DataTypes.STRING,
         allowNull: false,
-        set(this: User, value: string) {
-          const hash = bcrypt.hashSync(value, 10);
-          this.setDataValue("password", hash);
+        async set(this: User, value: string): Promise<void> {
+          this.password = await bcrypt.hash(value, 10);
         },
       },
     },
     {
       sequelize,
-      modelName: "User",
       tableName: "user",
       underscored: true,
     }
