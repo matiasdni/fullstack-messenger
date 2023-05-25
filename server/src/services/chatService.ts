@@ -3,11 +3,7 @@ import { User } from "../models/user";
 import { Message } from "../models/message";
 import { UserChat } from "../models/userChat";
 import { ChatData } from "../controllers/chatController";
-
-interface UserData {
-  id: string;
-  username: string;
-}
+import { Invite } from "../models/Invite";
 
 export async function addUserToChat(user: User, chat: Chat) {
   await chat.addUser(user);
@@ -59,10 +55,22 @@ export const createChatWithUsers = async (
     name: chatData.name,
     description: chatData.description,
     chat_type: chatData.chat_type,
-    owner_id: chatData.userIds[0],
   });
 
-  await chat.addUsers(chatData.userIds);
+  const invitations: Invite[] = await Promise.all(
+    chatData.userIds.map((userId) =>
+      Invite.create({
+        chat_id: chat.id,
+        sender_id: chatData.currentUser!.id,
+        recipient_id: userId,
+      })
+    )
+  );
+
+  await chat.addInvites(invitations);
+
+  await chat.addUser(chatData.currentUser!);
+
   await chat.reload({
     include: [
       {
@@ -83,8 +91,13 @@ export const createChatWithUsers = async (
           },
         ],
       },
+      {
+        association: "invites",
+        attributes: ["sender_id", "recipient_id", "chat_id"],
+      },
     ],
   });
+
   return chat;
 };
 
