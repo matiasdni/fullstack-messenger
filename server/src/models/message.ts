@@ -43,7 +43,6 @@ const initMessage = (sequelize: Sequelize): void => {
           model: User,
           key: "id",
         },
-        onDelete: "CASCADE",
       },
       chat_id: {
         type: DataTypes.UUID,
@@ -52,11 +51,9 @@ const initMessage = (sequelize: Sequelize): void => {
           model: Chat,
           key: "id",
         },
-        onDelete: "CASCADE",
       },
     },
     {
-      modelName: "Message",
       tableName: "message",
       sequelize,
       underscored: true,
