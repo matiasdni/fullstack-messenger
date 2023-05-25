@@ -29,19 +29,25 @@ router.post("/", async (req: any, res: Response) => {
   const { name, description, chat_type, userIds } = req.body as ChatData;
   const currentUser: User = req.user;
 
-  const chat = await createChatWithUsers({
-    name,
-    description,
-    chat_type,
-    userIds,
-    currentUser,
-  });
+  let chat;
+
+  if (chat_type === "private") {
+    // handle private chat create
+  } else {
+    chat = await createChatWithUsers({
+      name,
+      description,
+      chat_type,
+      userIds,
+      currentUser,
+    });
+  }
 
   console.log("chat created", chat);
 
   res.status(200).json(chat);
 
-  io.to(userIds).to(currentUser.id).emit("invite", chat);
+  io.to(userIds).emit("invite", chat);
 });
 
 router.get("/:id", async (req: any, res: Response) => {
