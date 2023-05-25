@@ -5,7 +5,7 @@ import { initUser, User } from "./user";
 import { initMessage, Message } from "./message";
 import { initUserChat, UserChat } from "./userChat";
 import { config } from "../config";
-import { initInvitation, Invitation } from "./Invitation";
+import { initInvitation, Invite } from "./Invite";
 
 const db: any = config.database;
 
@@ -27,30 +27,14 @@ const setupAssociations = (): void => {
   Message.belongsTo(Chat, { foreignKey: "chat_id" });
   Chat.hasMany(Message, { foreignKey: "chat_id", as: "messages" });
 
-  Invitation.belongsTo(User, {
-    foreignKey: "senderId",
-    as: "sender",
-  });
+  Invite.belongsTo(Chat);
+  Chat.hasMany(Invite, { foreignKey: "chat_id", as: "invites" });
 
-  Invitation.belongsTo(User, {
-    foreignKey: "recipientId",
-    as: "recipient",
-  });
+  User.hasMany(Invite, { foreignKey: "recipient_id" });
+  Invite.belongsTo(User, { foreignKey: "recipient_id" });
 
-  Invitation.belongsTo(Chat, {
-    foreignKey: "groupId",
-    as: "group",
-  });
-
-  User.hasMany(Invitation, {
-    foreignKey: "senderId",
-    as: "sentInvitations",
-  });
-
-  User.hasMany(Invitation, {
-    foreignKey: "recipientId",
-    as: "receivedInvitations",
-  });
+  User.hasMany(Invite, { foreignKey: "sender_id" });
+  Invite.belongsTo(User, { foreignKey: "sender_id" });
 };
 
 const sequelize = new Sequelize(db.database, db.username, db.password, {
