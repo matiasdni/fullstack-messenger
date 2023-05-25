@@ -2,6 +2,7 @@ import { useAppDispatch } from "../store";
 import { useEffect } from "react";
 import { socket } from "../socket";
 import { addMessage, getChatById } from "../features/chats/chatsSlice";
+import { log } from "console";
 
 export const useSocketEvents = (chats, auth) => {
   const dispatch = useAppDispatch();
@@ -15,6 +16,12 @@ export const useSocketEvents = (chats, auth) => {
       console.log("socketio disconnected");
     };
 
+    const log = (event, ...args) => {
+      console.log(`got ${event}`, args);
+    };
+
+    socket.onAny(log);
+
     const messageEvent = `chat:message`;
     const setUpChatListeners = (chatId) => {
       socket.emit("join-room", chatId);
@@ -23,6 +30,10 @@ export const useSocketEvents = (chats, auth) => {
     socket.on("join-room", (chatId) => {
       console.log("join-room", chatId);
       socket.emit("join-room", chatId);
+    });
+
+    socket.on("invite", (chat) => {
+      console.log("invite", chat);
     });
 
     socket.on(messageEvent, async (data) => {
@@ -47,6 +58,7 @@ export const useSocketEvents = (chats, auth) => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("join-room");
+      socket.offAny(log);
       socket.off(messageEvent);
       socket.disconnect();
     };
