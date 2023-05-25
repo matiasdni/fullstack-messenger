@@ -11,7 +11,6 @@ import {
 } from "sequelize";
 import { User } from "./user";
 import { Message } from "./message";
-import { ForeignKey } from "sequelize";
 import { Invite } from "./Invite";
 
 class Chat extends Model {
