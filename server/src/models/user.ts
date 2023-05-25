@@ -17,7 +17,6 @@ class User extends Model {
 
   declare chats: NonAttribute<User>[] | User[];
   declare messages: NonAttribute<Message>[] | Message[];
-
   declare getMessages: HasManyGetAssociationsMixin<Message>;
   declare getChats: HasManyGetAssociationsMixin<Chat>;
 

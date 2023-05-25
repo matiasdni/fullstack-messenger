@@ -39,18 +39,10 @@ const initMessage = (sequelize: Sequelize): void => {
       user_id: {
         type: DataTypes.UUID,
         allowNull: false,
-        references: {
-          model: User,
-          key: "id",
-        },
       },
       chat_id: {
         type: DataTypes.UUID,
         allowNull: false,
-        references: {
-          model: Chat,
-          key: "id",
-        },
       },
     },
     {
