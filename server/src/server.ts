@@ -1,16 +1,15 @@
 import cors from "cors";
 import { authenticateSocket } from "./middlewares/auth";
 import onConnection from "./listeners/socketsManager";
+import http from "http";
+import express from "express";
+import { Server } from "socket.io";
+import loginRouter from "./controllers/loginController";
+import usersRouter from "./controllers/userController";
+import chatRouter from "./controllers/chatController";
 
-const http = require("http");
-const express = require("express");
-const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
-
-const loginRouter = require("./controllers/loginController");
-const usersRouter = require("./controllers/userController");
-const chatRouter = require("./controllers/chatController");
 
 export const io = new Server(server, {
   cors: {
