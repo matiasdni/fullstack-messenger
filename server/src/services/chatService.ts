@@ -58,6 +58,7 @@ export const createChatWithUsers = async (
     name: chatData.name,
     description: chatData.description,
     chat_type: chatData.chat_type,
+    owner_id: chatData.userIds[0],
   });
 
   await chat.addUsers(chatData.userIds);
@@ -83,41 +84,6 @@ export const createChatWithUsers = async (
       },
     ],
   });
-  console.log("chat created", chat);
-  console.log("userIds", chatData.userIds);
-  const users: User[] = await User.findAll({
-    where: {
-      id: chatData.userIds,
-    },
-  });
-  console.log("users", users);
-  await chat.addUser(users[0]);
-  console.log(
-    "chat created",
-    await chat.reload({
-      include: [
-        {
-          model: User,
-          as: "users",
-          attributes: ["id", "username"],
-          through: { attributes: [] },
-        },
-        {
-          model: Message,
-          as: "messages",
-          attributes: ["id", "content", "createdAt", "updatedAt"],
-          include: [
-            {
-              model: User,
-              as: "user",
-              attributes: ["id", "username"],
-            },
-          ],
-        },
-      ],
-    })
-  );
-  console.log("users", chat.users);
   return chat;
 };
 
