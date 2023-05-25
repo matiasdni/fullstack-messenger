@@ -3,6 +3,7 @@ import {
   HasManyGetAssociationsMixin,
   Model,
   NonAttribute,
+  CreationOptional,
   Sequelize,
 } from "sequelize";
 import { Message } from "./message";
@@ -10,7 +11,7 @@ import bcrypt from "bcrypt";
 import { Chat } from "./chat";
 
 class User extends Model {
-  declare id: string;
+  declare id: CreationOptional<string>;
   declare username: string;
   declare password: string;
 
@@ -43,12 +44,14 @@ const initUser = (sequelize: Sequelize): void => {
       password: {
         type: DataTypes.STRING,
         allowNull: false,
-        async set(this: User, value: string): Promise<void> {
-          this.password = await bcrypt.hash(value, 10);
-        },
       },
     },
     {
+      hooks: {
+        beforeCreate: async (user: User) => {
+          user.password = await bcrypt.hash(user.password, 10);
+        },
+      },
       sequelize,
       tableName: "user",
       underscored: true,

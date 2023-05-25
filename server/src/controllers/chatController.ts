@@ -22,14 +22,17 @@ export interface ChatData {
   description?: string;
 }
 
-const validateChatData = async (
-  req: Request,
-  res: Response<Chat | typeof JSON | undefined>,
-  next: any
-): Promise<void> => {
+const validateChatData = async (req: Request, res: Response, next: any) => {
   const { chat_type, userIds } = req.body as ChatData;
 
-  // check if private chat with these users id already exists
+  if (chat_type !== "private") {
+    next();
+  } else if (userIds.length !== 2) {
+    res.status(400).json({ error: "private chat must have 2 users" });
+  } else {
+    next();
+  }
+
   const existingChat = await Chat.findOne({
     where: { chat_type },
     include: [
@@ -45,15 +48,16 @@ const validateChatData = async (
 
   if (existingChat) {
     res.status(200).json(existingChat);
-  } else {
-    next();
   }
+
+  next();
 };
 
 router.use(authenticate);
 
 router.post("/", validateChatData, async (req: any, res: Response) => {
   const { name, description, chat_type, userIds } = req.body as ChatData;
+  userIds.unshift(req.user.id);
 
   const chat = await createChatWithUsers({
     name,

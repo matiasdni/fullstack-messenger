@@ -46,9 +46,10 @@ export async function findChats(ids: UserChat[]) {
 export async function createChat(
   name: string,
   description?: string,
-  chat_type?: string
+  chat_type?: string,
+  owner_id?: string
 ) {
-  return await Chat.create({ name, description, chat_type });
+  return await Chat.create({ name, description, chat_type, owner_id });
 }
 
 export const createChatWithUsers = async (
