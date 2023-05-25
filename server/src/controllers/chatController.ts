@@ -69,6 +69,27 @@ router.post("/", async (req: AuthenticatedRequest, res: Response) => {
     });
 
     await chat[0].addUsers([user, otherUser]);
+
+    await chat[0].reload({
+      include: [
+        {
+          association: Chat.associations.users,
+          attributes: ["id", "username"],
+          through: { attributes: [] },
+        },
+        // Include the messages
+        {
+          association: Chat.associations.messages,
+          attributes: ["id", "content", "createdAt"],
+          include: [
+            {
+              association: Message.associations.user,
+              attributes: ["id", "username"],
+            },
+          ],
+        },
+      ],
+    });
   } else {
     chat = await createChatWithUsers({
       name,
@@ -88,26 +109,29 @@ router.post("/", async (req: AuthenticatedRequest, res: Response) => {
 
 router.get("/:id", async (req: any, res: Response) => {
   const chat = await Chat.findByPk(req.params.id, {
+    // Include the users
     include: [
       {
-        association: "users",
+        association: Chat.associations.users,
         attributes: ["id", "username"],
         through: { attributes: [] },
       },
+      // Include the messages
       {
-        model: Message,
-        as: "messages",
+        association: Chat.associations.messages,
         attributes: ["id", "content", "createdAt"],
         include: [
           {
-            model: User,
-            as: "user",
+            association: Message.associations.user,
             attributes: ["id", "username"],
+            through: { attributes: [] },
           },
         ],
       },
     ],
   });
+
+  // Send the chat
   res.status(200).json(chat);
 });
 
