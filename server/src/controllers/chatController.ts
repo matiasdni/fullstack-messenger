@@ -5,6 +5,7 @@ import { User } from "../models/user";
 import authenticate from "../middlewares/auth";
 import { Message } from "../models/message";
 import { io } from "../server";
+import { Op } from "sequelize";
 
 const router = require("express").Router();
 
@@ -23,9 +24,13 @@ export interface ChatData {
   currentUser?: User;
 }
 
+interface AuthenticatedRequest extends Request {
+  user: User;
+}
+
 router.use(authenticate);
 
-router.post("/", async (req: any, res: Response) => {
+router.post("/", async (req: AuthenticatedRequest, res: Response) => {
   const { name, description, chat_type, userIds } = req.body as ChatData;
   const currentUser: User = req.user;
 
@@ -33,6 +38,37 @@ router.post("/", async (req: any, res: Response) => {
 
   if (chat_type === "private") {
     // handle private chat create
+    const user = await User.findByPk(currentUser.id);
+    const otherUser = await User.findByPk(userIds[0]);
+
+    if (!user || !otherUser) {
+      return res.status(400).json({ error: "Invalid user IDs" });
+    }
+
+    chat = await Chat.findOrCreate({
+      where: {
+        [Op.and]: [
+          { chat_type },
+          {
+            [Op.or]: [
+              {
+                name: `${user.username} & ${otherUser.username}`,
+              },
+              {
+                name: `${otherUser.username} & ${user.username}`,
+              },
+            ],
+          },
+        ],
+      },
+      defaults: {
+        name: `${user.username} & ${otherUser.username}`,
+        description,
+        chat_type,
+      },
+    });
+
+    await chat[0].addUsers([user, otherUser]);
   } else {
     chat = await createChatWithUsers({
       name,
@@ -54,8 +90,7 @@ router.get("/:id", async (req: any, res: Response) => {
   const chat = await Chat.findByPk(req.params.id, {
     include: [
       {
-        model: User,
-        as: "users",
+        association: "users",
         attributes: ["id", "username"],
         through: { attributes: [] },
       },
@@ -76,4 +111,4 @@ router.get("/:id", async (req: any, res: Response) => {
   res.status(200).json(chat);
 });
 
-module.exports = router;
+export default router;
