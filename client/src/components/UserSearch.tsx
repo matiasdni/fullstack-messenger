@@ -45,7 +45,7 @@ const SearchListItem = ({ user }) => {
     const chat: chatData = {
       name: `${user.username}-${currentUser.username}`,
       chat_type: "private",
-      userIds: [user.id, currentUser.id],
+      userIds: [user.id],
     };
     dispatch(createChat(chat));
   };
