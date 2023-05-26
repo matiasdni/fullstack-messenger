@@ -1,11 +1,25 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useAppSelector } from "../../store";
 import { SidebarHeader } from "./SidebarHeader";
 import { ChatList } from "./ChatList";
+import { Tab } from "./SidebarTab";
+
+const FriendList = () => {
+  return <div>FriendList</div>;
+};
+
+const InviteList = () => {
+  return <div>InviteList</div>;
+};
 
 export const Sidebar = () => {
   const allChats = useAppSelector((state) => state.chats.chats);
   const { user } = useAppSelector((state) => state.auth);
+  const [activeTab, setActiveTab] = useState<Tab>("chats");
+
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+  };
 
   const sortedChats = useMemo(
     () =>
@@ -26,13 +40,19 @@ export const Sidebar = () => {
 
   return (
     <>
-      <div className="flex">
+      <div className="flex w-72 flex-shrink-0 overflow-hidden">
         <div className="flex h-full w-full flex-col">
-          <SidebarHeader user={user} />
+          <SidebarHeader
+            user={user}
+            activeTab={activeTab}
+            onChangeTab={handleTabChange}
+          />
 
-          <div className="flex h-full w-full overflow-auto">
+          <div className="flex h-full w-full overflow-y-auto overflow-x-hidden">
             {/* chats list */}
-            <ChatList chats={sortedChats} />
+            {activeTab === "chats" && <ChatList chats={sortedChats} />}
+            {activeTab === "friends" && <FriendList />}
+            {activeTab === "invites" && <InviteList />}
           </div>
         </div>
       </div>
