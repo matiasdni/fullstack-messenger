@@ -1,15 +1,14 @@
-import { getChatById } from "../services/chatService";
 import { createMessage } from "../services/messageService";
 import { Server } from "socket.io";
 import { mySocket, newMessage } from "./types";
 import { Op } from "sequelize";
 import { User } from "../models/user";
+import { Chat } from "../models/chat";
 
 module.exports = (io: Server, socket: mySocket) => {
-  const joinRoom = async (room: string) => {
-    // check if room is valid
-    if (await getChatById(room)) {
-      socket.join(room);
+  const joinRoom = async (room: Chat) => {
+    if (await Chat.findByPk(room.id)) {
+      socket.join(room.id);
     }
   };
 
