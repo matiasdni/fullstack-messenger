@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "../store";
 
-import { Sidebar } from "./Sidebar";
+import { Sidebar } from "./sidebar/Sidebar";
 import { Chat } from "./Chat";
 import DarkModeToggle from "./common/DarkModeToggle";
 import { LoadingChat } from "./common/LoadingChat";
