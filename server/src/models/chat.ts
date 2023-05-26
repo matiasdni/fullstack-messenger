@@ -12,6 +12,7 @@ import {
 import { User } from "./user";
 import { Message } from "./message";
 import { Invite } from "./Invite";
+import { Transaction } from "sequelize";
 
 class Chat extends Model {
   declare id: string;
@@ -35,8 +36,10 @@ class Chat extends Model {
   declare addInvites: HasManyAddAssociationMixin<Invite[], "id">;
   declare removeInvites: HasManyRemoveAssociationMixin<Invite[], "id">;
 
-  async addUsers(users: User[]): Promise<Chat> {
-    await Promise.all(users.map(async (user) => await this.addUser(user)));
+  async addUsers(users: User[], transaction?: Transaction): Promise<Chat> {
+    await Promise.all(
+      users.map(async (user) => await this.addUser(user, { transaction }))
+    );
     return this;
   }
 }
