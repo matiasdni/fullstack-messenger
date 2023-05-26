@@ -92,7 +92,7 @@ export const createChat = async (req: AuthenticatedRequest, res: Response) => {
   if (chat.chat_type === "group") {
     io.to(userIds).emit("invite", chat);
   } else {
-    io.to(userIds[0]).to(currentUser.id).emit("join-room", chat);
+    io.to(userIds).emit("join-room", chat.id);
   }
 };
 
