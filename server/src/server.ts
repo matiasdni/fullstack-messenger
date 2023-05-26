@@ -6,7 +6,7 @@ import express from "express";
 import { Server } from "socket.io";
 import loginRouter from "./controllers/loginController";
 import usersRouter from "./controllers/userController";
-import chatRouter from "./controllers/chatController";
+import chatRouter from "./routes/chats";
 
 const app = express();
 const server = http.createServer(app);
