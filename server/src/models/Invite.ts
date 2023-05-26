@@ -35,7 +35,7 @@ const initInvitation = (sequelize: Sequelize): typeof Invite =>
       },
       status: {
         type: DataTypes.ENUM,
-        values: ["pending", "accepted", "declined"],
+        values: ["pending", "accepted", "rejected"],
         allowNull: false,
         defaultValue: "pending",
       },
