@@ -5,7 +5,7 @@ const Layout = () => {
   return (
     <>
       <div className="dark:bg-gray-900">
-        <main className="container box-border dark:bg-gray-900">
+        <main className="box-border dark:bg-gray-900">
           <Outlet />
         </main>
         <div id="modal" />

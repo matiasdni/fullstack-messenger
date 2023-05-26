@@ -25,12 +25,12 @@ export const Home = () => {
   }
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden text-neutral-900 dark:text-neutral-300">
+    <div className="text-neutral-900 dark:text-neutral-300">
       <DarkModeToggle />
-      <div className="flex-1">
-        <div className="grid h-full grid-rows-1 sm:grid-cols-[1fr_5fr] md:grid-cols-auto-1fr">
-          <Sidebar />
-          <div className="relative overflow-hidden">
+      <div className="fixed h-full w-full">
+        <div className="container h-[768px] w-[1280px]">
+          <div className="flex h-full">
+            <Sidebar />
             <Chat />
           </div>
         </div>

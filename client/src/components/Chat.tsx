@@ -24,7 +24,10 @@ export const Chat = () => {
   };
 
   return activeChat ? (
-    <section className="absolute inset-0 flex h-full flex-col overflow-hidden border">
+    <div
+      className="flex h-full w-full
+    flex-col"
+    >
       <ChatHeader activeChat={activeChat} />
 
       {/*messages*/}
@@ -32,12 +35,12 @@ export const Chat = () => {
 
       {/*input*/}
       <ChatInputForm onSubmit={sendMessage} />
-    </section>
+    </div>
   ) : (
-    <section className="absolute inset-0 flex h-full flex-col overflow-hidden border">
+    <>
       <ChatHeader />
       {/*messages*/}
       <MessageList />
-    </section>
+    </>
   );
 };
