@@ -17,18 +17,18 @@ export const ChatInputForm: React.FC<InputFormProps> = ({ onSubmit }) => {
 
   return (
     <form
-      className="flex items-center justify-between bg-transparent p-3"
+      className="flex items-center justify-between space-x-2 bg-transparent p-3"
       onSubmit={handleSubmit}
     >
       <input
         type="text"
-        className="focus:shadow-outline form-input w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 leading-normal focus:outline-none dark:border-gray-700 dark:bg-gray-700"
+        className="focus:shadow-outline form-input w-full appearance-none rounded-lg border border-neutral-300 bg-neutral-100 px-4 py-2 leading-normal focus:outline-none dark:border-gray-700 dark:bg-gray-700"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Type a message..."
       />
       <button
-        className="ml-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+        className="rounded bg-blue-500 px-4 py-2 font-bold text-neutral-100 shadow-md hover:bg-blue-700"
         onClick={handleSubmit}
       >
         Send
