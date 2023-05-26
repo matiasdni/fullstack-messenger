@@ -1,13 +1,17 @@
 import { Request, Response } from "express";
-import { createChatWithUsers } from "../services/chatService";
+import {
+  createChatWithUsers,
+  findOrCreatePrivateChat,
+} from "../services/chatService";
 import { Chat } from "../models/chat";
 import { User } from "../models/user";
-import authenticate from "../middlewares/auth";
 import { Message } from "../models/message";
 import { io } from "../server";
-import { Op } from "sequelize";
+import { sequelize } from "../models/initModels";
 
-const router = require("express").Router();
+interface AuthenticatedRequest extends Request {
+  user: User;
+}
 
 export enum ChatTypeEnum {
   group,
@@ -24,60 +28,37 @@ export interface ChatData {
   currentUser?: User;
 }
 
-interface AuthenticatedRequest extends Request {
-  user: User;
-}
-
-router.use(authenticate);
-
-router.post("/", async (req: AuthenticatedRequest, res: Response) => {
+export const createChat = async (req: AuthenticatedRequest, res: Response) => {
   const { name, description, chat_type, userIds } = req.body as ChatData;
   const currentUser: User = req.user;
+  const transaction = await sequelize.transaction();
 
   let chat;
 
   if (chat_type === "private") {
-    // handle private chat create
-    const user = await User.findByPk(currentUser.id);
-    const otherUser = await User.findByPk(userIds[0]);
+    const user = await User.findByPk(currentUser.id, { transaction });
+    const otherUser = await User.findByPk(userIds[0], { transaction });
 
     if (!user || !otherUser) {
+      transaction.rollback();
       return res.status(400).json({ error: "Invalid user IDs" });
     }
 
-    chat = await Chat.findOrCreate({
-      where: {
-        [Op.and]: [
-          { chat_type },
-          {
-            [Op.or]: [
-              {
-                name: `${user.username} & ${otherUser.username}`,
-              },
-              {
-                name: `${otherUser.username} & ${user.username}`,
-              },
-            ],
-          },
-        ],
-      },
-      defaults: {
-        name: `${user.username} & ${otherUser.username}`,
-        description,
-        chat_type,
-      },
-    });
+    chat = await findOrCreatePrivateChat(user, otherUser, transaction);
 
-    await chat[0].addUsers([user, otherUser]);
+    console.log("chat created", chat);
 
-    await chat[0].reload({
+    await chat.addUsers([user, otherUser], transaction);
+
+    console.log("chat users added", chat);
+
+    await chat.reload({
       include: [
         {
           association: Chat.associations.users,
           attributes: ["id", "username"],
           through: { attributes: [] },
         },
-        // Include the messages
         {
           association: Chat.associations.messages,
           attributes: ["id", "content", "createdAt"],
@@ -89,34 +70,39 @@ router.post("/", async (req: AuthenticatedRequest, res: Response) => {
           ],
         },
       ],
+      attributes: ["id", "name", "description", "chat_type"],
+      transaction,
     });
   } else {
-    chat = await createChatWithUsers({
-      name,
-      description,
-      chat_type,
-      userIds,
-      currentUser,
-    });
+    chat = await createChatWithUsers(
+      {
+        name,
+        description,
+        chat_type,
+        userIds,
+        currentUser,
+      },
+      transaction
+    );
   }
 
-  console.log("chat created", chat);
+  await transaction.commit();
 
   res.status(200).json(chat);
+  if (chat.chat_type === "group") {
+    io.to(userIds).emit("invite", chat);
+  } else {
+    io.to(userIds[0]).to(currentUser.id).emit("join-room", chat);
+  }
+};
 
-  io.to(userIds).emit("invite", chat);
-});
-
-router.get("/:id", async (req: any, res: Response) => {
+export const chatById = async (req: any, res: Response) => {
   const chat = await Chat.findByPk(req.params.id, {
-    // Include the users
     include: [
       {
         association: Chat.associations.users,
         attributes: ["id", "username"],
-        through: { attributes: [] },
       },
-      // Include the messages
       {
         association: Chat.associations.messages,
         attributes: ["id", "content", "createdAt"],
@@ -124,15 +110,11 @@ router.get("/:id", async (req: any, res: Response) => {
           {
             association: Message.associations.user,
             attributes: ["id", "username"],
-            through: { attributes: [] },
           },
         ],
       },
     ],
   });
 
-  // Send the chat
   res.status(200).json(chat);
-});
-
-export default router;
+};
