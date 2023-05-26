@@ -7,6 +7,8 @@ import { Chat } from "../models/chat";
 
 module.exports = (io: Server, socket: mySocket) => {
   const joinRoom = async (room: Chat) => {
+    console.log("join room", room);
+
     if (await Chat.findByPk(room.id)) {
       socket.join(room.id);
     }
@@ -23,6 +25,8 @@ module.exports = (io: Server, socket: mySocket) => {
         socket.user.id,
         room
       );
+
+      console.log("send message room", room);
 
       const returnedMessage = {
         content,
