@@ -1,14 +1,14 @@
 import { Avatar } from "./common/Avatar";
 import { Chat as ChatType } from "../features/chats/types";
-import React from "react";
+import { FC } from "react";
 
 export interface ChatHeaderProps {
   activeChat?: ChatType | null;
 }
 
-export const ChatHeader: React.FC<ChatHeaderProps> = ({ activeChat }) => {
+export const ChatHeader: FC<ChatHeaderProps> = ({ activeChat }) => {
   return (
-    <header className="bg-grey-lighter border-b-2 border-gray-300 dark:border-gray-700">
+    <header className="border-b-2 border-neutral-200 bg-neutral-50/50 dark:border-neutral-700">
       <div className="flex items-center p-4">
         <figure className="h-10 w-10">
           <Avatar />
