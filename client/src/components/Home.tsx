@@ -27,12 +27,10 @@ export const Home = () => {
   return (
     <div className="text-neutral-900 dark:text-neutral-300">
       <DarkModeToggle />
-      <div className="fixed h-full w-full">
-        <div className="container h-[768px] w-[1280px]">
-          <div className="flex h-full">
-            <Sidebar />
-            <Chat />
-          </div>
+      <div className="container h-[768px] max-w-7xl shadow-md ">
+        <div className="flex h-full shadow-inner">
+          <Sidebar />
+          <Chat />
         </div>
       </div>
     </div>
