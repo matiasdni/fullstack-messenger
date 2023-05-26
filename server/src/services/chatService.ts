@@ -4,6 +4,8 @@ import { Message } from "../models/message";
 import { UserChat } from "../models/userChat";
 import { ChatData } from "../controllers/chatController";
 import { Invite } from "../models/Invite";
+import { Op } from "sequelize";
+import { Transaction } from "sequelize";
 
 export async function addUserToChat(user: User, chat: Chat) {
   await chat.addUser(user);
@@ -49,27 +51,34 @@ export async function createChat(
 }
 
 export const createChatWithUsers = async (
-  chatData: ChatData
+  chatData: ChatData,
+  transaction?: Transaction
 ): Promise<Chat> => {
-  const chat = await Chat.create({
-    name: chatData.name,
-    description: chatData.description,
-    chat_type: chatData.chat_type,
-  });
+  const chat = await Chat.create(
+    {
+      name: chatData.name,
+      description: chatData.description,
+      chat_type: chatData.chat_type,
+    },
+    { transaction }
+  );
 
   const invitations: Invite[] = await Promise.all(
     chatData.userIds.map((userId) =>
-      Invite.create({
-        chat_id: chat.id,
-        sender_id: chatData.currentUser!.id,
-        recipient_id: userId,
-      })
+      Invite.create(
+        {
+          chat_id: chat.id,
+          sender_id: chatData.currentUser!.id,
+          recipient_id: userId,
+        },
+        { transaction }
+      )
     )
   );
 
-  await chat.addInvites(invitations);
+  await chat.addInvites(invitations, { transaction });
 
-  await chat.addUser(chatData.currentUser!);
+  await chat.addUser(chatData.currentUser!, { transaction });
 
   await chat.reload({
     include: [
@@ -96,11 +105,39 @@ export const createChatWithUsers = async (
         attributes: ["sender_id", "recipient_id", "chat_id"],
       },
     ],
+    transaction,
   });
 
   return chat;
 };
 
-export async function getChatById(id: string) {
-  return await Chat.findByPk(id);
-}
+export const findOrCreatePrivateChat = async (
+  currentUser: User,
+  otherUser: User,
+  transaction?: Transaction
+): Promise<Chat> => {
+  const [chat, created] = await Chat.findOrCreate({
+    where: {
+      [Op.and]: {
+        [Op.or]: [
+          {
+            name: `${currentUser.username} & ${otherUser.username}`,
+          },
+          {
+            name: `${otherUser.username} & ${currentUser.username}`,
+          },
+        ],
+        chat_type: "private",
+      },
+    },
+    defaults: {
+      name: `${currentUser.username} & ${otherUser.username}`,
+      description: undefined,
+      chat_type: "private",
+    },
+    mapToModel: true,
+    transaction,
+  });
+
+  return chat;
+};
