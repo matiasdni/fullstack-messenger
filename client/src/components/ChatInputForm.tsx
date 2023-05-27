@@ -17,12 +17,12 @@ export const ChatInputForm: React.FC<InputFormProps> = ({ onSubmit }) => {
 
   return (
     <form
-      className="flex items-center justify-between space-x-2 rounded-lg bg-neutral-200/50 p-4 dark:bg-gray-800"
+      className="flex items-center justify-between space-x-2 rounded-t-lg bg-neutral-200/50 p-4 dark:bg-gray-800"
       onSubmit={handleSubmit}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-8 w-8 fill-neutral-600 dark:text-gray-700"
+        className="h-8 w-8 fill-neutral-600"
         viewBox="0 0 24 24"
         stroke="currentColor"
       >
