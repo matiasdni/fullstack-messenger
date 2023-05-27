@@ -25,7 +25,7 @@ export const SidebarHeader: FC<SidebarHeaderProps> = ({
 
   return (
     <>
-      <div className="space-y-2 bg-neutral-100 px-3 py-2 dark:bg-gray-800/70">
+      <div className="space-y-2 bg-neutral-100 px-3 py-2 dark:bg-gray-800">
         <div className="mx-auto flex items-center space-x-3 text-xl">
           <div className="h-10 w-10">
             <Avatar />
