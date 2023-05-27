@@ -8,7 +8,7 @@ export interface ChatHeaderProps {
 
 export const ChatHeader: FC<ChatHeaderProps> = ({ activeChat }) => {
   return (
-    <header className="border-b-2 border-neutral-200 bg-neutral-50/50 dark:border-neutral-700 dark:bg-gray-800">
+    <header className="bg-neutral-50/50 dark:bg-gray-800">
       <div className="flex items-center p-4">
         <figure className="h-10 w-10">
           <Avatar />
