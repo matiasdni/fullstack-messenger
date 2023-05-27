@@ -39,17 +39,18 @@ const ChatItem = ({ chat }) => {
 
   return (
     <li
-      className={`cursor-pointer border-b border-gray-300 p-1 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700 ${activeChatClass}`}
+      className={`max-w-full cursor-pointer border-b border-gray-300 p-1 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700 ${activeChatClass}`}
       onClick={handleChatItemClick}
     >
       <div className="flex items-center space-x-2">
         <figure className="h-10 w-10 flex-none">
           <Avatar />
         </figure>
-        <div className="flex w-full flex-col overflow-hidden">
-          <div className="flex">
-            <span className="font-bold">{nameToDisplay}</span>
-            <div className="inline-block flex-1"></div>
+        <div className="flex w-full flex-col">
+          <div className="flex justify-between ">
+            <span className="max-w-[70%] truncate font-semibold">
+              {nameToDisplay}
+            </span>
             <span className="self-center whitespace-nowrap text-xs">
               {time}
             </span>
@@ -69,7 +70,7 @@ type Props = {
 };
 export const ChatList = ({ chats }: Props) => {
   return (
-    <ul className="p-2">
+    <ul className="w-full">
       {chats?.map((chat) => (
         <ChatItem key={chat?.id} chat={chat} />
       ))}
