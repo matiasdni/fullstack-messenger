@@ -12,7 +12,7 @@ export const SidebarTabs: React.FC<Props> = ({ activeTab, onChangeTab }) => {
 
   return (
     <>
-      <div className="flex justify-between space-x-1 bg-neutral-100 px-1 py-2">
+      <div className="flex justify-between space-x-1 bg-neutral-100 px-1 py-2 dark:bg-gray-800/75">
         {tabs.map((tab) => (
           <div className="flex-1 shadow-sm" key={tab}>
             <button
