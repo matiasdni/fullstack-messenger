@@ -17,7 +17,7 @@ export const ChatInputForm: React.FC<InputFormProps> = ({ onSubmit }) => {
 
   return (
     <form
-      className="flex items-center justify-between space-x-2 rounded-t-lg bg-neutral-200/50 p-4 dark:bg-gray-800"
+      className="flex items-center justify-between space-x-2 rounded-t-lg bg-neutral-200/50 p-4 shadow-inner dark:bg-gray-800"
       onSubmit={handleSubmit}
     >
       <svg
@@ -36,7 +36,7 @@ export const ChatInputForm: React.FC<InputFormProps> = ({ onSubmit }) => {
 
       <input
         type="text"
-        className="focus:shadow-outline form-input w-full appearance-none rounded-lg border border-neutral-300 bg-neutral-100 px-4 py-2 leading-normal focus:outline-none dark:border-gray-700 dark:bg-gray-700"
+        className="focus:shadow-outline form-input w-full appearance-none rounded-lg border border-neutral-300 bg-neutral-100 px-4 py-2 leading-normal shadow-inner focus:outline-none dark:border-gray-700 dark:bg-gray-700"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Type a message..."
