@@ -42,3 +42,45 @@ export async function fetchUserChats(id: string, token: string) {
   console.log(response.data);
   return response.data;
 }
+
+export async function fetchUserFriends(id: string, token: string) {
+  const response = await axios.get(`${BASE_URL}/${id}/friends`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}
+
+// returns all the user's friend requests and chat invites
+export async function fetchUserRequests(id: string, token: string) {
+  const response = await axios.get(`${BASE_URL}/${id}/requests`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}
+
+// returns all the user's friend requests
+export async function fetchUserFriendRequests(id: string, token: string) {
+  const response = await axios.get(`${BASE_URL}/${id}/friends/requests`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}
+
+export async function fetchUserChatRequests(id: string, token: string) {
+  const response = await axios.get(`${BASE_URL}/${id}/chats/requests`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}
