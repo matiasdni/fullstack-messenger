@@ -92,7 +92,7 @@ const InviteList = ({ invites }: InviteListProps) => {
           </div>
           <div className="w-full">
             <div className="flex w-full items-center justify-between">
-              <p className="font-semibold text-black">
+              <p className="font-semibold text-black dark:text-gray-300">
                 {invite.sender.username}
               </p>
             </div>
