@@ -39,20 +39,22 @@ const ChatItem = ({ chat }) => {
 
   return (
     <li
-      className={`cursor-pointer border-b border-gray-300 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700 ${activeChatClass}`}
+      className={`cursor-pointer border-b border-gray-300 p-1 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700 ${activeChatClass}`}
       onClick={handleChatItemClick}
     >
-      <div className="flex items-center p-3">
+      <div className="flex items-center space-x-2">
         <figure className="h-10 w-10 flex-none">
           <Avatar />
         </figure>
-        <div className="ml-2 flex w-full flex-col justify-center overflow-hidden">
-          <div className="flex w-full flex-row flex-wrap items-center justify-between">
-            <p className="font-bold">{nameToDisplay}</p>
-            <div className="flex flex-row items-center gap-2"></div>
-            <p className="text-xs">{time}</p>
+        <div className="flex w-full flex-col overflow-hidden">
+          <div className="flex">
+            <span className="font-bold">{nameToDisplay}</span>
+            <div className="inline-block flex-1"></div>
+            <span className="self-center whitespace-nowrap text-xs">
+              {time}
+            </span>
           </div>
-          <p className="truncate align-top text-sm">
+          <p className="truncate text-sm">
             {(messages?.length > 0 &&
               (includeUsername ? userNameInclude : lastMessage.content)) ||
               "No messages"}
@@ -67,7 +69,7 @@ type Props = {
 };
 export const ChatList = ({ chats }: Props) => {
   return (
-    <ul>
+    <ul className="p-2">
       {chats?.map((chat) => (
         <ChatItem key={chat?.id} chat={chat} />
       ))}
