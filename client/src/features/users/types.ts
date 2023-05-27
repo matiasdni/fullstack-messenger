@@ -4,8 +4,13 @@ export interface Invite {
   id: string;
   sender: User;
   receiver?: User | string;
-  chat_id?: string;
+  chat?: {
+    id: string;
+    name?: string;
+  };
+  message: string;
   status: Status;
+  createdAt?: Date;
 }
 
 export interface User {
