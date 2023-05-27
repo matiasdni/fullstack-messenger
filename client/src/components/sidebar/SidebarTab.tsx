@@ -12,19 +12,21 @@ export const SidebarTabs: React.FC<Props> = ({ activeTab, onChangeTab }) => {
 
   return (
     <>
-      <div className="flex justify-between">
+      <div className="flex justify-between space-x-1 bg-neutral-100 px-1 py-2">
         {tabs.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => onChangeTab(tab)}
-            className={`${
-              activeTab === tab
-                ? " bg-gray-200 dark:bg-gray-800"
-                : "bg-gray-100 dark:bg-gray-700"
-            } w-full p-3 text-center hover:bg-gray-200 focus:bg-gray-200 focus:outline-none dark:hover:bg-gray-800 dark:focus:bg-gray-800`}
-          >
-            {tab}
-          </button>
+          <div className="flex-1 shadow-sm" key={tab}>
+            <button
+              key={tab}
+              onClick={() => onChangeTab(tab)}
+              className={`${
+                activeTab === tab
+                  ? " bg-neutral-200 dark:bg-gray-800"
+                  : "bg-neutral-100 dark:bg-gray-900/25"
+              } w-full p-2 text-center shadow-inner hover:bg-gray-200 focus:bg-gray-200 focus:outline-none dark:hover:bg-gray-800 dark:focus:bg-gray-800`}
+            >
+              {tab}
+            </button>
+          </div>
         ))}
       </div>
     </>
