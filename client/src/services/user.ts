@@ -1,23 +1,33 @@
 import axios from "axios";
 import { User } from "../features/users/types";
+import { Senders, Chats, InviteAttributes } from "../../../shared/types";
 
 const BASE_URL = "/api/users";
 
-export const createUser = async (user) => {
+interface UserRequests {
+  invites: InviteAttributes[];
+  senders: Senders;
+  chats: Chats;
+}
+
+export const createUser = async (user: {
+  username: string;
+  password: string;
+}) => {
   return await axios.post(`${BASE_URL}`, user);
 };
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (): Promise<User[]> => {
   return await axios.get(`${BASE_URL}`);
 };
 
-export const getUserById = async (id: string) => {
+export const getUserById = async (id: string): Promise<User> => {
   return await axios.get(`${BASE_URL}/${id}`);
 };
 
 export const searchUsersByName = async (
   name: string,
-  token
+  token: string
 ): Promise<User[]> => {
   const response = await axios.post(
     `${BASE_URL}/search`,
@@ -54,7 +64,10 @@ export async function fetchUserFriends(id: string, token: string) {
 }
 
 // returns all the user's friend requests and chat invites
-export async function fetchUserRequests(id: string, token: string) {
+export async function fetchUserRequests(
+  id: string,
+  token: string
+): Promise<UserRequests> {
   const response = await axios.get(`${BASE_URL}/${id}/requests`, {
     withCredentials: true,
     headers: {
@@ -76,7 +89,7 @@ export async function fetchUserFriendRequests(id: string, token: string) {
 }
 
 export async function fetchUserChatRequests(id: string, token: string) {
-  const response = await axios.get(`${BASE_URL}/${id}/chats/requests`, {
+  const response = await axios.get(`${BASE_URL}/${id}/requests`, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${token}`,
