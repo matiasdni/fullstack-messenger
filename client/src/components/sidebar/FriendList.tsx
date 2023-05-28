@@ -1,10 +1,23 @@
+import { useEffect, useState } from "react";
 import { User } from "src/features/users/types";
+import { useAuth } from "src/hooks/useAuth";
+import { fetchUserFriends } from "src/services/user";
 
-type FriendListProps = {
-  friends: User[];
-};
+const FriendList = () => {
+  const [friends, setFriends] = useState<User[]>([]);
+  const {
+    user: { id: userId },
+    token,
+  } = useAuth();
 
-const FriendList = ({ friends }: FriendListProps) => {
+  useEffect(() => {
+    console.log("fetching friends");
+    fetchUserFriends(userId, token).then((data) => {
+      console.log("friends: ", data);
+      setFriends(data);
+    });
+  }, [userId, token]);
+
   return (
     <div className="relative flex w-full flex-col space-y-6 p-2">
       {friends.map((friend) => (
