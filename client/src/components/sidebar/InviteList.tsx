@@ -1,38 +1,61 @@
+import { FC, useEffect, useState } from "react";
 import { Invite } from "src/features/users/types";
+import { useAuth } from "src/hooks/useAuth";
+import { fetchUserRequests } from "src/services/user";
 
-type InviteListProps = {
-  invites: Invite[];
+const timeSince = (date: Date) => {
+  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+  let interval = seconds / 31536000;
+  if (interval > 1) {
+    return Math.floor(interval) + " years";
+  }
+  interval = seconds / 2592000;
+  if (interval > 1) {
+    return Math.floor(interval) + " months";
+  }
+  interval = seconds / 86400;
+  if (interval > 1) {
+    return Math.floor(interval) + " days";
+  }
+  interval = seconds / 3600;
+  if (interval > 1) {
+    return Math.floor(interval) + " hours";
+  }
+  interval = seconds / 60;
+  if (interval > 1) {
+    return Math.floor(interval) + " minutes";
+  }
+  return Math.floor(seconds) + " seconds";
 };
 
-const InviteList = ({ invites }: InviteListProps) => {
-  const timeSince = (date: Date) => {
-    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    let interval = seconds / 31536000;
-    if (interval > 1) {
-      return Math.floor(interval) + " years";
-    }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-      return Math.floor(interval) + " months";
-    }
-    interval = seconds / 86400;
-    if (interval > 1) {
-      return Math.floor(interval) + " days";
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-      return Math.floor(interval) + " hours";
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-      return Math.floor(interval) + " minutes";
-    }
-    return Math.floor(seconds) + " seconds";
-  };
+const InviteList: FC = () => {
+  const [requests, setRequests] = useState<Invite[]>([]);
+  const { user, token } = useAuth();
+  const userId = user.id;
+
+  useEffect(() => {
+    console.log("fetching invites");
+    fetchUserRequests(userId, token).then((data) => {
+      console.log("invites: ", data);
+      // Process the data to make it easier to use in the component
+      const invites: Invite[] = data.invites.map((invite) => ({
+        id: invite.id,
+        createdAt: new Date(invite.createdAt),
+        sender: data.senders[invite.senderId],
+        chat: data.chats[invite.chatId],
+      }));
+      console.log(
+        "invites: ",
+        invites[0].createdAt,
+        typeof invites[0].createdAt
+      );
+      setRequests(invites);
+    });
+  }, [userId, token, setRequests]);
 
   return (
     <div className="flex w-full flex-col space-y-4 p-2">
-      {invites.map((invite) => (
+      {requests.map((invite) => (
         <div
           key={invite.id}
           className="flex w-full flex-row items-center space-x-2"
@@ -52,7 +75,7 @@ const InviteList = ({ invites }: InviteListProps) => {
             </div>
             <div className="flex flex-col space-y-2">
               <p className="text-sm text-gray-500">
-                {invite.message + " "}
+                invited you to join {invite.chat.name}
                 <span>{invite.chat.name}</span>
               </p>
             </div>
