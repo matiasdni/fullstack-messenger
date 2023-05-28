@@ -2,7 +2,6 @@ import { useAppDispatch } from "../store";
 import { useEffect } from "react";
 import { socket } from "../socket";
 import { addMessage, getChatById } from "../features/chats/chatsSlice";
-import { log } from "console";
 
 export const useSocketEvents = (chats, auth) => {
   const dispatch = useAppDispatch();
