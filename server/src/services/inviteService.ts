@@ -1,50 +1,17 @@
 import { Invite } from "../models/initModels";
-import { User } from "../models/initModels";
-import { Chat } from "../models/initModels";
-
-type Sender = Pick<User, "id" | "username">;
-type TChat = Pick<Chat, "id" | "name">;
-type Senders = Record<string, Sender>;
-type Chats = Record<string, TChat>;
-type Status = "pending" | "accepted" | "rejected";
-
-interface InviteAttributes {
-  id: string;
-  status: Status;
-  chatId: string;
-  recipientId: string;
-  senderId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  sender?: Sender;
-  chat?: TChat;
-}
-
-interface CreateInviteInput {
-  senderId: string;
-  chatId: string;
-  recipientId: string;
-}
-
-interface AcceptInviteInput {
-  inviteId: string;
-  userId: string;
-}
-
-interface RejectInviteInput {
-  inviteId: string;
-  userId: string;
-}
-
-interface GetPendingInvitesInput {
-  userId: string;
-}
-
-interface GetPendingInvitesOutput {
-  invites: InviteAttributes[];
-  senders: Senders;
-  chats: Chats;
-}
+import {
+  CreateInviteInput,
+  InviteAttributes,
+  AcceptInviteInput,
+  RejectInviteInput,
+  GetPendingInvitesInput,
+  GetPendingInvitesOutput,
+  Status,
+  Sender,
+  Senders,
+  TChat,
+  Chats,
+} from "../../../shared/types";
 
 // senderId: The id of the user who is sending the invite.
 // chatId: The id of the chat to invite the user to.
