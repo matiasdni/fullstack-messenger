@@ -67,9 +67,9 @@ export const createChatWithUsers = async (
     chatData.userIds.map((userId) =>
       Invite.create(
         {
-          chat_id: chat.id,
-          sender_id: chatData.currentUser!.id,
-          recipient_id: userId,
+          chatId: chat.id,
+          senderId: chatData.currentUser!.id,
+          recipientId: userId,
         },
         { transaction }
       )
