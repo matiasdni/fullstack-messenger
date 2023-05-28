@@ -1,10 +1,18 @@
-import { Invite } from "src/features/users/types";
+import { Invite } from "./types";
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState: Invite[] = [];
 
 export const acceptInvite = createAsyncThunk(
   "invites/acceptInvite",
+  async (inviteId: string) => {
+    // TODO: implement
+    return inviteId;
+  }
+);
+
+export const rejectInvite = createAsyncThunk(
+  "invites/rejectInvite",
   async (inviteId: string) => {
     // TODO: implement
     return inviteId;
@@ -40,6 +48,37 @@ const invitesSlice = createSlice({
     builder.addCase(acceptInvite.fulfilled, (state, action) => {
       console.log(
         "acceptInvite.fulfilled",
+        "prev state",
+        state,
+        "action",
+        action
+      );
+    });
+    builder.addCase(rejectInvite.fulfilled, (state, action) => {
+      console.log(
+        "rejectInvite.fulfilled",
+        "prev state",
+        state,
+        "action",
+        action
+      );
+    });
+
+    builder.addCase(acceptInvite.rejected, (state, action) => {
+      // implement when we have error handling in place and we want to show the user a message
+      console.log(
+        "acceptInvite.rejected",
+        "prev state",
+        state,
+        "action",
+        action
+      );
+    });
+
+    builder.addCase(rejectInvite.rejected, (state, action) => {
+      // implement when we have error handling in place and we want to show the user a message
+      console.log(
+        "rejectInvite.rejected",
         "prev state",
         state,
         "action",
