@@ -5,7 +5,7 @@ import { initUser, User } from "./user";
 import { initMessage, Message } from "./message";
 import { initUserChat, UserChat } from "./userChat";
 import { config } from "../config";
-import { initInvitation, Invite } from "./Invite";
+import { initInvites, Invite } from "./Invite";
 
 const db: any = config.database;
 
@@ -27,14 +27,14 @@ const setupAssociations = (): void => {
   Message.belongsTo(Chat, { foreignKey: "chat_id" });
   Chat.hasMany(Message, { foreignKey: "chat_id", as: "messages" });
 
-  Invite.belongsTo(Chat);
-  Chat.hasMany(Invite, { foreignKey: "chat_id", as: "invites" });
+  Invite.belongsTo(Chat, { foreignKey: "chatId", as: "chat" });
+  Chat.hasMany(Invite, { foreignKey: "chatId", as: "invites" });
 
-  User.hasMany(Invite, { foreignKey: "recipient_id" });
-  Invite.belongsTo(User, { foreignKey: "recipient_id" });
+  User.hasMany(Invite, { foreignKey: "recipientId", as: "invites" });
+  Invite.belongsTo(User, { foreignKey: "recipientId", as: "recipient" });
 
-  User.hasMany(Invite, { foreignKey: "sender_id" });
-  Invite.belongsTo(User, { foreignKey: "sender_id" });
+  User.hasMany(Invite, { foreignKey: "senderId", as: "sentInvites" });
+  Invite.belongsTo(User, { foreignKey: "senderId", as: "sender" });
 };
 
 const sequelize = new Sequelize(db.database, db.username, db.password, {
@@ -82,7 +82,7 @@ const initModels = async (): Promise<void> => {
     initUser(sequelize);
     initMessage(sequelize);
     initUserChat(sequelize);
-    initInvitation(sequelize);
+    initInvites(sequelize);
 
     setupAssociations();
   } catch (error) {
@@ -91,4 +91,4 @@ const initModels = async (): Promise<void> => {
   }
 };
 
-export { initModels, sequelize, User, Message, Chat, UserChat };
+export { initModels, sequelize, User, Message, Chat, Invite, UserChat };
