@@ -10,46 +10,16 @@ import { useAppSelector } from "../../store";
 import { SidebarHeader } from "./SidebarHeader";
 import { ChatList } from "./ChatList";
 import { Tab } from "./SidebarTab";
-import { users, invites } from "../../sampledata";
-import { Invite, User } from "../../features/users/types";
-import { fetchUserChatRequests, fetchUserFriends } from "src/services/user";
 
 const FriendList = lazy(() => import("./FriendList"));
 const InviteList = lazy(() => import("./InviteList"));
 
 export const Sidebar = () => {
   const allChats = useAppSelector((state) => state.chats.chats);
-  const { user, token } = useAppSelector((state) => state.auth);
   const [activeTab, setActiveTab] = useState<Tab>("chats");
-  const [friends, setFriends] = useState<User[]>([]);
-  const [requests, setRequests] = useState<Invite[]>([]);
-
-  useEffect(() => {
-    console.log("fetching friends");
-    startTransition(() => {
-      fetchUserFriends(user.id, token).then((data) => {
-        console.log("friends", data);
-
-        setFriends(data);
-      });
-    });
-  }, [user.id, token]);
-
-  useEffect(() => {
-    console.log("fetching requests");
-
-    startTransition(() => {
-      fetchUserChatRequests(user.id, token).then((data) => {
-        console.log("requests", data);
-        setRequests(data);
-      });
-    });
-  }, [user.id, token]);
 
   const handleTabChange = (tab: Tab) => {
-    startTransition(() => {
-      setActiveTab(tab);
-    });
+    setActiveTab(tab);
   };
 
   const sortedChats = useMemo(
@@ -75,19 +45,21 @@ export const Sidebar = () => {
     <>
       <div className="flex w-72 flex-shrink-0 overflow-hidden ">
         <div className="flex h-full w-full flex-col">
-          <SidebarHeader
-            user={user}
-            activeTab={activeTab}
-            onChangeTab={handleTabChange}
-          />
+          <SidebarHeader activeTab={activeTab} onChangeTab={handleTabChange} />
 
           <div className="flex h-full w-full overflow-y-auto overflow-x-hidden">
             {/* chats list */}
             {activeTab === "chats" && <ChatList chats={sortedChats} />}
-            <Suspense fallback={loading}>
-              {activeTab === "friends" && <FriendList friends={users} />}
-              {activeTab === "invites" && <InviteList invites={invites} />}
-            </Suspense>
+            {activeTab === "friends" && (
+              <Suspense fallback={loading}>
+                <FriendList />
+              </Suspense>
+            )}
+            {activeTab === "invites" && (
+              <Suspense fallback={loading}>
+                <InviteList />
+              </Suspense>
+            )}
           </div>
         </div>
       </div>
