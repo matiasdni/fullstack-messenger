@@ -9,6 +9,7 @@ import authenticate, { AuthRequest } from "../middlewares/auth";
 import { validateUserData } from "../middlewares/validationMiddleware";
 import { findChats } from "../services/chatService";
 import { getChatIds } from "../services/userChatService";
+import { getPendingInvites } from "../services/inviteService";
 
 const router = require("express").Router();
 
@@ -42,6 +43,29 @@ router.get(
     const chatIds = await getChatIds(req.params.id);
     const chats = await findChats(chatIds);
     res.json(chats);
+  }
+);
+
+router.get(
+  "/:id/friends",
+  authenticate,
+  async (req: AuthRequest, res: Response) => {
+    res.json({ message: "Not implemented yet" });
+  }
+);
+
+router.get(
+  "/:id/requests",
+  authenticate,
+  async (req: AuthRequest, res: Response) => {
+    console.log("Getting requests");
+    const user = req.user;
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const requests = await getPendingInvites({ userId: user.id });
+
+    res.json(requests);
   }
 );
 
