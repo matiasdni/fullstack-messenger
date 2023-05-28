@@ -1,14 +1,15 @@
 import {
   CreationOptional,
-  DataTypes,
   ForeignKey,
   InferAttributes,
   InferCreationAttributes,
   Model,
   Sequelize,
+  DataTypes,
+  NonAttribute,
 } from "sequelize";
-import { User } from "./user";
-import { Chat } from "./chat";
+import { User } from "./initModels";
+import { Chat } from "./initModels";
 
 class Invite extends Model<
   InferAttributes<Invite>,
@@ -16,16 +17,20 @@ class Invite extends Model<
 > {
   declare id: CreationOptional<string>;
   declare status: CreationOptional<string>;
-  declare sender_id: ForeignKey<User["id"]>;
-  declare chat_id: ForeignKey<Chat["id"]>;
-  declare recipient_id: ForeignKey<User["id"]>;
+  declare senderId: ForeignKey<User["id"]>;
+  declare chatId: ForeignKey<Chat["id"]>;
+  declare recipientId: ForeignKey<User["id"]>;
+
+  declare sender: NonAttribute<User>;
+  declare chat: NonAttribute<Chat>;
+  declare recipient: NonAttribute<User>;
 
   declare readonly createdAt: CreationOptional<Date>;
   declare readonly updatedAt: CreationOptional<Date>;
 }
 
-const initInvitation = (sequelize: Sequelize): typeof Invite =>
-  Invite.init(
+const initInvites = (sequelize: Sequelize): typeof Invite => {
+  const invite = Invite.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -34,8 +39,7 @@ const initInvitation = (sequelize: Sequelize): typeof Invite =>
         allowNull: false,
       },
       status: {
-        type: DataTypes.ENUM,
-        values: ["pending", "accepted", "rejected"],
+        type: DataTypes.ENUM("pending", "accepted", "rejected"),
         allowNull: false,
         defaultValue: "pending",
       },
@@ -56,5 +60,7 @@ const initInvitation = (sequelize: Sequelize): typeof Invite =>
       underscored: true,
     }
   );
+  return invite;
+};
 
-export { initInvitation, Invite };
+export { initInvites, Invite };
