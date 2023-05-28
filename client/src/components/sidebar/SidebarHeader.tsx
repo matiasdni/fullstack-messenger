@@ -1,23 +1,22 @@
 import { FC, useState } from "react";
 import { Avatar } from "../common/Avatar";
-import { User } from "../../features/users/types";
 import { Modal } from "../common/Modal";
 import { UserSearch } from "../UserSearch";
 import { GroupForm } from "../GroupForm";
 import SidebarTabs, { Tab } from "./SidebarTab";
+import { useUser } from "src/hooks/useAuth";
 
 interface SidebarHeaderProps {
-  user: User;
   activeTab: Tab;
   onChangeTab: (tab: Tab) => void;
 }
 export const SidebarHeader: FC<SidebarHeaderProps> = ({
-  user,
   activeTab,
   onChangeTab,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const user = useUser();
 
   const handleGroupModalClose = () => {
     setIsGroupModalOpen(false);
