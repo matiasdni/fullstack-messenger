@@ -16,7 +16,7 @@ class Invite extends Model<
   InferCreationAttributes<Invite>
 > {
   declare id: CreationOptional<string>;
-  declare status: CreationOptional<string>;
+  declare status: CreationOptional<"pending" | "accepted" | "rejected">;
   declare senderId: ForeignKey<User["id"]>;
   declare chatId: ForeignKey<Chat["id"]>;
   declare recipientId: ForeignKey<User["id"]>;
@@ -40,6 +40,7 @@ const initInvites = (sequelize: Sequelize): typeof Invite => {
       },
       status: {
         type: DataTypes.ENUM("pending", "accepted", "rejected"),
+        values: ["pending", "accepted", "rejected"],
         allowNull: false,
         defaultValue: "pending",
       },
