@@ -43,3 +43,17 @@ export const updateInvite = async (
   });
   return response.data;
 };
+
+export const deleteInvite = async (invite: Invite, token: string) => {
+  const response = await axios.delete(BASE_URL, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    data: invite,
+  });
+  if (response.status === 204) {
+    return invite.id;
+  } else {
+    throw new Error("Error rejecting invite");
+  }
+};
