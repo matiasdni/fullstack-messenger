@@ -14,10 +14,16 @@ const ChatItem = ({ chat }) => {
   const activeChat = useAppSelector(selectActiveChat);
   const { name, messages } = chat;
   const lastMessage = messages?.[messages?.length - 1];
-  const time = new Date(lastMessage?.createdAt).toLocaleTimeString("fi-FI", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+
+  const time = lastMessage?.createdAt
+    ? new Date(lastMessage?.createdAt).toLocaleTimeString("fi-FI", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : new Date(chat.updatedAt).toLocaleTimeString("fi-FI", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
 
   const userNameInclude = (
     <span>{`${lastMessage?.user.username}: ${lastMessage?.content}`}</span>
