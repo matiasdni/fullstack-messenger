@@ -1,4 +1,4 @@
-import { Invite } from "../models/initModels";
+import { Invite as InviteModel, User } from "../models/initModels";
 import {
   CreateInviteInput,
   InviteAttributes,
@@ -12,6 +12,7 @@ import {
   TChat,
   Chats,
 } from "../../../shared/types";
+import { Invite } from "../../../shared/types";
 
 // senderId: The id of the user who is sending the invite.
 // chatId: The id of the chat to invite the user to.
@@ -21,7 +22,7 @@ const createInvite = async ({
   chatId,
   recipientId,
 }: CreateInviteInput): Promise<InviteAttributes> => {
-  const invite = await Invite.create({
+  const invite = await InviteModel.create({
     senderId: senderId,
     chatId: chatId,
     recipientId: recipientId,
@@ -30,34 +31,54 @@ const createInvite = async ({
   return invite.toJSON() as InviteAttributes;
 };
 
-// inviteId: The id of the invite to accept.
-// userId: The id of the user who is accepting the invite.
-const acceptInvite = async ({
-  inviteId,
-  userId,
-}: AcceptInviteInput): Promise<void> => {
-  const invite = await Invite.findOne({
+// inviteId: The id of the invite to accept or reject.
+// userId: The id of the user who is accepting or rejecting the invite.
+const updateInvite = async (
+  updatedInvite: Invite,
+  user: User
+): Promise<InviteAttributes> => {
+  const invite = await InviteModel.findOne({
     where: {
-      id: inviteId,
-      recipientId: userId,
+      id: updatedInvite.id,
+      recipientId: user.id,
       status: "pending",
     },
+    include: [
+      {
+        association: "sender",
+        attributes: ["id", "username"],
+      },
+      {
+        association: "chat",
+        attributes: ["id", "name"],
+      },
+    ],
   });
 
   if (!invite) {
     throw new Error("invite not found or already accepted/rejected");
   }
 
-  await invite.update({ status: "accepted" });
+  console.log("invite", invite.toJSON(), "updatedInvite", updatedInvite);
+
+  if (
+    !(
+      updatedInvite.status === "accepted" || updatedInvite.status === "rejected"
+    )
+  ) {
+    throw new Error("invalid invite status");
+  }
+  await invite.update({ status: updatedInvite.status });
+
+  return invite.toJSON() as InviteAttributes;
 };
 
-// inviteId: The id of the invite to reject.
-// userId: The id of the user who is rejecting the invite.
 const rejectInvite = async ({
   inviteId,
   userId,
 }: RejectInviteInput): Promise<void> => {
-  const invite = await Invite.findOne({
+  // delete invite from database if it exists for now. Later implement a way to view rejected invites maybe?
+  const invite = await InviteModel.findOne({
     where: {
       id: inviteId,
       recipientId: userId,
@@ -69,14 +90,14 @@ const rejectInvite = async ({
     throw new Error("invite not found or already accepted/rejected");
   }
 
-  await invite.update({ status: "rejected" });
+  await invite.destroy();
 };
 
 // userId: The id of the user whose pending invites to get.
 const getPendingInvites = async ({
   userId,
 }: GetPendingInvitesInput): Promise<GetPendingInvitesOutput> => {
-  const invites = await Invite.findAll({
+  const invites = await InviteModel.findAll({
     where: {
       recipientId: userId,
       status: "pending",
@@ -117,4 +138,4 @@ const getPendingInvites = async ({
   return { invites: inviteAttributes, senders, chats };
 };
 
-export { createInvite, acceptInvite, rejectInvite, getPendingInvites };
+export { createInvite, updateInvite, getPendingInvites, rejectInvite };
