@@ -47,10 +47,12 @@ const invitesSlice = createSlice({
     builder.addCase(updateInviteStatus.fulfilled, (state, action) => {
       console.log(action.payload);
       const updateInvite: InviteAttributes = action.payload;
-      const invite = state.findIndex((invite) => invite.id === updateInvite.id);
-      if (invite !== -1) {
-        state[invite] = {
-          ...state[invite],
+      const inviteIndex = state.findIndex(
+        (invite) => invite.id === updateInvite.id
+      );
+      if (inviteIndex !== -1) {
+        state[inviteIndex] = {
+          ...state[inviteIndex],
           status: updateInvite.status,
         };
       }
