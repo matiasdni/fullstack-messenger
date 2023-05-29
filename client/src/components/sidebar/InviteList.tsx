@@ -10,6 +10,7 @@ import {
 } from "src/features/invites/inviteSlice";
 import { Invite } from "src/features/invites/types";
 import { addChat } from "src/features/chats/chatsSlice";
+import { InviteAttributes } from "../../../../shared/types";
 
 const timeSince = (date: Date) => {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
@@ -48,12 +49,14 @@ const InviteList: FC = () => {
   }, [dispatch, userId]);
 
   const handleAccept = async (invite: Invite): Promise<void> => {
-    const result = await dispatch(
+    const action = await dispatch(
       updateInviteStatus({ ...invite, status: "accepted" })
     );
 
-    if (result.meta.requestStatus === "fulfilled") {
-      dispatch(addChat(invite.chat));
+    if (action.meta.requestStatus === "fulfilled") {
+      const result = action.payload as InviteAttributes;
+      console.log("accepted invite", result);
+      dispatch(addChat(result.chat));
     }
   };
 
