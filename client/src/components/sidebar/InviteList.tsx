@@ -65,9 +65,13 @@ const InviteList: FC = () => {
     dispatch(rejectInvite(invite));
   };
 
+  const filteredInvites = invites.filter(
+    (invite) => invite.status === "pending"
+  );
+
   return (
     <div className="flex w-full flex-col space-y-4 divide-y p-2">
-      {invites.map((invite) => (
+      {filteredInvites.map((invite) => (
         <div
           key={invite.id}
           className="flex w-full flex-row items-center justify-center space-x-2"
@@ -87,8 +91,7 @@ const InviteList: FC = () => {
             </div>
             <div className="flex flex-col space-y-2">
               <p className="text-sm text-gray-500">
-                invited you to join {invite.chat.name}
-                <span>{invite.chat.name}</span>
+                invited you to join <span>{invite.chat.name}</span>
               </p>
             </div>
             <p className="text-xs text-gray-500">
