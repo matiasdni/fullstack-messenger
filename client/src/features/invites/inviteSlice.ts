@@ -2,22 +2,24 @@ import { fetchUserRequests } from "src/services/user";
 import { Invite } from "./types";
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "src/types";
+import { deleteInvite, updateInvite } from "src/services/invite";
+import { InviteAttributes } from "../../../../shared/types";
 
 const initialState: Invite[] = [];
 
-export const acceptInvite = createAsyncThunk(
-  "invites/acceptInvite",
-  async (inviteId: string) => {
-    // TODO: implement
-    return inviteId;
+export const updateInviteStatus = createAsyncThunk(
+  "invites/updateInviteStatus",
+  async (invite: Invite, { getState }) => {
+    const token = (getState() as RootState).auth.token;
+    return await updateInvite(invite, token);
   }
 );
 
 export const rejectInvite = createAsyncThunk(
   "invites/rejectInvite",
-  async (inviteId: string) => {
-    // TODO: implement
-    return inviteId;
+  async (invite: Invite, { getState }) => {
+    const token = (getState() as RootState).auth.token;
+    return await deleteInvite(invite, token);
   }
 );
 
@@ -40,56 +42,25 @@ const invitesSlice = createSlice({
     removeInvite: (state, action: PayloadAction<string>) => {
       return state.filter((invite) => invite.id !== action.payload);
     },
-    updateInviteStatus: (
-      state,
-      action: PayloadAction<{
-        inviteId: string;
-        status: "pending" | "accepted" | "rejected";
-      }>
-    ) => {
-      const invite = state.find(
-        (invite) => invite.id === action.payload.inviteId
-      );
-      if (invite) {
-        invite.status = action.payload.status;
-      }
-    },
   },
   extraReducers: (builder) => {
-    builder.addCase(acceptInvite.fulfilled, (state, action) => {
-      console.log(
-        "acceptInvite.fulfilled",
-        "prev state",
-        state,
-        "action",
-        action
-      );
-    });
-    builder.addCase(rejectInvite.fulfilled, (state, action) => {
-      console.log(
-        "rejectInvite.fulfilled",
-        "prev state",
-        state,
-        "action",
-        action
-      );
+    builder.addCase(updateInviteStatus.fulfilled, (state, action) => {
+      console.log(action.payload);
+      const updateInvite: InviteAttributes = action.payload;
+      const invite = state.findIndex((invite) => invite.id === updateInvite.id);
+      if (invite !== -1) {
+        state[invite] = {
+          ...state[invite],
+          status: updateInvite.status,
+        };
+      }
+      console.log("acceptInvite.fulfilled after", state);
     });
 
-    builder.addCase(acceptInvite.rejected, (state, action) => {
+    builder.addCase(updateInviteStatus.rejected, (state, action) => {
       // implement when we have error handling in place and we want to show the user a message
       console.log(
         "acceptInvite.rejected",
-        "prev state",
-        state,
-        "action",
-        action
-      );
-    });
-
-    builder.addCase(rejectInvite.rejected, (state, action) => {
-      // implement when we have error handling in place and we want to show the user a message
-      console.log(
-        "rejectInvite.rejected",
         "prev state",
         state,
         "action",
@@ -104,6 +75,7 @@ const invitesSlice = createSlice({
         createdAt: invite.createdAt,
         sender: data.senders[invite.senderId],
         chat: data.chats[invite.chatId],
+        status: invite.status,
       }));
 
       return invites;
@@ -113,10 +85,25 @@ const invitesSlice = createSlice({
       // implement when we have error handling in place and we want to show the user a message
       console.log("getInvites.rejected", "prev state", state, "action", action);
     });
+
+    builder.addCase(rejectInvite.fulfilled, (state, action) => {
+      const inviteId = action.payload;
+      return state.filter((invite) => invite.id !== inviteId);
+    });
+
+    builder.addCase(rejectInvite.rejected, (state, action) => {
+      // implement when we have error handling in place and we want to show the user a message
+      console.log(
+        "rejectInvite.rejected",
+        "prev state",
+        state,
+        "action",
+        action
+      );
+    });
   },
 });
 
-export const { addInvite, removeInvite, updateInviteStatus } =
-  invitesSlice.actions;
+export const { addInvite, removeInvite } = invitesSlice.actions;
 export const selectInvites = (state: RootState) => state.invites;
 export default invitesSlice.reducer;
