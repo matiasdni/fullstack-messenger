@@ -22,6 +22,7 @@ export const Sidebar = () => {
     setActiveTab(tab);
   };
 
+  // TODO: need to reimplement this to take into account if there is no last message and use the createdAt/updatedAt of the chat instead.
   const sortedChats = useMemo(
     () =>
       allChats
