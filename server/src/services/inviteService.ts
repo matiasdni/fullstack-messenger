@@ -91,6 +91,7 @@ const getPendingInvites = async ({
         attributes: ["id", "name"],
       },
     ],
+    order: [["createdAt", "DESC"]],
   });
 
   const inviteAttributes = invites.map((invite) => ({
