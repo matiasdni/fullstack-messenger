@@ -1,8 +1,15 @@
-import { FC, useEffect, useState } from "react";
-import { Invite } from "src/features/users/types";
+import { FC, useEffect } from "react";
 import { useAuth } from "src/hooks/useAuth";
-import { fetchUserRequests } from "src/services/user";
 import { IoMdClose, IoMdCheckmark } from "react-icons/io";
+import { useAppDispatch, useAppSelector } from "../../store";
+import {
+  updateInviteStatus,
+  getInvites,
+  selectInvites,
+  rejectInvite,
+} from "src/features/invites/inviteSlice";
+import { Invite } from "src/features/invites/types";
+import { addChat } from "src/features/chats/chatsSlice";
 
 const timeSince = (date: Date) => {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
@@ -30,33 +37,34 @@ const timeSince = (date: Date) => {
 };
 
 const InviteList: FC = () => {
-  const [requests, setRequests] = useState<Invite[]>([]);
-  const { user, token } = useAuth();
+  const dispatch = useAppDispatch();
+  const invites = useAppSelector(selectInvites);
+  const { user } = useAuth();
   const userId = user.id;
 
   useEffect(() => {
     console.log("fetching invites");
-    fetchUserRequests(userId, token).then((data) => {
-      console.log("invites: ", data);
-      // Process the data to make it easier to use in the component
-      const invites: Invite[] = data.invites.map((invite) => ({
-        id: invite.id,
-        createdAt: new Date(invite.createdAt),
-        sender: data.senders[invite.senderId],
-        chat: data.chats[invite.chatId],
-      }));
-      console.log(
-        "invites: ",
-        invites[0].createdAt,
-        typeof invites[0].createdAt
-      );
-      setRequests(invites);
-    });
-  }, [userId, token, setRequests]);
+    dispatch(getInvites(userId));
+  }, [dispatch, userId]);
+
+  const handleAccept = async (invite: Invite): Promise<void> => {
+    const result = await dispatch(
+      updateInviteStatus({ ...invite, status: "accepted" })
+    );
+
+    if (result.meta.requestStatus === "fulfilled") {
+      dispatch(addChat(invite.chat));
+    }
+  };
+
+  const handleReject = (invite: Invite): void => {
+    console.log("rejecting invite", invite);
+    dispatch(rejectInvite(invite));
+  };
 
   return (
-    <div className="flex w-full flex-col space-y-4 p-2">
-      {requests.map((invite) => (
+    <div className="flex w-full flex-col space-y-4 divide-y p-2">
+      {invites.map((invite) => (
         <div
           key={invite.id}
           className="flex w-full flex-row items-center justify-center space-x-2"
@@ -84,12 +92,17 @@ const InviteList: FC = () => {
               {timeSince(new Date(invite.createdAt))} ago
             </p>
           </div>
-          <div className="flex flex-col items-center justify-center space-y-1 p-1">
+          <div className="space-y-1">
             <IoMdCheckmark
-              className="fill-emerald-600 hover:fill-green-800"
+              className="fill-emerald-500 hover:fill-green-800"
               size={24}
+              onClick={() => handleAccept(invite)}
             />
-            <IoMdClose className="fill-rose-600 hover:fill-red-800" size={24} />
+            <IoMdClose
+              className=" fill-rose-500 hover:fill-rose-900"
+              size={24}
+              onClick={() => handleReject(invite)}
+            />
           </div>
         </div>
       ))}
