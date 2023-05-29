@@ -1,16 +1,16 @@
 export interface UserAttributes {
   id: string;
   username: string;
-  password: string;
-  createdAt: Date;
-  updatedAt: Date;
+  password?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface Chat {
   id: string;
   name: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export type Sender = Pick<UserAttributes, "id" | "username">;
@@ -18,7 +18,6 @@ export type TChat = Pick<Chat, "id" | "name">;
 export type Senders = Record<string, Sender>;
 export type Chats = Record<string, TChat>;
 export type Status = "pending" | "accepted" | "rejected";
-
 export interface InviteAttributes {
   id: string;
   status: Status;
@@ -55,4 +54,20 @@ export interface GetPendingInvitesOutput {
   invites: InviteAttributes[];
   senders: Senders;
   chats: Chats;
+}
+
+export interface User {
+  id: string;
+  username: string;
+}
+
+export interface Invite {
+  id: string;
+  sender: User;
+  chat: {
+    id: string;
+    name: string;
+  };
+  status?: Status;
+  createdAt: Date;
 }
