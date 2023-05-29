@@ -28,7 +28,7 @@ router.get("/", async (req: Request, res: Response) => {
   res.status(200).json(users);
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", authenticate, async (req: AuthRequest, res: Response) => {
   const user = await getUserById(req.params.id);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
@@ -40,7 +40,8 @@ router.get(
   "/:id/chats",
   authenticate,
   async (req: AuthRequest, res: Response) => {
-    const chatIds = await getChatIds(req.params.id);
+    const user = req.user;
+    const chatIds = await getChatIds(user.id);
     const chats = await findChats(chatIds);
     res.json(chats);
   }
