@@ -40,7 +40,7 @@ export const createChat = async (req: AuthenticatedRequest, res: Response) => {
     const otherUser = await User.findByPk(userIds[0], { transaction });
 
     if (!user || !otherUser) {
-      transaction.rollback();
+      await transaction.rollback();
       return res.status(400).json({ error: "Invalid user IDs" });
     }
 
@@ -52,6 +52,7 @@ export const createChat = async (req: AuthenticatedRequest, res: Response) => {
 
     console.log("chat users added", chat);
 
+    //TODO: fix this
     await chat.reload({
       include: [
         {
