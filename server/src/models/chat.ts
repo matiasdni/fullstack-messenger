@@ -1,28 +1,23 @@
 import {
   CreationOptional,
   DataTypes,
+  HasManyAddAssociationMixin,
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
-  HasManyAddAssociationMixin,
   HasManyRemoveAssociationMixin,
   Model,
-  NonAttribute,
   Sequelize,
+  Transaction,
 } from "sequelize";
 import { User } from "./user";
 import { Message } from "./message";
 import { Invite } from "./Invite";
-import { Transaction } from "sequelize";
 
 class Chat extends Model {
   declare id: string;
   declare name: string;
   declare description: CreationOptional<string>;
   declare chat_type: "group" | "private";
-
-  declare users: NonAttribute<User>[];
-  declare messages: NonAttribute<Message>[];
-  declare invites: NonAttribute<Invite>[];
 
   declare getUsers: HasManyGetAssociationsMixin<User>;
   declare getMessages: HasManyGetAssociationsMixin<Message>;

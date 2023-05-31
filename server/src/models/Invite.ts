@@ -1,15 +1,14 @@
 import {
   CreationOptional,
+  DataTypes,
   ForeignKey,
   InferAttributes,
   InferCreationAttributes,
   Model,
-  Sequelize,
-  DataTypes,
   NonAttribute,
+  Sequelize,
 } from "sequelize";
-import { User } from "./initModels";
-import { Chat } from "./initModels";
+import { Chat, User } from "./initModels";
 
 class Invite extends Model<
   InferAttributes<Invite>,
@@ -30,7 +29,7 @@ class Invite extends Model<
 }
 
 const initInvites = (sequelize: Sequelize): typeof Invite => {
-  const invite = Invite.init(
+  return Invite.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -61,7 +60,6 @@ const initInvites = (sequelize: Sequelize): typeof Invite => {
       underscored: true,
     }
   );
-  return invite;
 };
 
 export { initInvites, Invite };

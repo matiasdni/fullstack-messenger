@@ -6,6 +6,7 @@ import { initMessage, Message } from "./message";
 import { initUserChat, UserChat } from "./userChat";
 import { config } from "../config";
 import { initInvites, Invite } from "./Invite";
+import { initUserFriends, UserFriends } from "./UserFriends";
 
 const db: any = config.database;
 
@@ -22,6 +23,18 @@ const setupAssociations = (): void => {
     through: UserChat,
     foreignKey: "user_id",
     as: "chats",
+  });
+
+  User.belongsToMany(User, {
+    as: "friends",
+    foreignKey: "userId",
+    through: UserFriends,
+  });
+
+  User.belongsToMany(User, {
+    as: "userFriends",
+    foreignKey: "friendId",
+    through: UserFriends,
   });
 
   Message.belongsTo(Chat, { foreignKey: "chat_id" });
@@ -83,6 +96,7 @@ const initModels = async (): Promise<void> => {
     initMessage(sequelize);
     initUserChat(sequelize);
     initInvites(sequelize);
+    initUserFriends(sequelize);
 
     setupAssociations();
   } catch (error) {

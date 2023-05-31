@@ -1,9 +1,8 @@
 import {
+  CreationOptional,
   DataTypes,
   HasManyGetAssociationsMixin,
   Model,
-  NonAttribute,
-  CreationOptional,
   Sequelize,
 } from "sequelize";
 import { Message } from "./message";
@@ -14,9 +13,6 @@ class User extends Model {
   declare id: CreationOptional<string>;
   declare username: string;
   declare password: string;
-
-  declare chats: NonAttribute<User>[] | User[];
-  declare messages: NonAttribute<Message>[] | Message[];
   declare getMessages: HasManyGetAssociationsMixin<Message>;
   declare getChats: HasManyGetAssociationsMixin<Chat>;
 

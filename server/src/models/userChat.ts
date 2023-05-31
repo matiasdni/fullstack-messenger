@@ -1,6 +1,4 @@
 import { DataTypes, ForeignKey, Model, Sequelize } from "sequelize";
-import { User } from "./user";
-import { Chat } from "./chat";
 
 class UserChat extends Model {
   declare user_id: ForeignKey<string>;

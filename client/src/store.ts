@@ -13,15 +13,15 @@ const store = configureStore({
     users: usersReducer,
     invites: inviteReducer,
   },
-  preloadedState: {
-    auth: {
-      token: localStorage.getItem("token"),
-      user: {
-        id: localStorage.getItem("id"),
-        username: localStorage.getItem("username"),
-      },
-    },
-  },
+  // preloadedState: {
+  //   auth: {
+  //     token: localStorage.getItem("token"),
+  //     user: {
+  //       id: localStorage.getItem("id"),
+  //       username: localStorage.getItem("username"),
+  //     },
+  //   },
+  // },
 });
 
 export type AppDispatch = typeof store.dispatch;
