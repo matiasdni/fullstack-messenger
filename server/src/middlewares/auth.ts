@@ -1,6 +1,6 @@
 import { getUserByToken } from "../services/userService";
 import { NextFunction, Request, Response } from "express";
-import { User } from "../models/user";
+import { User } from "../models/initModels";
 import { mySocket } from "../listeners/types";
 
 export interface AuthRequest extends Request {
