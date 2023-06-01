@@ -52,6 +52,13 @@ const friendService = {
 
     return formattedFriendRequests;
   },
+  sendFriendRequest: async (userId: string, friendId: string) => {
+    const friendRequest = await UserFriends.create({
+      userId,
+      friendId,
+    });
+    return friendRequest;
+  },
 };
 
 export default friendService;
