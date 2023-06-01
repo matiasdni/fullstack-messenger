@@ -71,7 +71,7 @@ const invitesSlice = createSlice({
     });
 
     builder.addCase(getInvites.fulfilled, (state, action) => {
-      const data = action.payload;
+      const data = action.payload.invites;
       const invites: Invite[] = data.invites.map((invite) => ({
         id: invite.id,
         createdAt: invite.createdAt,
