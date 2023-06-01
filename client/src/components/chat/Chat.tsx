@@ -3,7 +3,7 @@ import { useAppSelector } from "../../store";
 import { selectActiveChat } from "../../features/chats/chatsSlice";
 import { Chat as ChatType } from "../../features/chats/types";
 import { ChatHeader } from "./ChatHeader";
-import { MessageList } from "../MessageList";
+import { MessageList } from "./MessageList";
 import { ChatInputForm } from "./ChatInputForm";
 
 export const Chat = () => {
