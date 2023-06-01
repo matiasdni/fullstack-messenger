@@ -3,6 +3,7 @@ import { createUser } from "./src/services/userService";
 import { addUserToChat, createChat } from "./src/services/chatService";
 import { createMessage } from "./src/services/messageService";
 import { Chat, initModels, sequelize, User } from "./src/models/initModels";
+import friendService from "./src/services/friendService";
 
 // sample data with different real names and passwords
 const sampleUsers = [
@@ -33,6 +34,10 @@ async function main() {
     // Create sample users
     const user1 = await createUser("test", "test");
     const user2 = await createUser("test2", "test");
+
+    // add friends
+    await friendService.sendFriendRequest(user1.id, user2.id);
+    await friendService.sendFriendRequest(user2.id, user1.id);
 
     const users = await User.bulkCreate(sampleUsers, {
       returning: true,
