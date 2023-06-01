@@ -25,17 +25,23 @@ const setupAssociations = (): void => {
     as: "chats",
   });
 
-  User.belongsToMany(User, {
-    as: "friends",
-    foreignKey: "userId",
-    through: UserFriends,
-  });
+  // User.belongsToMany(User, {
+  //   as: "friends",
+  //   foreignKey: "userId",
+  //   through: UserFriends,
+  // });
 
-  User.belongsToMany(User, {
-    as: "userFriends",
-    foreignKey: "friendId",
-    through: UserFriends,
-  });
+  // User.belongsToMany(User, {
+  //   foreignKey: "friendId",
+  //   through: UserFriends,
+  //   as: "user",
+  // });
+
+  UserFriends.belongsTo(User, { foreignKey: "userId", as: "user" });
+  User.hasMany(UserFriends, { foreignKey: "userId", as: "userFriends" });
+
+  UserFriends.belongsTo(User, { foreignKey: "friendId", as: "friend" });
+  User.hasMany(UserFriends, { foreignKey: "friendId", as: "friends" });
 
   Message.belongsTo(Chat, { foreignKey: "chat_id" });
   Chat.hasMany(Message, { foreignKey: "chat_id", as: "messages" });
