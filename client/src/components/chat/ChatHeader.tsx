@@ -1,5 +1,5 @@
-import { Avatar } from "./common/Avatar";
-import { Chat as ChatType } from "../features/chats/types";
+import { Avatar } from "../common/Avatar";
+import { Chat as ChatType } from "../../features/chats/types";
 import { FC } from "react";
 
 export interface ChatHeaderProps {
