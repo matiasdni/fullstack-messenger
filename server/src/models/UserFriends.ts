@@ -1,11 +1,17 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, NonAttribute, Sequelize } from "sequelize";
+import { User } from "./initModels";
 
 class UserFriends extends Model {
   declare userId: string;
   declare friendId: string;
+  declare status: "pending" | "accepted" | "rejected";
+  declare user: NonAttribute<User>;
+
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
-const initUserFriends = (sequelize: any): void => {
+const initUserFriends = (sequelize: Sequelize): void => {
   UserFriends.init(
     {
       userId: {
@@ -18,12 +24,16 @@ const initUserFriends = (sequelize: any): void => {
         primaryKey: true,
         allowNull: false,
       },
+      status: {
+        type: DataTypes.ENUM("pending", "accepted", "rejected"),
+        allowNull: false,
+        defaultValue: "pending",
+      },
     },
     {
       sequelize,
       tableName: "user_friends",
       underscored: true,
-      timestamps: false,
     }
   );
 };
