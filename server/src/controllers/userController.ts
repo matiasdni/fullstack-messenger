@@ -10,6 +10,7 @@ import { validateUserData } from "../middlewares/validationMiddleware";
 import { findChats } from "../services/chatService";
 import { getChatIds } from "../services/userChatService";
 import { getPendingInvites } from "../services/inviteService";
+import friendService from "../services/friendService";
 
 const router = require("express").Router();
 
@@ -51,7 +52,12 @@ router.get(
   "/:id/friends",
   authenticate,
   async (req: AuthRequest, res: Response) => {
-    res.json({ message: "Not implemented yet" });
+    const user = req.user;
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const friends = await friendService.getFriends(user.id);
+    res.json(friends);
   }
 );
 
@@ -66,7 +72,15 @@ router.get(
     }
     const requests = await getPendingInvites({ userId: user.id });
 
-    res.json(requests);
+    const friendRequests = await friendService.getFriendRequests(user.id);
+
+    const returnValues = {
+      invites: requests,
+      friendRequests,
+    };
+    console.log("return values", returnValues);
+
+    res.json(returnValues);
   }
 );
 
