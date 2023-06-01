@@ -5,9 +5,17 @@ import { Senders, Chats, InviteAttributes } from "../../../shared/types";
 const BASE_URL = "/api/users";
 
 interface UserRequests {
-  invites: InviteAttributes[];
-  senders: Senders;
-  chats: Chats;
+  invites: {
+    invites: InviteAttributes[];
+    senders: Senders;
+    chats: Chats;
+  };
+  friendRequests: {
+    userId: string;
+    username: string;
+    status: string;
+    createdAt: string;
+  }[];
 }
 
 export const createUser = async (user: {
@@ -60,6 +68,7 @@ export async function fetchUserFriends(id: string, token: string) {
       Authorization: `Bearer ${token}`,
     },
   });
+  console.log("friends", response.data);
   return response.data;
 }
 
