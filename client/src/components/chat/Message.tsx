@@ -1,4 +1,4 @@
-import { useAppSelector } from "../store";
+import { useAppSelector } from "../../store";
 import React from "react";
 
 const getTime = (date): string => {
