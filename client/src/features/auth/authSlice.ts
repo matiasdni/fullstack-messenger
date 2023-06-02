@@ -30,6 +30,75 @@ const authSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
     },
+    setUserChatInvites(state, action) {
+      state.user = {
+        ...state.user,
+        chatInvites: action.payload,
+      };
+    },
+    addFriendRequest(state, action) {
+      state.user = {
+        ...state.user,
+        friendRequests: [...state.user.friendRequests, action.payload],
+      };
+    },
+    updateFriendRequest(state, action) {
+      const friendRequests = state.user.friendRequests.map((friendRequest) => {
+        if (friendRequest.id === action.payload.friendId) {
+          return {
+            ...friendRequest,
+            status: action.payload.status,
+          };
+        }
+        return friendRequest;
+      });
+      state.user = {
+        ...state.user,
+        friendRequests,
+      };
+    },
+    removeFriendRequest(state, action) {
+      const friendRequests = state.user.friendRequests.filter(
+        (friendRequest) => friendRequest.id !== action.payload
+      );
+      state.user = {
+        ...state.user,
+        friendRequests,
+      };
+    },
+    removeChatInvite(state: AuthState, action) {
+      const inviteToRemove = state.user.chatInvites.invites.find(
+        (invite) => invite.id === action.payload
+      );
+
+      state.user = {
+        ...state.user,
+        chatInvites: {
+          ...state.user.chatInvites,
+          invites: state.user.chatInvites.invites.filter(
+            (invite) => invite.id !== action.payload
+          ),
+          chats: Object.keys(state.user.chatInvites.chats).reduce(
+            (acc, key) => {
+              if (key !== inviteToRemove.chatId) {
+                acc[key] = state.user.chatInvites.chats[key];
+              }
+              return acc;
+            },
+            {}
+          ),
+          senders: Object.keys(state.user?.chatInvites.senders).reduce(
+            (acc, key) => {
+              if (key !== inviteToRemove?.senderId) {
+                acc[key] = state.user?.chatInvites.senders[key];
+              }
+              return acc;
+            },
+            {}
+          ),
+        },
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
@@ -56,6 +125,13 @@ const authSlice = createSlice({
   },
 });
 
-export const { logOut, setAuth } = authSlice.actions;
+export const {
+  logOut,
+  setAuth,
+  addFriendRequest,
+  removeFriendRequest,
+  updateFriendRequest,
+  setUserChatInvites,
+} = authSlice.actions;
 
 export default authSlice.reducer;
