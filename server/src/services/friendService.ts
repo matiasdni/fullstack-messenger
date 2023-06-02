@@ -6,8 +6,14 @@ const friendService = {
   getFriends: async (userId: string) => {
     const friends = await UserFriends.findAll({
       where: {
-        [Op.or]: [{ userId }, { friendId: userId }],
-        status: "accepted",
+        [Op.and]: [
+          {
+            [Op.or]: [{ userId }, { friendId: userId }],
+          },
+          {
+            status: "accepted",
+          },
+        ],
       },
     });
 
@@ -128,7 +134,7 @@ const friendService = {
         },
       });
       if (reverseFriendRequest) {
-        reverseFriendRequest.status = "accepted";
+        reverseFriendRequest.status = "rejected";
         await reverseFriendRequest.save({ transaction: t });
       }
 
