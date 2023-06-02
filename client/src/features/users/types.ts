@@ -6,6 +6,7 @@ export interface friendRequest {
   username: string;
   status: "pending" | "accepted" | "rejected";
   createdAt: Date;
+  type?: string;
 }
 
 export interface User {

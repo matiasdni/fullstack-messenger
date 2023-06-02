@@ -11,4 +11,5 @@ export interface Invite {
   status?: Status;
   createdAt: Date;
   updatedAt?: Date;
+  type?: string;
 }
