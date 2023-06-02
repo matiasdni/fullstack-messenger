@@ -62,6 +62,42 @@ router.get(
 );
 
 router.get(
+  "/:id/friends/:friendId",
+  authenticate,
+  async (req: AuthRequest, res: Response) => {
+    const user = req.user;
+    if (!user || user.id !== req.params.friendId) {
+      console.log("Not authorized");
+      return res.status(403).json({ error: "Not Authorized" });
+    }
+    const friend = await friendService.getFriend(
+      req.params.id,
+      req.params.friendId
+    );
+    res.json(friend);
+  }
+);
+
+router.put(
+  "/:id/friends/:friendId/accept",
+  authenticate,
+  async (req: AuthRequest, res: Response) => {
+    const user = req.user;
+    if (!user || user.id !== req.params.friendId) {
+      console.log("Not authorized");
+      return res.status(403).json({ error: "Not Authorized" });
+    }
+    const friend = await friendService.acceptFriendRequest(
+      req.params.friendId,
+      req.params.id
+    );
+    console.log("friend accepted", friend.toJSON());
+
+    res.json(friend.toJSON());
+  }
+);
+
+router.get(
   "/:id/requests",
   authenticate,
   async (req: AuthRequest, res: Response) => {

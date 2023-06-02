@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 import { UserFriends } from "../models/UserFriends";
-import { User } from "../models/initModels";
+import { User, sequelize } from "../models/initModels";
 
 const friendService = {
   getFriends: async (userId: string) => {
@@ -17,6 +17,7 @@ const friendService = {
       }
       return friend.userId;
     });
+
     const friendsList = await User.findAll({
       where: {
         id: {
@@ -43,6 +44,7 @@ const friendService = {
 
     const formattedFriendRequests = friendRequests.map((friendRequest) => {
       return {
+        id: friendRequest.friendId,
         userId: friendRequest.userId,
         username: friendRequest.user.username,
         status: friendRequest.status,
@@ -58,6 +60,118 @@ const friendService = {
       friendId,
     });
     return friendRequest;
+  },
+  getFriend: async (userId: string, friendId: string) => {
+    const friend = await UserFriends.findOne({
+      where: {
+        [Op.or]: [
+          { userId, friendId },
+          { userId: friendId, friendId: userId },
+        ],
+      },
+    });
+    return friend;
+  },
+  acceptFriendRequest: async (userId: string, friendId: string) => {
+    const t = await sequelize.transaction();
+
+    try {
+      const friendRequest = await UserFriends.findOne({
+        where: {
+          userId: friendId,
+          friendId: userId,
+        },
+      });
+      if (!friendRequest) {
+        throw new Error("Friend request not found");
+      }
+      friendRequest.status = "accepted";
+      await friendRequest.save({ transaction: t });
+
+      const reverseFriendRequest = await UserFriends.findOne({
+        where: {
+          userId,
+          friendId,
+        },
+      });
+      if (reverseFriendRequest) {
+        reverseFriendRequest.status = "accepted";
+        await reverseFriendRequest.save({ transaction: t });
+      }
+
+      await t.commit();
+      return friendRequest;
+    } catch (error) {
+      await t.rollback();
+      throw error;
+    }
+  },
+  rejectFriendRequest: async (userId: string, friendId: string) => {
+    const t = await sequelize.transaction();
+    try {
+      const friendRequest = await UserFriends.findOne({
+        where: {
+          userId: friendId,
+          friendId: userId,
+        },
+      });
+      if (!friendRequest) {
+        throw new Error("Friend request not found");
+      }
+      friendRequest.status = "rejected";
+      await friendRequest.save({ transaction: t });
+
+      const reverseFriendRequest = await UserFriends.findOne({
+        where: {
+          userId,
+          friendId,
+        },
+      });
+      if (reverseFriendRequest) {
+        reverseFriendRequest.status = "accepted";
+        await reverseFriendRequest.save({ transaction: t });
+      }
+
+      await t.commit();
+      return friendRequest;
+    } catch (error) {
+      await t.rollback();
+      throw error;
+    }
+  },
+
+  removeFriend: async (userId: string, friendId: string) => {
+    const t = await sequelize.transaction();
+    try {
+      const friendRequest = await UserFriends.findOne({
+        where: {
+          userId,
+          friendId,
+          status: "accepted",
+        },
+      });
+      if (!friendRequest) {
+        throw new Error("Friend request not found");
+      }
+      await friendRequest.destroy({ transaction: t });
+
+      const reverseFriendRequest = await UserFriends.findOne({
+        where: {
+          userId: friendId,
+          friendId: userId,
+          status: "accepted",
+        },
+      });
+      if (reverseFriendRequest) {
+        await reverseFriendRequest.destroy({ transaction: t });
+      }
+
+      await t.commit();
+      return friendRequest;
+    } catch (error) {
+      await t.rollback();
+      throw error;
+    }
   },
 };
 
