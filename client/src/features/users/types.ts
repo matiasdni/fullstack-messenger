@@ -4,7 +4,7 @@ export interface User {
   id: string;
   username: string;
   friends?: User[];
-  invites?: Invite[];
+  chatInvites?: Invite[];
   friendRequests?: User[];
 }
 
