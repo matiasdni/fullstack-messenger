@@ -91,9 +91,47 @@ router.put(
       req.params.friendId,
       req.params.id
     );
-    console.log("friend accepted", friend.toJSON());
+    console.log("friend request accepted", friend.toJSON());
 
     res.json(friend.toJSON());
+  }
+);
+
+router.put(
+  "/:id/friends/:friendId/reject",
+  authenticate,
+  async (req: AuthRequest, res: Response) => {
+    const user = req.user;
+    if (!user || user.id !== req.params.friendId) {
+      console.log("Not authorized");
+      return res.status(403).json({ error: "Not Authorized" });
+    }
+    const friend = await friendService.rejectFriendRequest(
+      req.params.friendId,
+      req.params.id
+    );
+    console.log("friend request rejected", friend.toJSON());
+
+    res.json(friend.toJSON());
+  }
+);
+
+router.delete(
+  "/:id/friends/:friendId",
+  authenticate,
+  async (req: AuthRequest, res: Response) => {
+    const user = req.user;
+    if (!user || user.id !== req.params.friendId) {
+      console.log("Not authorized");
+      return res.status(403).json({ error: "Not Authorized" });
+    }
+    const friend = await friendService.removeFriend(
+      req.params.friendId,
+      req.params.id
+    );
+    console.log("friend removed", friend.toJSON());
+
+    res.status(204).json();
   }
 );
 
