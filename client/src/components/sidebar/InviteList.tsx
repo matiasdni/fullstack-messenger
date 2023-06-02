@@ -101,7 +101,8 @@ const InviteList: FC = () => {
     if (isFriendRequest) {
       console.log("accepting friend request", invite);
       const { userId, id: friendId } = invite as friendRequest;
-      await acceptFriendRequest(userId, friendId, token);
+      const response = await acceptFriendRequest(userId, friendId, token);
+      console.log("response", response);
     } else {
       console.log("accepting invite", invite);
       const action = await dispatch(
