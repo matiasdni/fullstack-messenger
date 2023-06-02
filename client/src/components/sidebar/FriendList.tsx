@@ -1,26 +1,13 @@
-import { useEffect, useState } from "react";
-import { User } from "src/features/users/types";
-import { useAuth } from "src/hooks/useAuth";
-import { fetchUserFriends } from "src/services/user";
+import { useUser } from "src/hooks/useAuth";
 
 const FriendList = () => {
-  const [friends, setFriends] = useState<User[]>([]);
-  const {
-    user: { id: userId },
-    token,
-  } = useAuth();
+  const user = useUser();
 
-  useEffect(() => {
-    console.log("fetching friends");
-    fetchUserFriends(userId, token).then((data) => {
-      console.log("friends: ", data);
-      setFriends(data);
-    });
-  }, [userId, token]);
-
-  return (
+  return user.friends.length === 0 ? (
+    <div className="flex h-full w-full justify-center">No friends yet</div>
+  ) : (
     <div className="relative flex w-full flex-col space-y-6 p-2">
-      {friends.map((friend) => (
+      {user.friends.map((friend) => (
         <div key={friend.id} className="relative flex items-center space-x-2">
           <img
             src={`https://avatars.dicebear.com/api/identicon/${friend.username}.svg`}
