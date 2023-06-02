@@ -3,17 +3,18 @@ import { AuthState } from "src/features/auth/types";
 import { User } from "src/features/users/types";
 import { RootState } from "src/types";
 
-export const useAuth = (): AuthState => {
-  const auth = useSelector((state: RootState) => state.auth);
-  return auth;
+const useAuth = (): AuthState => {
+  return useSelector((state: RootState) => state.auth);
 };
 
-export const useToken = (): string => {
+const useToken = (): string => {
   const { token } = useAuth();
   return token;
 };
 
-export const useUser = (): User => {
+const useUser = (): User => {
   const { user } = useAuth();
-  return user;
+  return user as User;
 };
+
+export { useAuth, useToken, useUser };
