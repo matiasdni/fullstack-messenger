@@ -18,22 +18,11 @@ interface UserRequests {
   }[];
 }
 
-export const createUser = async (user: {
-  username: string;
-  password: string;
-}) => {
+const createUser = async (user: { username: string; password: string }) => {
   return await axios.post(`${BASE_URL}`, user);
 };
 
-export const getAllUsers = async (): Promise<User[]> => {
-  return await axios.get(`${BASE_URL}`);
-};
-
-export const getUserById = async (id: string): Promise<User> => {
-  return await axios.get(`${BASE_URL}/${id}`);
-};
-
-export const searchUsersByName = async (
+const searchUsersByName = async (
   name: string,
   token: string
 ): Promise<User[]> => {
@@ -50,7 +39,7 @@ export const searchUsersByName = async (
   return response.data;
 };
 
-export async function fetchUserChats(id: string, token: string) {
+const fetchUserChats = async (id: string, token: string) => {
   const response = await axios.get(`${BASE_URL}/${id}/chats`, {
     withCredentials: true,
     headers: {
@@ -59,24 +48,13 @@ export async function fetchUserChats(id: string, token: string) {
   });
   console.log(response.data);
   return response.data;
-}
-
-export async function fetchUserFriends(id: string, token: string) {
-  const response = await axios.get(`${BASE_URL}/${id}/friends`, {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  console.log("friends", response.data);
-  return response.data;
-}
+};
 
 // returns all the user's friend requests and chat invites
-export async function fetchUserRequests(
+const fetchUserRequests = async (
   id: string,
   token: string
-): Promise<UserRequests> {
+): Promise<UserRequests> => {
   const response = await axios.get(`${BASE_URL}/${id}/requests`, {
     withCredentials: true,
     headers: {
@@ -84,25 +62,49 @@ export async function fetchUserRequests(
     },
   });
   return response.data;
-}
+};
 
-// returns all the user's friend requests
-export async function fetchUserFriendRequests(id: string, token: string) {
-  const response = await axios.get(`${BASE_URL}/${id}/friends/requests`, {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+const acceptFriendRequest = async (
+  userId: string,
+  friendId: string,
+  token: string
+) => {
+  const response = await axios.put(
+    `${BASE_URL}/${userId}/friends/${friendId}/accept`,
+    {},
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return response.data;
-}
+};
 
-export async function fetchUserChatRequests(id: string, token: string) {
-  const response = await axios.get(`${BASE_URL}/${id}/requests`, {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+const rejectFriendRequest = async (
+  userId: string,
+  friendId: string,
+  token: string
+) => {
+  const response = await axios.put(
+    `${BASE_URL}/${userId}/friends/${friendId}/reject`,
+    {},
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return response.data;
-}
+};
+
+export {
+  createUser,
+  searchUsersByName,
+  fetchUserChats,
+  fetchUserRequests,
+  acceptFriendRequest,
+  rejectFriendRequest,
+};
