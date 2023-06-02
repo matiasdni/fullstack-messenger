@@ -14,12 +14,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/lodash": "^4.14.195",
+    "@types/socket.io": "^3.0.2",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
+    "lodash": "^4.17.21",
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.31.0",
@@ -35,7 +38,6 @@
     "@types/node": "^18.15.11",
     "@types/pg": "^8.6.6",
     "@types/sequelize": "^4.28.14",
-    "@types/socket.io": "^3.0.2",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
