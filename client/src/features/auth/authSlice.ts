@@ -37,16 +37,17 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       localStorage.setItem("token", action.payload.token);
       localStorage.setItem("username", action.payload.user.username);
+      localStorage.setItem("userId", action.payload.user.id);
     });
 
-    builder.addCase(login.rejected, (state, action) => {
+    builder.addCase(login.rejected, (state, _action) => {
       state.user = null;
       state.token = null;
 
       removeTokenFromStorage();
     });
 
-    builder.addCase(login.pending, (state, action) => {
+    builder.addCase(login.pending, (state, _action) => {
       state.user = null;
       state.token = null;
 
