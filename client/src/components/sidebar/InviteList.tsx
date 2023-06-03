@@ -12,6 +12,7 @@ import { InviteAttributes } from "../../../../shared/types";
 import { friendRequest } from "src/features/users/types";
 import timeSince from "src/utils/timeSince";
 import { acceptFriendRequest, rejectFriendRequest } from "src/services/user";
+import { updateFriendRequest } from "src/features/auth/authSlice";
 
 type PendingInvite = Invite | friendRequest;
 
@@ -101,8 +102,8 @@ const InviteList: FC = () => {
     if (isFriendRequest) {
       console.log("accepting friend request", invite);
       const { userId, id: friendId } = invite as friendRequest;
-      const response = await acceptFriendRequest(userId, friendId, token);
-      console.log("response", response);
+      const data = await acceptFriendRequest(userId, friendId, token);
+      dispatch(updateFriendRequest(data));
     } else {
       console.log("accepting invite", invite);
       const action = await dispatch(
@@ -150,10 +151,12 @@ const InviteList: FC = () => {
 
   const friendRequestsAndChatInvites = useMemo(
     () => [
-      ...currentUser.friendRequests.map((friendRequest) => ({
-        ...friendRequest,
-        type: "friendRequest",
-      })),
+      ...currentUser.friendRequests
+        .map((friendRequest) => ({
+          ...friendRequest,
+          type: "friendRequest",
+        }))
+        .filter((friendRequest) => friendRequest.status === "pending"),
       ...pendingInvites,
     ],
     [currentUser.friendRequests, pendingInvites]
