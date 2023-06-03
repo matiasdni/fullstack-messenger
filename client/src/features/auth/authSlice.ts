@@ -42,6 +42,12 @@ const authSlice = createSlice({
         friendRequests: [...state.user.friendRequests, action.payload],
       };
     },
+    addSentFriendRequest(state, action) {
+      state.user = {
+        ...state.user,
+        sentFriendRequests: [...state.user.sentFriendRequests, action.payload],
+      };
+    },
     updateFriendRequest(state, action) {
       const friendRequests = state.user.friendRequests.map((friendRequest) => {
         if (friendRequest.id === action.payload.friendId) {
@@ -132,6 +138,7 @@ export const {
   removeFriendRequest,
   updateFriendRequest,
   setUserChatInvites,
+  addSentFriendRequest,
 } = authSlice.actions;
 
 export default authSlice.reducer;
