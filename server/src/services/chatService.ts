@@ -6,42 +6,54 @@ import { ChatData } from "../controllers/chatController";
 import { Invite } from "../models/Invite";
 import { Op } from "sequelize";
 import { Transaction } from "sequelize";
+import _ from "lodash";
 
 export async function addUserToChat(user: User, chat: Chat) {
   await chat.addUser(user);
 }
 
 export async function findChats(ids: UserChat[]) {
-  return await Chat.findAll({
+  const chats = await Chat.findAll({
     where: {
       id: ids.map((chat: any) => chat.chat_id),
     },
     include: [
       {
-        model: User,
+        association: "users",
         attributes: ["id", "username"],
         as: "users",
-        through: {
-          attributes: [],
-        },
+        through: { attributes: [] },
       },
       {
-        model: Message,
-        as: "messages",
+        association: "messages",
         attributes: ["id", "content", "createdAt", "updatedAt"],
         order: [["createdAt", "ASC"]],
         separate: true,
         include: [
           {
-            model: User,
+            association: "user",
             attributes: ["id", "username"],
             as: "user",
           },
         ],
       },
     ],
-    order: [["updatedAt", "DESC"]],
   });
+
+  const sortedChats = _.orderBy(
+    chats,
+    [
+      (chat) => {
+        if (chat.messages.length === 0) {
+          return chat.createdAt;
+        }
+        return chat.messages[chat.messages.length - 1].createdAt;
+      },
+    ],
+    ["desc"]
+  );
+
+  return sortedChats;
 }
 
 export async function createChat(
