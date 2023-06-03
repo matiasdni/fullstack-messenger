@@ -1,65 +1,52 @@
-import { useAppDispatch } from "../store";
-import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../store";
+import { useEffect, useRef } from "react";
 import { socket } from "../socket";
 import { addMessage, getChatById } from "../features/chats/chatsSlice";
 
-export const useSocketEvents = (chats, auth) => {
+const useSocketEvents = () => {
   const dispatch = useAppDispatch();
+  const { token, chats } = useAppSelector((state) => ({
+    token: state.auth.token,
+    chats: state.chats.chats,
+  }));
+  const chatsRef = useRef(chats);
+
+  useEffect(() => {
+    chatsRef.current = chats;
+  }, [chats]);
 
   useEffect(() => {
     const onConnect = () => {
-      console.log("socketio connected");
+      console.log("socket connected");
+      chatsRef.current.forEach((chat) => socket.emit("join-room", chat.id));
     };
+    const onDisconnect = () => console.log("socket disconnected");
 
-    const onDisconnect = () => {
-      console.log("socketio disconnected");
-    };
-
-    const log = (event, ...args) => {
-      console.log(`got ${event}`, args);
-    };
-
-    socket.onAny(log);
-
-    const messageEvent = `chat:message`;
-    const setUpChatListeners = (chatId) => {
-      socket.emit("join-room", chatId);
-    };
-
-    socket.on("join-room", (chatId) => {
-      console.log("join-room", chatId);
-      socket.emit("join-room", chatId);
-    });
-
-    socket.on("invite", (chat) => {
-      console.log("invite", chat);
-    });
-
-    socket.on(messageEvent, async (data) => {
-      console.log("message received", data);
-      const chat = chats.find((chat) => chat.id === data.chatId);
+    const onMessage = async (data) => {
+      console.log("message received");
+      const chat = chatsRef.current.find((chat) => chat.id === data.chatId);
       if (!chat) {
         await dispatch(getChatById(data.chatId));
       } else {
         dispatch(addMessage(data));
       }
-    });
+    };
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-    socket.auth = { token: auth.token };
-    socket.connect();
+    socket.on("message", onMessage);
 
-    chats.forEach((chat) => setUpChatListeners(chat.id));
-    console.log(auth);
+    socket.auth = { token };
+    socket.connect();
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      socket.off("join-room");
-      socket.offAny(log);
-      socket.off(messageEvent);
+      chatsRef.current.forEach((chat) => socket.emit("leave-room", chat.id));
+      socket.off("message", onMessage);
       socket.disconnect();
     };
-  }, [auth.token]);
+  }, [token, dispatch]);
 };
+
+export default useSocketEvents;
