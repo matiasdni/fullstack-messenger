@@ -1,7 +1,8 @@
 import { GetPendingInvitesOutput } from "../../../../shared/types";
 
 export interface friendRequest {
-  id: string;
+  id?: string;
+  friendId: string;
   userId: string;
   username: string;
   status: "pending" | "accepted" | "rejected";
@@ -15,6 +16,7 @@ export interface User {
   friends?: User[];
   chatInvites?: GetPendingInvitesOutput;
   friendRequests?: friendRequest[];
+  sentFriendRequests?: friendRequest[];
 }
 
 export type UsersInitialState = User[];
