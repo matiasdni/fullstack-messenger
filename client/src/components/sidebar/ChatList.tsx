@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { Avatar } from "../common/Avatar";
 import { User } from "../../features/users/types";
@@ -52,9 +52,9 @@ const ChatItem = ({ chat }) => {
         <figure className="h-10 w-10 flex-none">
           <Avatar />
         </figure>
-        <div className="flex w-full flex-col">
-          <div className="flex justify-between ">
-            <span className="max-w-[70%] truncate font-semibold">
+        <div className="flex w-full flex-col truncate">
+          <div className="flex justify-between">
+            <span className="max-w-[85%] truncate font-semibold">
               {nameToDisplay}
             </span>
             <span className="self-center whitespace-nowrap text-xs">
@@ -75,9 +75,19 @@ type Props = {
   chats: Chat[];
 };
 export const ChatList = ({ chats }: Props) => {
+  const sortedChats = useMemo(
+    () =>
+      [...chats].sort((a, b) => {
+        const aTime = new Date(a.updatedAt).getTime();
+        const bTime = new Date(b.updatedAt).getTime();
+        return bTime - aTime;
+      }),
+    [chats]
+  );
+
   return (
     <ul className="w-full divide-y divide-gray-300 dark:divide-gray-700">
-      {chats?.map((chat) => (
+      {sortedChats?.map((chat) => (
         <ChatItem key={chat?.id} chat={chat} />
       ))}
     </ul>
