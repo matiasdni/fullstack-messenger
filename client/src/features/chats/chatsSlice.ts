@@ -86,12 +86,6 @@ const chatsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getChats.fulfilled, (state, action) => {
       state.chats = action.payload;
-      // Sort chats by last message date
-      state.chats = state.chats?.sort((a, b) => {
-        const aDate = new Date(a.updatedAt);
-        const bDate = new Date(b.updatedAt);
-        return bDate.getTime() - aDate.getTime();
-      });
     });
     builder.addCase(createChat.fulfilled, (state, action) => {
       if (!state.chats?.some((chat) => chat.id === action.payload.id)) {
