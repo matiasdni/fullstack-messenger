@@ -11,8 +11,8 @@ import { initUserFriends, UserFriends } from "./UserFriends";
 const db: any = config.database;
 
 const setupAssociations = (): void => {
-  User.hasMany(Message, { foreignKey: "user_id", as: "messages" });
-  Message.belongsTo(User, { foreignKey: "user_id", as: "user" });
+  User.hasMany(Message, { foreignKey: "userId", as: "messages" });
+  Message.belongsTo(User, { foreignKey: "userId", as: "user" });
 
   Chat.belongsToMany(User, {
     through: UserChat,
@@ -25,26 +25,14 @@ const setupAssociations = (): void => {
     as: "chats",
   });
 
-  // User.belongsToMany(User, {
-  //   as: "friends",
-  //   foreignKey: "userId",
-  //   through: UserFriends,
-  // });
-
-  // User.belongsToMany(User, {
-  //   foreignKey: "friendId",
-  //   through: UserFriends,
-  //   as: "user",
-  // });
-
   UserFriends.belongsTo(User, { foreignKey: "userId", as: "user" });
   User.hasMany(UserFriends, { foreignKey: "userId", as: "userFriends" });
 
   UserFriends.belongsTo(User, { foreignKey: "friendId", as: "friend" });
   User.hasMany(UserFriends, { foreignKey: "friendId", as: "friends" });
 
-  Message.belongsTo(Chat, { foreignKey: "chat_id" });
-  Chat.hasMany(Message, { foreignKey: "chat_id", as: "messages" });
+  Message.belongsTo(Chat, { foreignKey: "chatId" });
+  Chat.hasMany(Message, { foreignKey: "chatId", as: "messages" });
 
   Invite.belongsTo(Chat, { foreignKey: "chatId", as: "chat" });
   Chat.hasMany(Invite, { foreignKey: "chatId", as: "invites" });
