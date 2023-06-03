@@ -1,10 +1,10 @@
 import { useSelector } from "react-redux";
-import { AuthState } from "src/features/auth/types";
-import { User } from "src/features/users/types";
-import { RootState } from "src/types";
+import { AuthState } from "../features/auth/types";
+import { User } from "../features/users/types";
+import { RootState } from "../types";
 
 const useAuth = (): AuthState => {
-  return useSelector((state: RootState) => state.auth);
+  return useSelector((state: RootState): AuthState => state.auth);
 };
 
 const useToken = (): string => {
