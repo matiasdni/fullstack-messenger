@@ -126,6 +126,7 @@ const InviteList: FC = () => {
       console.log("rejecting friend request", invite);
       const { userId, id: friendId } = invite as friendRequest;
       const response = await rejectFriendRequest(userId, friendId, token);
+      dispatch(updateFriendRequest(response));
       console.log("response", response);
       return;
     }
