@@ -7,10 +7,11 @@ import {
   setActiveChat,
 } from "../../features/chats/chatsSlice";
 import { Chat } from "../../features/chats/types";
+import { useUser } from "src/hooks/useAuth";
 
 const ChatItem = ({ chat }) => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useUser();
   const activeChat = useAppSelector(selectActiveChat);
   const { name, messages } = chat;
   const lastMessage = messages?.[messages?.length - 1];
