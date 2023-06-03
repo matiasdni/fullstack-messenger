@@ -8,6 +8,8 @@ export type Message = {
     username: string;
   };
   createdAt: string;
+  chatId: string;
+  userId: string;
 };
 
 export interface Chat {
