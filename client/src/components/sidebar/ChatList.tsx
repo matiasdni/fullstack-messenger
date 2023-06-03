@@ -79,9 +79,16 @@ export const ChatList = ({ chats }: Props) => {
   const sortedChats = useMemo(
     () =>
       [...chats].sort((a, b) => {
-        const aTime = new Date(a.updatedAt).getTime();
-        const bTime = new Date(b.updatedAt).getTime();
-        return bTime - aTime;
+        const aTime =
+          a.messages.length === 0
+            ? a.createdAt
+            : a.messages[a.messages.length - 1].createdAt;
+        const bTime =
+          b.messages.length === 0
+            ? b.createdAt
+            : b.messages[b.messages.length - 1].createdAt;
+
+        return new Date(bTime).getTime() - new Date(aTime).getTime();
       }),
     [chats]
   );
