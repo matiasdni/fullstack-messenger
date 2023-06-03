@@ -6,6 +6,7 @@ import {
   HasManyGetAssociationsMixin,
   HasManyRemoveAssociationMixin,
   Model,
+  NonAttribute,
   Sequelize,
   Transaction,
 } from "sequelize";
@@ -18,6 +19,11 @@ class Chat extends Model {
   declare name: string;
   declare description: CreationOptional<string>;
   declare chat_type: "group" | "private";
+  declare users: NonAttribute<User[]>;
+  declare messages: NonAttribute<Message[]>;
+
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   declare getUsers: HasManyGetAssociationsMixin<User>;
   declare getMessages: HasManyGetAssociationsMixin<Message>;
@@ -31,11 +37,18 @@ class Chat extends Model {
   declare addInvites: HasManyAddAssociationMixin<Invite[], "id">;
   declare removeInvites: HasManyRemoveAssociationMixin<Invite[], "id">;
 
-  async addUsers(users: User[], transaction?: Transaction): Promise<Chat> {
-    await Promise.all(
-      users.map(async (user) => await this.addUser(user, { transaction }))
-    );
-    return this;
+  async addUsers(users: User[]): Promise<Chat> {
+    const transaction = await this.sequelize!.transaction();
+    try {
+      await Promise.all(
+        users.map(async (user) => await this.addUser(user, { transaction }))
+      );
+      await transaction.commit();
+      return this;
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
+    }
   }
 }
 
