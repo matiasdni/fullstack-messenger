@@ -1,5 +1,5 @@
 import axios from "axios";
-import { User } from "../features/users/types";
+import { User, friendRequest } from "../features/users/types";
 import { Senders, Chats, InviteAttributes } from "../../../shared/types";
 
 const BASE_URL = "/api/users";
@@ -68,7 +68,7 @@ const acceptFriendRequest = async (
   userId: string,
   friendId: string,
   token: string
-) => {
+): Promise<friendRequest> => {
   const response = await axios.put(
     `${BASE_URL}/${userId}/friends/${friendId}/accept`,
     {},
@@ -86,7 +86,7 @@ const rejectFriendRequest = async (
   userId: string,
   friendId: string,
   token: string
-) => {
+): Promise<friendRequest> => {
   const response = await axios.put(
     `${BASE_URL}/${userId}/friends/${friendId}/reject`,
     {},
@@ -104,7 +104,7 @@ const sendFriendRequest = async (
   userId: string,
   friendId: string,
   token: string
-) => {
+): Promise<friendRequest> => {
   const response = await axios.post(
     `${BASE_URL}/${userId}/friends/${friendId}`,
     {},
