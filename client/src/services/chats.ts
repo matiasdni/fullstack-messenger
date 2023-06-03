@@ -11,7 +11,7 @@ export interface chatData {
   description?: string;
 }
 
-const newChat = async (chatData: chatData, token): Promise<Chat> => {
+const newChat = async (chatData: chatData, token: string): Promise<Chat> => {
   console.log("chatData", chatData);
   const response = await axios.post(BASE_URL, chatData, {
     withCredentials: true,
@@ -24,7 +24,7 @@ const newChat = async (chatData: chatData, token): Promise<Chat> => {
   else throw new Error("chat creation failed");
 };
 
-const fetchChatById = async (chatId, token): Promise<Chat> => {
+const fetchChatById = async (chatId: string, token: string): Promise<Chat> => {
   const response = await axios.get(`${BASE_URL}/${chatId}`, {
     withCredentials: true,
     headers: {
