@@ -25,8 +25,8 @@ export async function createMessage(
 
   const message = await Message.create({
     content,
-    chat_id: chatId,
-    user_id: userId,
+    chatId,
+    userId,
   });
 
   return await message
