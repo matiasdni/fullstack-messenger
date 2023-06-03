@@ -79,6 +79,7 @@ const chatsSlice = createSlice({
 
       if (!existingMessage) {
         chat.messages?.push(action.payload);
+        chat.updatedAt = action.payload.createdAt;
       }
     },
   },
