@@ -2,8 +2,9 @@ import { useAppDispatch, useAppSelector } from "../store";
 import { useEffect, useRef } from "react";
 import { socket } from "../socket";
 import { addMessage, getChatById } from "../features/chats/chatsSlice";
+import { Chat, Message } from "../features/chats/types";
 
-const useSocketEvents = () => {
+const useSocketEvents = (): void => {
   const dispatch = useAppDispatch();
   const { token, chats } = useAppSelector((state) => ({
     token: state.auth.token,
@@ -16,13 +17,15 @@ const useSocketEvents = () => {
   }, [chats]);
 
   useEffect(() => {
-    const onConnect = () => {
+    const onConnect = (): void => {
       console.log("socket connected");
-      chatsRef.current.forEach((chat) => socket.emit("join-room", chat.id));
+      chatsRef.current.forEach((chat: Chat) =>
+        socket.emit("join-room", chat.id)
+      );
     };
     const onDisconnect = () => console.log("socket disconnected");
 
-    const onMessage = async (data) => {
+    const onMessage = async (data: Message): Promise<void> => {
       console.log("message received");
       const chat = chatsRef.current.find((chat) => chat.id === data.chatId);
       if (!chat) {
