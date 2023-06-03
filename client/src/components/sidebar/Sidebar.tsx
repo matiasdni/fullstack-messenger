@@ -19,11 +19,11 @@ export const Sidebar = () => {
 
   return (
     <>
-      <div className="flex w-72 flex-shrink-0 overflow-hidden ">
-        <div className="flex h-full w-full flex-col">
+      <div className="flex w-72 flex-shrink-0 select-none scroll-m-2 scroll-p-2 overflow-hidden ">
+        <div className="flex h-full w-full scroll-m-2 scroll-p-2 flex-col">
           <SidebarHeader activeTab={activeTab} onChangeTab={handleTabChange} />
 
-          <div className="flex h-full w-full overflow-y-auto overflow-x-hidden">
+          <div className="flex h-full w-full scroll-m-2 scroll-p-2 overflow-y-auto overflow-x-hidden">
             {/* chats list */}
             {activeTab === "chats" && <ChatList chats={allChats} />}
             {activeTab === "friends" && (
