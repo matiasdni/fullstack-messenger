@@ -101,7 +101,7 @@ const InviteList: FC = () => {
   ): Promise<void> => {
     if (isFriendRequest) {
       console.log("accepting friend request", invite);
-      const { userId, id: friendId } = invite as friendRequest;
+      const { userId, friendId } = invite as friendRequest;
       const data = await acceptFriendRequest(userId, friendId, token);
       dispatch(updateFriendRequest(data));
     } else {
@@ -124,7 +124,7 @@ const InviteList: FC = () => {
   ): Promise<void> => {
     if (isFriendRequest) {
       console.log("rejecting friend request", invite);
-      const { userId, id: friendId } = invite as friendRequest;
+      const { userId, friendId } = invite as friendRequest;
       const response = await rejectFriendRequest(userId, friendId, token);
       dispatch(updateFriendRequest(response));
       console.log("response", response);
