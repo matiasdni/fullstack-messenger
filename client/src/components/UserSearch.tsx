@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
-import { ChatType, createChat } from "../features/chats/chatsSlice";
-import { searchUsersByName } from "../services/user";
+import { createChat } from "../features/chats/chatsSlice";
+import { searchUsersByName, sendFriendRequest } from "../services/user";
 import { chatData } from "../services/chats";
+import { useAuth } from "src/hooks/useAuth";
+import { addSentFriendRequest } from "src/features/auth/authSlice";
 
 const StatusIndicator = ({ online }) => {
   return (
@@ -38,7 +40,7 @@ export const UserSearch = () => {
 };
 
 const SearchListItem = ({ user }) => {
-  const currentUser = useAppSelector((state) => state.auth.user);
+  const { user: currentUser, token } = useAuth();
   const dispatch = useAppDispatch();
 
   const handleMessageClick = () => {
@@ -50,9 +52,19 @@ const SearchListItem = ({ user }) => {
     dispatch(createChat(chat));
   };
 
+  const handleAddFriendClick = async () => {
+    const friendRequest = await sendFriendRequest(
+      currentUser.id,
+      user.id,
+      token
+    );
+    console.log(friendRequest);
+    dispatch(addSentFriendRequest(friendRequest));
+  };
+
   return (
-    <li key={user.id} className="flex flex-row items-center justify-between">
-      <div className="flex flex-row items-center">
+    <li key={user.id} className="flex flex-row items-center">
+      <div className="inline-flex grow basis-1/3 items-center">
         <img
           className="inline-block h-8 w-8 rounded-full"
           src={`https://avatars.dicebear.com/api/identicon/${user.username}.svg`}
@@ -62,13 +74,22 @@ const SearchListItem = ({ user }) => {
           {user.username}
         </p>
       </div>
-
-      <button
-        className={`ml-2 text-sm font-medium text-gray-500 dark:text-gray-300`}
-        onClick={handleMessageClick}
-      >
-        Message
-      </button>
+      <div className="grow basis-1/4 justify-center text-center">
+        <button
+          className={`text-sm font-medium text-gray-500 dark:text-gray-300`}
+          onClick={handleAddFriendClick}
+        >
+          Add Friend
+        </button>
+      </div>
+      <div className="grow basis-1/4 text-center">
+        <button
+          className={`text-sm font-medium text-gray-500 dark:text-gray-300`}
+          onClick={handleMessageClick}
+        >
+          Message
+        </button>
+      </div>
 
       <StatusIndicator online={user.online} />
     </li>
@@ -79,11 +100,9 @@ const SearchResults = ({ results }) => {
   return (
     <div className="px-4 pb-4 pt-5 text-gray-900 dark:text-gray-300 sm:p-6 sm:pb-4">
       <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-        <ul className="flex flex-col">
+        <ul className="flex flex-col space-y-2">
           {results.map((user) => (
-            <li>
-              <SearchListItem key={user.id} user={user} />
-            </li>
+            <SearchListItem key={user.id} user={user} />
           ))}
         </ul>
       </div>
