@@ -15,6 +15,9 @@ class Message extends Model {
   declare userId: ForeignKey<User["id"]>;
   declare chatId: ForeignKey<Chat["id"]>;
 
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+
   declare getUser: BelongsToGetAssociationMixin<User>;
   declare setUser: BelongsToCreateAssociationMixin<User>;
 
