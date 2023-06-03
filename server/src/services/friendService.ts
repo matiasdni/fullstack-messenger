@@ -221,8 +221,6 @@ const friendService = {
       ],
     });
 
-    console.log("friendRequests", friendRequests);
-
     const formattedFriendRequests = friendRequests.map((friendRequest) => {
       return {
         id: friendRequest.friendId,
