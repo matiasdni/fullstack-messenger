@@ -29,7 +29,7 @@ class Chat extends Model {
   declare getMessages: HasManyGetAssociationsMixin<Message>;
 
   declare createUser: HasManyCreateAssociationMixin<User, "id">;
-  declare addMessage: HasManyCreateAssociationMixin<Message, "chat_id">;
+  declare createMessage: HasManyCreateAssociationMixin<Message, "chatId">;
 
   declare addUser: HasManyAddAssociationMixin<User, "id">;
   declare removeUser: HasManyRemoveAssociationMixin<User, "id">;
