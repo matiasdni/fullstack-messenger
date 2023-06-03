@@ -29,6 +29,8 @@ export async function findChats(ids: UserChat[]) {
         model: Message,
         as: "messages",
         attributes: ["id", "content", "createdAt", "updatedAt"],
+        order: [["createdAt", "ASC"]],
+        separate: true,
         include: [
           {
             model: User,
@@ -38,6 +40,7 @@ export async function findChats(ids: UserChat[]) {
         ],
       },
     ],
+    order: [["updatedAt", "DESC"]],
   });
 }
 
