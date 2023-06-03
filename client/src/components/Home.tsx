@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useAppSelector } from "../store";
+import { useEffect, useState } from "react";
 
 import { Sidebar } from "./sidebar/Sidebar";
 import { Chat } from "./chat/Chat";
 import DarkModeToggle from "./common/DarkModeToggle";
 import { LoadingChat } from "./common/LoadingChat";
-import { useSocketEvents } from "../hooks/UseSocketEvents";
+import useSocketEvents from "../hooks/UseSocketEvents";
 
 export const Home = () => {
-  const auth = useAppSelector((state) => state.auth);
-  const chats = useAppSelector((state) => state.chats.chats);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useSocketEvents(chats, auth);
+  useSocketEvents();
 
   useEffect(() => {
     setTimeout(() => {
