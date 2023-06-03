@@ -7,7 +7,6 @@ import { Chat } from "../models/chat";
 import { User } from "../models/user";
 import { Message } from "../models/message";
 import { io } from "../server";
-import { sequelize } from "../models/initModels";
 
 interface AuthenticatedRequest extends Request {
   user: User;
@@ -28,68 +27,58 @@ export interface ChatData {
   currentUser?: User;
 }
 
+// todo: fix this spaghetti
 export const createChat = async (req: AuthenticatedRequest, res: Response) => {
   const { name, description, chat_type, userIds } = req.body as ChatData;
   const currentUser: User = req.user;
-  const transaction = await sequelize.transaction();
 
   let chat;
 
   if (chat_type === "private") {
-    const user = await User.findByPk(currentUser.id, { transaction });
-    const otherUser = await User.findByPk(userIds[0], { transaction });
+    const user = await User.findByPk(currentUser.id);
+    const otherUser = await User.findByPk(userIds[0]);
 
     if (!user || !otherUser) {
-      await transaction.rollback();
       return res.status(400).json({ error: "Invalid user IDs" });
     }
 
-    chat = await findOrCreatePrivateChat(user, otherUser, transaction);
+    chat = await findOrCreatePrivateChat(user, otherUser);
 
-    console.log("chat created", chat);
-
-    await chat.addUsers([user, otherUser], transaction);
-
-    console.log("chat users added", chat);
+    await chat.addUsers([user, otherUser]);
 
     //TODO: fix this
     await chat.reload({
       include: [
         {
-          association: Chat.associations.users,
+          association: "users",
           attributes: ["id", "username"],
-          through: { attributes: [] },
         },
         {
-          association: Chat.associations.messages,
+          association: "messages",
           attributes: ["id", "content", "createdAt"],
           include: [
             {
-              association: Message.associations.user,
+              association: "user",
               attributes: ["id", "username"],
             },
           ],
         },
       ],
       attributes: ["id", "name", "description", "chat_type"],
-      transaction,
     });
   } else {
-    chat = await createChatWithUsers(
-      {
-        name,
-        description,
-        chat_type,
-        userIds,
-        currentUser,
-      },
-      transaction
-    );
+    chat = await createChatWithUsers({
+      name,
+      description,
+      chat_type,
+      userIds,
+      currentUser,
+    });
   }
 
-  await transaction.commit();
+  console.log("chat created", chat.toJSON());
 
-  res.status(200).json(chat);
+  res.status(200).json(chat.toJSON());
   if (chat.chat_type === "group") {
     io.to(userIds).emit("invite", chat);
   } else {
