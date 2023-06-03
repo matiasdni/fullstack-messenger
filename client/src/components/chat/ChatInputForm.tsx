@@ -1,17 +1,29 @@
-import React, { useState } from "react";
+import { FC, useState } from "react";
+import { addMessage } from "src/features/chats/chatsSlice";
+import { Chat } from "src/features/chats/types";
+import { sendMessage } from "src/services/chats";
+import { useAppDispatch } from "src/store";
 
 interface InputFormProps {
-  onSubmit: (input: string) => void;
+  activeChat: Chat;
+  token: string;
 }
 
-export const ChatInputForm: React.FC<InputFormProps> = ({ onSubmit }) => {
+const ChatInputForm: FC<InputFormProps> = ({ activeChat, token }) => {
   const [input, setInput] = useState<string>("");
+  const dispatch = useAppDispatch();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim().length > 0) {
-      onSubmit(input);
-      setInput("");
+      try {
+        const data = await sendMessage(activeChat.id, input, token);
+        console.log("data", data);
+        dispatch(addMessage(data));
+        setInput("");
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -50,3 +62,5 @@ export const ChatInputForm: React.FC<InputFormProps> = ({ onSubmit }) => {
     </form>
   );
 };
+
+export default ChatInputForm;
