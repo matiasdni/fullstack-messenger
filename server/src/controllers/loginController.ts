@@ -29,6 +29,7 @@ router.post("/", async (req: Request, res: Response) => {
 
   const friends = await friendService.getFriends(user.id);
   const friendRequests = await friendService.getFriendRequests(user.id);
+  const sentFriendRequests = await friendService.getSentFriendRequests(user.id);
   const chatInvites = await getPendingInvites({ userId: user.id });
 
   res.status(200).json({
@@ -39,6 +40,7 @@ router.post("/", async (req: Request, res: Response) => {
       chatInvites,
       friends,
       friendRequests,
+      sentFriendRequests,
     },
   });
 });
