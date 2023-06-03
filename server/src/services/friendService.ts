@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import { UserFriends } from "../models/UserFriends";
 import { User, sequelize } from "../models/initModels";
+import _ from "lodash";
 
 const friendService = {
   getFriends: async (userId: string) => {
@@ -51,6 +52,7 @@ const friendService = {
     const formattedFriendRequests = friendRequests.map((friendRequest) => {
       return {
         id: friendRequest.friendId,
+        friendId: friendRequest.friendId,
         userId: friendRequest.userId,
         username: friendRequest.user.username,
         status: friendRequest.status,
@@ -61,11 +63,37 @@ const friendService = {
     return formattedFriendRequests;
   },
   sendFriendRequest: async (userId: string, friendId: string) => {
-    const friendRequest = await UserFriends.create({
-      userId,
-      friendId,
+    const request = await UserFriends.findCreateFind({
+      where: {
+        userId,
+        friendId,
+      },
+      defaults: {
+        status: "pending",
+      },
     });
-    return friendRequest;
+
+    if (!request[1]) {
+      throw new Error("Friend request already sent");
+    }
+    const friendRequest = request[0];
+    await friendRequest.reload({
+      include: [
+        {
+          association: "friend",
+          attributes: ["id", "username"],
+        },
+      ],
+    });
+    const formattedFriendRequest = {
+      id: friendRequest.friendId,
+      friendId: friendRequest.friendId,
+      userId: friendRequest.userId,
+      username: friendRequest.friend.username,
+      status: friendRequest.status,
+      createdAt: friendRequest.createdAt,
+    };
+    return formattedFriendRequest;
   },
   getFriend: async (userId: string, friendId: string) => {
     const friend = await UserFriends.findOne({
@@ -178,6 +206,35 @@ const friendService = {
       await t.rollback();
       throw error;
     }
+  },
+  getSentFriendRequests: async (userId: string) => {
+    const friendRequests = await UserFriends.findAll({
+      where: {
+        userId,
+        status: "pending",
+      },
+      include: [
+        {
+          association: "friend",
+          attributes: ["id", "username"],
+        },
+      ],
+    });
+
+    console.log("friendRequests", friendRequests);
+
+    const formattedFriendRequests = friendRequests.map((friendRequest) => {
+      return {
+        id: friendRequest.friendId,
+        friendId: friendRequest.friendId,
+        userId: friendRequest.userId,
+        username: friendRequest.friend.username,
+        status: friendRequest.status,
+        createdAt: friendRequest.createdAt,
+      };
+    });
+
+    return formattedFriendRequests;
   },
 };
 
