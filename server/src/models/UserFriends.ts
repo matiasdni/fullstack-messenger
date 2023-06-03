@@ -6,6 +6,7 @@ class UserFriends extends Model {
   declare friendId: string;
   declare status: "pending" | "accepted" | "rejected";
   declare user: NonAttribute<User>;
+  declare friend: NonAttribute<User>;
 
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
