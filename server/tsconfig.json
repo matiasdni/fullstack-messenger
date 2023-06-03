@@ -3,12 +3,11 @@
     "target": "es2022",
     "module": "CommonJS",
     "moduleResolution": "node",
-    "lib": [
-      "es2022",
-    ],
+    "lib": ["es2022"],
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "strict": true
   }
 }
