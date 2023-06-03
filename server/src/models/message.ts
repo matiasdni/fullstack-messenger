@@ -12,8 +12,8 @@ import { Chat } from "./chat";
 class Message extends Model {
   declare id: string;
   declare content: string;
-  declare user_id: ForeignKey<User["id"]>;
-  declare chat_id: ForeignKey<Chat["id"]>;
+  declare userId: ForeignKey<User["id"]>;
+  declare chatId: ForeignKey<Chat["id"]>;
 
   declare getUser: BelongsToGetAssociationMixin<User>;
   declare setUser: BelongsToCreateAssociationMixin<User>;
@@ -36,11 +36,11 @@ const initMessage = (sequelize: Sequelize): void => {
         type: new DataTypes.TEXT(),
         allowNull: false,
       },
-      user_id: {
+      userId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      chat_id: {
+      chatId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
