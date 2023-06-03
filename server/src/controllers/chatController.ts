@@ -7,6 +7,8 @@ import { Chat } from "../models/chat";
 import { User } from "../models/user";
 import { Message } from "../models/message";
 import { io } from "../server";
+import { AuthRequest } from "../middlewares/auth";
+import { createMessage } from "../services/messageService";
 
 interface AuthenticatedRequest extends Request {
   user: User;
@@ -76,8 +78,6 @@ export const createChat = async (req: AuthenticatedRequest, res: Response) => {
     });
   }
 
-  console.log("chat created", chat.toJSON());
-
   res.status(200).json(chat.toJSON());
   if (chat.chat_type === "group") {
     io.to(userIds).emit("invite", chat);
@@ -107,4 +107,23 @@ export const chatById = async (req: any, res: Response) => {
   });
 
   res.status(200).json(chat);
+};
+
+export const sendMessage = async (req: AuthRequest, res: Response) => {
+  const { message } = req.body;
+  const { id: chatId } = req.params;
+  const user = req.user;
+
+  console.log("chatId", chatId);
+
+  const chat = await Chat.findByPk(chatId);
+
+  if (!chat) {
+    return res.status(404).json({ error: "Chat not found" });
+  }
+
+  const newMessage = await createMessage(message, user.id, chatId);
+
+  res.status(200).json(newMessage);
+  io.to(chatId).emit("message", newMessage);
 };
