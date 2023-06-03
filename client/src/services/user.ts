@@ -100,6 +100,24 @@ const rejectFriendRequest = async (
   return response.data;
 };
 
+const sendFriendRequest = async (
+  userId: string,
+  friendId: string,
+  token: string
+) => {
+  const response = await axios.post(
+    `${BASE_URL}/${userId}/friends/${friendId}`,
+    {},
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
+
 export {
   createUser,
   searchUsersByName,
@@ -107,4 +125,5 @@ export {
   fetchUserRequests,
   acceptFriendRequest,
   rejectFriendRequest,
+  sendFriendRequest,
 };
