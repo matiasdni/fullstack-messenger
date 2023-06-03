@@ -52,7 +52,7 @@ const InviteItem: FC<InviteItemProps> = ({
       : pendingInvite.sender.username;
 
   return (
-    <div className="flex w-full flex-row items-center justify-center space-x-2">
+    <div className="flex w-full grow-0 flex-row items-center justify-center space-x-2">
       <div className="shrink-0">
         <img
           src={`https://avatars.dicebear.com/api/identicon/${username}.svg`}
@@ -60,14 +60,14 @@ const InviteItem: FC<InviteItemProps> = ({
           className="h-8 w-8 rounded-full object-cover"
         />
       </div>
-      <div className="w-full">
+      <div className="w-full truncate">
         <div className="flex w-full items-center justify-between">
           <p className="font-semibold text-black dark:text-gray-300">
             {username}
           </p>
         </div>
         <div className="flex flex-col space-y-2">
-          <p className="text-sm text-gray-500">
+          <p className=" truncate text-sm text-gray-500">
             {formatInviteMessage(pendingInvite, isFriendRequest)}
           </p>
         </div>
@@ -177,7 +177,7 @@ const InviteList: FC = () => {
       <p className="text-center">No new invites</p>
     </div>
   ) : (
-    <div className="flex w-full flex-col space-y-4 divide-y p-2">
+    <div className="flex w-full flex-col space-y-4 divide-y overflow-scroll p-2">
       {sortedInvites.map((pendingInvite) => (
         <InviteItem
           key={pendingInvite.id}
