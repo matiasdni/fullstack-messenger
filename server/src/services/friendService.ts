@@ -73,7 +73,7 @@ const friendService = {
       },
     });
 
-    if (!request[1]) {
+    if (!request[1] && request[0].status === "pending") {
       throw new Error("Friend request already sent");
     }
     const friendRequest = request[0];
@@ -85,6 +85,13 @@ const friendService = {
         },
       ],
     });
+
+    if (friendRequest.status === "rejected") {
+      friendRequest.status = "pending";
+      // todo: update timestamps, currently shows the time when the friend request was first sent
+      await friendRequest.save();
+    }
+
     const formattedFriendRequest = {
       id: friendRequest.friendId,
       friendId: friendRequest.friendId,
