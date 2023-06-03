@@ -78,6 +78,25 @@ router.get(
   }
 );
 
+router.post(
+  "/:id/friends/:friendId",
+  authenticate,
+  async (req: AuthRequest, res: Response) => {
+    const user = req.user;
+    if (!user || user.id !== req.params.id) {
+      console.log("Not authorized");
+      return res.status(403).json({ error: "Not Authorized" });
+    }
+    const friend = await friendService.sendFriendRequest(
+      req.params.id,
+      req.params.friendId
+    );
+
+    res.json(friend);
+    // todo: send notification to friend
+  }
+);
+
 router.put(
   "/:id/friends/:friendId/accept",
   authenticate,
@@ -94,6 +113,7 @@ router.put(
     console.log("friend request accepted", friend.toJSON());
 
     res.json(friend.toJSON());
+    // todo: send notification to friend
   }
 );
 
