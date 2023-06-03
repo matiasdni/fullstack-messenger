@@ -1,11 +1,4 @@
-import {
-  Suspense,
-  lazy,
-  startTransition,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { Suspense, lazy, useState } from "react";
 import { useAppSelector } from "../../store";
 import { SidebarHeader } from "./SidebarHeader";
 import { ChatList } from "./ChatList";
@@ -22,24 +15,6 @@ export const Sidebar = () => {
     setActiveTab(tab);
   };
 
-  // TODO: need to reimplement this to take into account if there is no last message and use the createdAt/updatedAt of the chat instead.
-  const sortedChats = useMemo(
-    () =>
-      allChats
-        .map((chat) => ({ ...chat }))
-        .sort((a, b) => {
-          const aLastMessage = a.messages[a.messages.length - 1];
-          const bLastMessage = b.messages[b.messages.length - 1];
-          if (!aLastMessage) return 1;
-          if (!bLastMessage) return -1;
-          return (
-            new Date(bLastMessage.createdAt).getTime() -
-            new Date(aLastMessage.createdAt).getTime()
-          );
-        }),
-    [allChats]
-  );
-
   const loading = <div>Loading...</div>;
 
   return (
@@ -50,7 +25,7 @@ export const Sidebar = () => {
 
           <div className="flex h-full w-full overflow-y-auto overflow-x-hidden">
             {/* chats list */}
-            {activeTab === "chats" && <ChatList chats={sortedChats} />}
+            {activeTab === "chats" && <ChatList chats={allChats} />}
             {activeTab === "friends" && (
               <Suspense fallback={loading}>
                 <FriendList />
