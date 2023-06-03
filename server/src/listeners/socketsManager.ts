@@ -23,6 +23,9 @@ const onConnection = (socket: mySocket) => {
 
   socket.on("disconnect", () => {
     console.log("User disconnected: ", user.username);
+    socket.leave(user.id);
+    socket.removeAllListeners();
+    socket.disconnect();
   });
 };
 
