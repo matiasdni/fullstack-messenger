@@ -113,8 +113,7 @@ export const createChatWithUsers = async (
 
 export const findOrCreatePrivateChat = async (
   currentUser: User,
-  otherUser: User,
-  transaction?: Transaction
+  otherUser: User
 ): Promise<Chat> => {
   const [chat, created] = await Chat.findOrCreate({
     where: {
@@ -135,8 +134,6 @@ export const findOrCreatePrivateChat = async (
       description: undefined,
       chat_type: "private",
     },
-    mapToModel: true,
-    transaction,
   });
 
   return chat;
