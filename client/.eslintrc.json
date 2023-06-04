@@ -23,14 +23,13 @@
     "ecmaVersion": "latest",
     "ecmaFeatures": {
       "jsx": true
-    },
-    "sourceType": "module",
-    "project": "./client/tsconfig.json"
+    }
   },
   "env": {
     "browser": true,
     "jest": true,
-    "es2021": true
+    "es2022": true,
+    "node": true
   },
   "rules": {
     "import/no-unresolved": "error",
@@ -66,14 +65,24 @@
     "import/parsers": {
       "@typescript-eslint/parser": [
         ".ts",
-        ".tsx"
+        ".tsx",
+        ".js",
+        ".jsx",
+        ".d.ts"
       ]
     },
     "import/resolver": {
       "typescript": {
-        "alwaysTryTypes": true
-      },
-      "node": true
+        "alwaysTryTypes": "true",
+        "project": "./client/tsconfig.json",
+        "extensions": [
+          ".ts",
+          ".tsx",
+          ".js",
+          ".jsx",
+          ".json"
+        ]
+      }
     }
   }
 }

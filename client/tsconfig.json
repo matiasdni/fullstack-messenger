@@ -5,7 +5,7 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
     ],
     "target": "es2015",
     "noEmit": true,
@@ -22,7 +22,7 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
-    "baseUrl": "./"
+    "baseUrl": "src",
   },
   "include": [
     "src"
