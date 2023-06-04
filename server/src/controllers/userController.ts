@@ -1,16 +1,17 @@
 import { Request, Response } from "express";
+import authenticate, { AuthRequest } from "../middlewares/auth";
+import { validateUserData } from "../middlewares/validationMiddleware";
+import { io } from "../server";
+import { findChats } from "../services/chatService";
+import friendService from "../services/friendService";
+import { getPendingInvites } from "../services/inviteService";
+import { getChatIds } from "../services/userChatService";
 import {
   createUser,
   getAllUsers,
   getUserById,
   searchUsers,
 } from "../services/userService";
-import authenticate, { AuthRequest } from "../middlewares/auth";
-import { validateUserData } from "../middlewares/validationMiddleware";
-import { findChats } from "../services/chatService";
-import { getChatIds } from "../services/userChatService";
-import { getPendingInvites } from "../services/inviteService";
-import friendService from "../services/friendService";
 
 const router = require("express").Router();
 
@@ -93,7 +94,12 @@ router.post(
     );
 
     res.json(friend);
+
     // todo: send notification to friend
+    io.to(req.params.friendId).emit("friendRequest", {
+      from: req.params.id,
+      to: req.params.friendId,
+    });
   }
 );
 
