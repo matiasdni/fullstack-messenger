@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import { FC, useState } from "react";
 
-export type Tab = "chats" | "friends" | "invites";
+type Tab = "chats" | "friends" | "invites";
 
 interface Props {
   activeTab: Tab;
   onChangeTab: (tab: Tab) => void;
 }
 
-export const SidebarTabs: React.FC<Props> = ({ activeTab, onChangeTab }) => {
+const SidebarTabs: FC<Props> = ({ activeTab, onChangeTab }) => {
   const [tabs] = useState<Tab[]>(["chats", "friends", "invites"]);
 
   return (
@@ -33,4 +33,5 @@ export const SidebarTabs: React.FC<Props> = ({ activeTab, onChangeTab }) => {
   );
 };
 
-export default SidebarTabs;
+export { SidebarTabs };
+export type { Tab };

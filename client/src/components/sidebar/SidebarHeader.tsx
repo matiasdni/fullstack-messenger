@@ -1,10 +1,10 @@
+import { useUser } from "hooks/useAuth";
 import { FC, useState } from "react";
+import { GroupForm } from "../GroupForm";
+import { UserSearch } from "../UserSearch";
 import { Avatar } from "../common/Avatar";
 import { Modal } from "../common/Modal";
-import { UserSearch } from "../UserSearch";
-import { GroupForm } from "../GroupForm";
-import SidebarTabs, { Tab } from "./SidebarTab";
-import { useUser } from "src/hooks/useAuth";
+import { SidebarTabs, Tab } from "./SidebarTab";
 
 interface SidebarHeaderProps {
   activeTab: Tab;
@@ -13,12 +13,12 @@ interface SidebarHeaderProps {
 export const SidebarHeader: FC<SidebarHeaderProps> = ({
   activeTab,
   onChangeTab,
-}) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+}: SidebarHeaderProps) => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState<boolean>(false);
   const user = useUser();
 
-  const handleGroupModalClose = () => {
+  const handleGroupModalClose = (): void => {
     setIsGroupModalOpen(false);
   };
 
@@ -35,7 +35,7 @@ export const SidebarHeader: FC<SidebarHeaderProps> = ({
           <div className="flex-1"></div>
           <span
             className="cursor-pointer p-2"
-            onClick={() => {
+            onClick={(): void => {
               setIsGroupModalOpen(true);
             }}
           >
@@ -50,7 +50,7 @@ export const SidebarHeader: FC<SidebarHeaderProps> = ({
         </div>
         <button
           className="min-w-full cursor-pointer rounded border border-gray-400 bg-neutral-100 px-3 py-1 text-left shadow-sm dark:border-gray-600 dark:bg-gray-700"
-          onClick={() => {
+          onClick={(): void => {
             setIsModalOpen(true);
           }}
         >
@@ -60,7 +60,7 @@ export const SidebarHeader: FC<SidebarHeaderProps> = ({
 
       {isModalOpen && (
         <Modal
-          handleCloseModal={() => {
+          handleCloseModal={(): void => {
             setIsModalOpen(false);
           }}
         >
@@ -70,7 +70,7 @@ export const SidebarHeader: FC<SidebarHeaderProps> = ({
       {isGroupModalOpen && (
         <Modal handleCloseModal={handleGroupModalClose}>
           <GroupForm
-            handleCloseModal={() => {
+            handleCloseModal={(): void => {
               setIsGroupModalOpen(false);
             }}
           />

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../types";
-import { fetchUserChats } from "../../services/user";
 import { chatData, fetchChatById, newChat } from "../../services/chats";
+import { fetchUserChats } from "../../services/user";
+import { RootState } from "../../types";
 import { Chat } from "./types";
 
 const initialState = {
@@ -30,24 +30,24 @@ export const getChats = createAsyncThunk(
 
 export const createChat = createAsyncThunk(
   "chats/createChat",
-  async (chatData: chatData, { rejectWithValue, getState }) => {
+  async (chatData: chatData, { rejectWithValue, getState }): Promise<Chat> => {
     const token = (getState() as RootState).auth.token;
     try {
       return await newChat(chatData, token);
     } catch (error) {
-      return rejectWithValue(error);
+      rejectWithValue(error);
     }
   }
 );
 
 export const getChatById = createAsyncThunk(
   "chats/getChatById",
-  async (chatId: string, { rejectWithValue, getState }) => {
+  async (chatId: string, { rejectWithValue, getState }): Promise<Chat> => {
     const token = (getState() as RootState).auth.token;
     try {
       return await fetchChatById(chatId, token);
     } catch (error) {
-      return rejectWithValue(error);
+      rejectWithValue(error);
     }
   }
 );
