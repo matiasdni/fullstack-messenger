@@ -1,18 +1,15 @@
+import { updateFriendRequest } from "features/auth/authSlice";
+import { addChat } from "features/chats/chatsSlice";
+import { rejectInvite, updateInviteStatus } from "features/invites/inviteSlice";
+import { Invite } from "features/invites/types";
+import { friendRequest } from "features/users/types";
+import { useAuth } from "hooks/useAuth";
 import { FC, useMemo } from "react";
-import { useAuth } from "src/hooks/useAuth";
-import { IoMdClose, IoMdCheckmark } from "react-icons/io";
-import { useAppDispatch } from "../../store";
-import {
-  updateInviteStatus,
-  rejectInvite,
-} from "src/features/invites/inviteSlice";
-import { Invite } from "src/features/invites/types";
-import { addChat } from "src/features/chats/chatsSlice";
+import { IoMdCheckmark, IoMdClose } from "react-icons/io";
+import { acceptFriendRequest, rejectFriendRequest } from "services/user";
+import { useAppDispatch, useThunkDispatch } from "store";
+import timeSince from "utils/timeSince";
 import { InviteAttributes } from "../../../../shared/types";
-import { friendRequest } from "src/features/users/types";
-import timeSince from "src/utils/timeSince";
-import { acceptFriendRequest, rejectFriendRequest } from "src/services/user";
-import { updateFriendRequest } from "src/features/auth/authSlice";
 
 type PendingInvite = Invite | friendRequest;
 
@@ -93,6 +90,7 @@ const InviteItem: FC<InviteItemProps> = ({
 
 const InviteList: FC = () => {
   const dispatch = useAppDispatch();
+  const thunkDispatch = useThunkDispatch();
   const { user: currentUser, token } = useAuth();
 
   const handleAccept = async (
@@ -106,8 +104,11 @@ const InviteList: FC = () => {
       dispatch(updateFriendRequest(data));
     } else {
       console.log("accepting invite", invite);
-      const action = await dispatch(
-        updateInviteStatus({ ...(invite as Invite), status: "accepted" })
+      const action = await thunkDispatch(
+        updateInviteStatus({
+          ...(invite as Invite),
+          status: "accepted",
+        })
       );
 
       if (action.meta.requestStatus === "fulfilled") {
@@ -132,13 +133,13 @@ const InviteList: FC = () => {
     }
 
     console.log("rejecting invite", invite);
-    await dispatch(rejectInvite(invite as Invite));
+    await thunkDispatch(rejectInvite(invite as Invite));
   };
 
   const pendingInvites = useMemo(
     (): Invite[] =>
       currentUser.chatInvites.invites
-        .map((invite) => ({
+        .map((invite: InviteAttributes) => ({
           id: invite.id,
           createdAt: invite.createdAt,
           sender: currentUser.chatInvites.senders[invite.senderId],
@@ -153,7 +154,7 @@ const InviteList: FC = () => {
   const friendRequestsAndChatInvites = useMemo(
     () => [
       ...currentUser.friendRequests
-        .map((friendRequest) => ({
+        .map((friendRequest: friendRequest) => ({
           ...friendRequest,
           type: "friendRequest",
         }))

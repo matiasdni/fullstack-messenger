@@ -1,10 +1,10 @@
+import { addSentFriendRequest } from "features/auth/authSlice";
+import { useAuth } from "hooks/useAuth";
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store";
 import { createChat } from "../features/chats/chatsSlice";
-import { searchUsersByName, sendFriendRequest } from "../services/user";
 import { chatData } from "../services/chats";
-import { useAuth } from "src/hooks/useAuth";
-import { addSentFriendRequest } from "src/features/auth/authSlice";
+import { searchUsersByName, sendFriendRequest } from "../services/user";
+import { useAppDispatch, useAppSelector, useThunkDispatch } from "../store";
 
 const StatusIndicator = ({ online }) => {
   return (
@@ -42,14 +42,16 @@ export const UserSearch = () => {
 const SearchListItem = ({ user }) => {
   const { user: currentUser, token } = useAuth();
   const dispatch = useAppDispatch();
+  const thunkDispatch = useThunkDispatch();
 
-  const handleMessageClick = () => {
+  const handleMessageClick = async () => {
     const chat: chatData = {
       name: `${user.username}-${currentUser.username}`,
       chat_type: "private",
       userIds: [user.id],
     };
-    dispatch(createChat(chat));
+
+    await thunkDispatch(createChat(chat));
   };
 
   const handleAddFriendClick = async () => {

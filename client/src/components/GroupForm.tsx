@@ -1,11 +1,11 @@
-import { useAppDispatch, useAppSelector } from "../store";
-import React, { useCallback, useState } from "react";
-import { User } from "../features/users/types";
-import { ChatType, createChat } from "../features/chats/chatsSlice";
-import { searchUsersByName } from "../services/user";
-import AsyncSelect from "react-select/async";
+import { useCallback, useState } from "react";
 import OptionTypeBase from "react-select";
+import AsyncSelect from "react-select/async";
+import { createChat } from "../features/chats/chatsSlice";
+import { User } from "../features/users/types";
 import { chatData } from "../services/chats";
+import { searchUsersByName } from "../services/user";
+import { useAppSelector, useThunkDispatch } from "../store";
 
 interface UserOption extends OptionTypeBase {
   label: string;
@@ -21,7 +21,11 @@ const userToOption = (user: User): UserOption =>
 
 const formatOptionLabel = ({ value, label, avatar }) => (
   <div className="flex flex-row items-center">
-    <img className="inline-block h-8 w-8 rounded-full" src={avatar} alt="" />
+    <img
+      className="inline-block h-8 w-8 rounded-full"
+      src={`https://avatars.dicebear.com/api/identicon/${label}.svg`}
+      alt=""
+    />
     <p className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
       {label}
     </p>
@@ -95,7 +99,7 @@ const AddUsers = ({ setSelectedUsers }) => {
 };
 
 export const GroupForm = (props: { handleCloseModal: () => void }) => {
-  const dispatch = useAppDispatch();
+  const thunkDispatch = useThunkDispatch();
   const [groupName, setGroupName] = useState<string>("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [groupDescription, setGroupDescription] = useState<string>("");
@@ -108,7 +112,7 @@ export const GroupForm = (props: { handleCloseModal: () => void }) => {
       userIds: selectedUsers,
       chat_type: "group",
     };
-    const action = await dispatch(createChat(data));
+    const action = await thunkDispatch(createChat(data));
     if (action.meta.requestStatus === "fulfilled") {
       console.log("Group created");
       console.log(action.payload);

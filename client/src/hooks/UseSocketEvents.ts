@@ -1,11 +1,12 @@
-import { useAppDispatch, useAppSelector } from "../store";
 import { useEffect, useRef } from "react";
-import { socket } from "../socket";
 import { addMessage, getChatById } from "../features/chats/chatsSlice";
 import { Chat, Message } from "../features/chats/types";
+import { socket } from "../socket";
+import { useAppDispatch, useAppSelector, useThunkDispatch } from "../store";
 
 const useSocketEvents = (): void => {
   const dispatch = useAppDispatch();
+  const dispatchThunk = useThunkDispatch();
   const { token, chats } = useAppSelector((state) => ({
     token: state.auth.token,
     chats: state.chats.chats,
@@ -29,7 +30,7 @@ const useSocketEvents = (): void => {
       console.log("message received");
       const chat = chatsRef.current.find((chat) => chat.id === data.chatId);
       if (!chat) {
-        await dispatch(getChatById(data.chatId));
+        await dispatchThunk(getChatById(data.chatId));
       } else {
         dispatch(addMessage(data));
       }
@@ -49,7 +50,7 @@ const useSocketEvents = (): void => {
       socket.off("message", onMessage);
       socket.disconnect();
     };
-  }, [token, dispatch]);
+  }, [token, dispatch, dispatchThunk]);
 };
 
 export default useSocketEvents;
