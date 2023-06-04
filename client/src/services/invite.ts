@@ -1,6 +1,6 @@
 import axios from "axios";
+import { Invite } from "features/invites/types";
 import { InviteAttributes } from "../../../shared/types";
-import { Invite } from "src/features/invites/types";
 
 const BASE_URL = "/api/invites";
 

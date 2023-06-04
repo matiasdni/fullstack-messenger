@@ -1,7 +1,6 @@
-import { useAppSelector } from "../../store";
-import React from "react";
+import { useUser } from "hooks/useAuth";
 
-const getTime = (date): string => {
+const getTime = (date: Date): string => {
   const time = new Date(date);
   return time
     .toLocaleTimeString([], {
@@ -13,12 +12,12 @@ const getTime = (date): string => {
 };
 
 export const Message = ({ message }) => {
-  const username = useAppSelector((state) => state.auth.user?.username);
+  const { username } = useUser();
 
   return message.user?.username === username ? (
     <div className="mb-2 flex w-full items-center justify-end">
-      <div className="flex max-w-3/4 shrink-0 flex-col overflow-auto break-words rounded bg-sky-200 p-2 dark:bg-sky-700">
-        <p className="self-end text-sm">{message?.content}</p>
+      <div className="flex min-w-[72px] max-w-3/4 shrink-0 flex-col overflow-auto break-words rounded bg-sky-200 p-2 dark:bg-sky-700">
+        <p className=" cursor-default text-sm">{message?.content}</p>
         <p className="text-grey-dark mt-0.5 self-end text-xs">
           {getTime(message?.createdAt)}
         </p>

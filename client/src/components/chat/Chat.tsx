@@ -1,10 +1,10 @@
-import { useAppSelector } from "../../store";
+import { useToken } from "hooks/useAuth";
 import { selectActiveChat } from "../../features/chats/chatsSlice";
 import { Chat as ChatType } from "../../features/chats/types";
+import { useAppSelector } from "../../store";
 import { ChatHeader } from "./ChatHeader";
-import { MessageList } from "./MessageList";
 import ChatInputForm from "./ChatInputForm";
-import { useToken } from "src/hooks/useAuth";
+import { MessageList } from "./MessageList";
 
 export const Chat = () => {
   const token = useToken();

@@ -1,4 +1,4 @@
-import { useUser } from "src/hooks/useAuth";
+import { useUser } from "hooks/useAuth";
 
 const FriendList = () => {
   const user = useUser();

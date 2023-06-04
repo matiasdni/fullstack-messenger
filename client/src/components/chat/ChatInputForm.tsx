@@ -1,8 +1,8 @@
+import { addMessage } from "features/chats/chatsSlice";
+import { Chat } from "features/chats/types";
 import { FC, useState } from "react";
-import { addMessage } from "src/features/chats/chatsSlice";
-import { Chat } from "src/features/chats/types";
-import { sendMessage } from "src/services/chats";
-import { useAppDispatch } from "src/store";
+import { sendMessage } from "services/chats";
+import { useAppDispatch } from "store";
 
 interface InputFormProps {
   activeChat: Chat;

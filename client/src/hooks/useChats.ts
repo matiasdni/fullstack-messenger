@@ -1,8 +1,8 @@
+import { setActiveChat } from "features/chats/chatsSlice";
+import { Chat, ChatState } from "features/chats/types";
 import { useSelector } from "react-redux";
-import { setActiveChat } from "src/features/chats/chatsSlice";
-import { Chat, ChatState } from "src/features/chats/types";
-import { useAppDispatch } from "src/store";
-import { RootState } from "src/types";
+import { useAppDispatch } from "store";
+import { RootState } from "types";
 
 import { PayloadAction } from "@reduxjs/toolkit";
 
