@@ -1,15 +1,27 @@
-import { fetchUserRequests } from "src/services/user";
-import { Invite } from "./types";
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { RootState } from "src/types";
-import { deleteInvite, updateInvite } from "src/services/invite";
+import {
+  Dispatch,
+  PayloadAction,
+  createAsyncThunk,
+  createSlice,
+} from "@reduxjs/toolkit";
+import { deleteInvite, updateInvite } from "services/invite";
+import { fetchUserRequests } from "services/user";
+import { RootState } from "types";
 import { InviteAttributes } from "../../../../shared/types";
+import { Invite } from "./types";
 
 const initialState: Invite[] = [];
 
-export const updateInviteStatus = createAsyncThunk(
+export const updateInviteStatus = createAsyncThunk<
+  InviteAttributes,
+  Invite,
+  {
+    state: RootState;
+    dispatch: Dispatch<PayloadAction<Invite>>;
+  }
+>(
   "invites/updateInviteStatus",
-  async (invite: Invite, { getState }) => {
+  async (invite: Invite, { getState }): Promise<InviteAttributes> => {
     const token = (getState() as RootState).auth.token;
     return await updateInvite(invite, token);
   }
