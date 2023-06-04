@@ -1,18 +1,19 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
+    "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext",
     ],
-    "target": "es2015",
+    "target": "ESNext",
     "noEmit": true,
     "allowJs": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
@@ -21,13 +22,29 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "sourceMap": true,
-    "baseUrl": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "components/*": [
+        "./src/components/*"
+      ],
+      "hooks/*": [
+        "./src/hooks/*"
+      ],
+      "features/*": [
+        "./src/features/*"
+      ],
+      "services/*": [
+        "./src/services/*"
+      ],
+      "utils/*": [
+        "./src/utils/*"
+      ],
+      "*": [
+        "./src/*"
+      ]
+    }
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
 }

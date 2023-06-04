@@ -4,13 +4,7 @@
 
 module.exports = {
   darkMode: "class",
-  content: [
-    "./src/*.{js, jsx, ts, tsx}",
-    "./src/**/*.{js,jsx,ts,tsx,html}",
-    "./src/components/**/*.{js,jsx,ts,tsx}",
-    "./src/pages/**/*.{js,jsx,ts,tsx}",
-    "./src/**/**/*.{js,jsx,ts,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     container: {
       center: true,
@@ -126,5 +120,6 @@ module.exports = {
     require("@tailwindcss/forms"),
     require("@tailwindcss/typography"),
     require("@tailwindcss/container-queries"),
+    require("@tailwindcss/aspect-ratio"),
   ],
 };
