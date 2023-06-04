@@ -1,10 +1,19 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { ThunkDispatch, configureStore } from "@reduxjs/toolkit";
+import { ActionsFromAsyncThunk } from "@reduxjs/toolkit/src/matchers";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import authReducer from "./features/auth/authSlice";
-import chatsReducer from "./features/chats/chatsSlice";
+import authReducer, { login } from "./features/auth/authSlice";
+import chatsReducer, {
+  createChat,
+  getChatById,
+  getChats,
+} from "./features/chats/chatsSlice";
+import inviteReducer, {
+  getInvites,
+  rejectInvite,
+  updateInviteStatus,
+} from "./features/invites/inviteSlice";
 import usersReducer from "./features/users/usersSlice";
 import { RootState } from "./types";
-import inviteReducer from "./features/invites/inviteSlice";
 
 const store = configureStore({
   reducer: {
@@ -26,7 +35,19 @@ const store = configureStore({
 
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch: () => AppDispatch = useDispatch;
-
+export const useThunkDispatch = (): ThunkDispatch<
+  RootState,
+  void,
+  ActionsFromAsyncThunk<
+    | typeof createChat
+    | typeof getChats
+    | typeof updateInviteStatus
+    | typeof rejectInvite
+    | typeof getInvites
+    | typeof getChatById
+    | typeof login
+  >
+> => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = (selector) =>
   useSelector(selector);
 
