@@ -95,11 +95,8 @@ router.post(
       req.params.friendId
     );
 
-    // todo: send notification to friend
     res.json(friend);
-    // print the object to the console
     logger.info(`Friend request sent to ${JSON.stringify(friend)}`);
-
     io.to(friend.friendId).emit("friend-request", friend);
   }
 );
@@ -117,10 +114,15 @@ router.put(
       req.params.friendId,
       req.params.id
     );
-    console.log("friend request accepted", friend.toJSON());
+    logger.info(`Friend request accepted ${JSON.stringify(friend)}`);
 
     res.json(friend.toJSON());
+    const friendUser = await getUserById(friend.userId);
     // todo: send notification to friend
+    io.to(friend.userId).emit("friend-request-accepted", {
+      friend,
+      friendUser,
+    });
   }
 );
 
