@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
 import { UserFriends } from "../models/UserFriends";
 import { User, sequelize } from "../models/initModels";
-import _ from "lodash";
+import { ApiError } from "../utils/ApiError";
 
 const friendService = {
   getFriends: async (userId: string) => {
@@ -74,7 +74,7 @@ const friendService = {
     });
 
     if (!request[1] && request[0].status === "pending") {
-      throw new Error("Friend request already sent");
+      throw new ApiError(403, "Friend request already sent");
     }
     const friendRequest = request[0];
     await friendRequest.reload({
