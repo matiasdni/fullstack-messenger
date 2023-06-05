@@ -49,22 +49,22 @@ const InviteItem: FC<InviteItemProps> = ({
       : pendingInvite.sender.username;
 
   return (
-    <div className="flex w-full grow-0 flex-row items-center justify-center space-x-2">
+    <div className="flex flex-row items-center justify-center w-full space-x-2 grow-0">
       <div className="shrink-0">
         <img
           src={`https://avatars.dicebear.com/api/identicon/${username}.svg`}
           alt="avatar"
-          className="h-8 w-8 rounded-full object-cover"
+          className="object-cover w-8 h-8 rounded-full"
         />
       </div>
       <div className="w-full truncate">
-        <div className="flex w-full items-center justify-between">
+        <div className="flex items-center justify-between w-full">
           <p className="font-semibold text-black dark:text-gray-300">
             {username}
           </p>
         </div>
         <div className="flex flex-col space-y-2">
-          <p className=" truncate text-sm text-gray-500">
+          <p className="text-sm text-gray-500 truncate ">
             {formatInviteMessage(pendingInvite, isFriendRequest)}
           </p>
         </div>
@@ -174,11 +174,11 @@ const InviteList: FC = () => {
   );
 
   return !friendRequestsAndChatInvites.length ? (
-    <div className="flex w-full flex-col space-y-4 divide-y p-2">
+    <div className="flex flex-col w-full p-2 space-y-4 divide-y">
       <p className="text-center">No new invites</p>
     </div>
   ) : (
-    <div className="flex w-full flex-col space-y-4 divide-y overflow-scroll p-2">
+    <div className="flex flex-col w-full p-2 space-y-4 overflow-scroll divide-y">
       {sortedInvites.map((pendingInvite) => (
         <InviteItem
           key={pendingInvite.id}
