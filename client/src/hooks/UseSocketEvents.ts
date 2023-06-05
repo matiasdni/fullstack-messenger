@@ -1,7 +1,12 @@
-import { addFriendRequest } from "@/features/auth/authSlice";
+import {
+  addFriend,
+  addFriendRequest,
+  removeFriendRequest,
+} from "@/features/auth/authSlice";
 import { useEffect, useRef } from "react";
 import { addMessage, getChatById } from "../features/chats/chatsSlice";
 import { Chat, Message } from "../features/chats/types";
+import { User, friendRequest } from "../features/users/types";
 import { socket } from "../socket";
 import { useAppDispatch, useAppSelector, useThunkDispatch } from "../store";
 
@@ -42,10 +47,20 @@ const useSocketEvents = (): void => {
       dispatch(addFriendRequest(data));
     };
 
+    const onFriendRequestAccepted = (data: {
+      friendRequest: friendRequest;
+      newFriend: User;
+    }) => {
+      console.log("friend request accepted");
+      dispatch(addFriend(data.newFriend));
+      dispatch(removeFriendRequest(data.friendRequest));
+    };
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("message", onMessage);
     socket.on("friend-request", onFriendRequest);
+    socket.on("friend-request-accepted", onFriendRequestAccepted);
 
     socket.auth = { token };
     socket.connect();
@@ -56,6 +71,7 @@ const useSocketEvents = (): void => {
       chatsRef.current.forEach((chat) => socket.emit("leave-room", chat.id));
       socket.off("message", onMessage);
       socket.off("friend-request", onFriendRequest);
+      socket.off("friend-request-accepted", onFriendRequestAccepted);
       socket.disconnect();
     };
   }, [token, dispatch, dispatchThunk]);
