@@ -36,9 +36,15 @@ const useSocketEvents = (): void => {
       }
     };
 
+    const onFriendRequest = (data: any) => {
+      console.log("friend request received");
+      console.log(data);
+    };
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("message", onMessage);
+    socket.on("friend-request", onFriendRequest);
 
     socket.auth = { token };
     socket.connect();
@@ -48,6 +54,7 @@ const useSocketEvents = (): void => {
       socket.off("disconnect", onDisconnect);
       chatsRef.current.forEach((chat) => socket.emit("leave-room", chat.id));
       socket.off("message", onMessage);
+      socket.off("friend-request", onFriendRequest);
       socket.disconnect();
     };
   }, [token, dispatch, dispatchThunk]);
