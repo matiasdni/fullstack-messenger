@@ -12,6 +12,8 @@ import {
   getUserById,
   searchUsers,
 } from "../services/userService";
+import { ApiError } from "../utils/ApiError";
+import logger from "../utils/logger";
 
 const router = require("express").Router();
 
@@ -86,20 +88,19 @@ router.post(
     const user = req.user;
     if (!user || user.id !== req.params.id) {
       console.log("Not authorized");
-      return res.status(403).json({ error: "Not Authorized" });
+      throw new ApiError(403, "Not Authorized");
     }
     const friend = await friendService.sendFriendRequest(
       req.params.id,
       req.params.friendId
     );
 
-    res.json(friend);
-
     // todo: send notification to friend
-    io.to(req.params.friendId).emit("friendRequest", {
-      from: req.params.id,
-      to: req.params.friendId,
-    });
+    res.json(friend);
+    // print the object to the console
+    logger.info(`Friend request sent to ${JSON.stringify(friend)}`);
+
+    io.to(friend.friendId).emit("friend-request", friend);
   }
 );
 
