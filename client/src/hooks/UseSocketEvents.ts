@@ -1,3 +1,4 @@
+import { addFriendRequest } from "@/features/auth/authSlice";
 import { useEffect, useRef } from "react";
 import { addMessage, getChatById } from "../features/chats/chatsSlice";
 import { Chat, Message } from "../features/chats/types";
@@ -38,7 +39,7 @@ const useSocketEvents = (): void => {
 
     const onFriendRequest = (data: any) => {
       console.log("friend request received");
-      console.log(data);
+      dispatch(addFriendRequest(data));
     };
 
     socket.on("connect", onConnect);
