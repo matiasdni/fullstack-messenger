@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { loginUser } from "../../services/auth";
-import { AuthInitialState, AuthState, LoginData } from "./types";
 import { removeTokenFromStorage } from "../../utils/localStorage";
+import { AuthInitialState, AuthState, LoginData } from "./types";
 
 const initialState: AuthInitialState = {
   user: null,
@@ -37,10 +37,17 @@ const authSlice = createSlice({
       };
     },
     addFriendRequest(state, action) {
-      state.user = {
-        ...state.user,
-        friendRequests: [...state.user.friendRequests, action.payload],
-      };
+      const friendRequest = state.user.friendRequests.find(
+        (friendRequest) => friendRequest.id === action.payload.id
+      );
+      if (friendRequest && friendRequest.status === "rejected") {
+        friendRequest.status = action.payload.status;
+      } else {
+        state.user = {
+          ...state.user,
+          friendRequests: [...state.user.friendRequests, action.payload],
+        };
+      }
     },
     addSentFriendRequest(state, action) {
       state.user = {
