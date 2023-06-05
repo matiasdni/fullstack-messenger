@@ -1,15 +1,16 @@
 import cors from "cors";
 import express from "express";
+import "express-async-errors";
 import http from "http";
 import { Server } from "socket.io";
 import inviteRouter from "./controllers/inviteController";
 import loginRouter from "./controllers/loginController";
 import usersRouter from "./controllers/userController";
-import onConnection from "./listeners/socketsManager";
+import { mySocket } from "./listeners/types";
 import { authenticateSocket } from "./middlewares/auth";
 import errorHandler from "./middlewares/errorHandler";
 import chatRouter from "./routes/chats";
-require("express-async-errors");
+import logger from "./utils/logger";
 
 const app = express();
 const server = http.createServer(app);
@@ -39,6 +40,30 @@ app.use(errorHandler);
 
 io.use(authenticateSocket);
 
-io.on("connection", onConnection);
+const connectedClients: mySocket[] = [];
+io.sockets.on("connection", (socket: mySocket) => {
+  connectedClients.push(socket);
+  logger.info(
+    `User ${socket.user?.username} connected, connected clients: ${io.engine.clientsCount}`
+  );
 
-export { app, server };
+  const uniqueUsers = connectedClients.reduce((acc: any, curr: any) => {
+    if (!acc.includes(curr.user.username)) {
+      acc.push(curr.user.username);
+    }
+    return acc;
+  }, []);
+
+  logger.info(`Unique users: ${uniqueUsers.length}`);
+
+  socket.join(socket.user!.id);
+
+  socket.on("disconnect", () => {
+    logger.info(`User disconnected: ${socket.user?.username}`);
+    const index = connectedClients.indexOf(socket);
+    connectedClients.splice(index, 1);
+    socket.disconnect();
+  });
+});
+
+export { app, connectedClients, server };
