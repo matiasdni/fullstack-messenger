@@ -1,6 +1,7 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { loginUser } from "../../services/auth";
 import { removeTokenFromStorage } from "../../utils/localStorage";
+import { User } from "../users/types";
 import { AuthInitialState, AuthState, LoginData } from "./types";
 
 const initialState: AuthInitialState = {
@@ -72,11 +73,25 @@ const authSlice = createSlice({
     },
     removeFriendRequest(state, action) {
       const friendRequests = state.user.friendRequests.filter(
-        (friendRequest) => friendRequest.id !== action.payload
+        (friendRequest) => friendRequest.userId !== action.payload.userId
       );
       state.user = {
         ...state.user,
         friendRequests,
+      };
+    },
+    addFriend(state, action: PayloadAction<User>) {
+      if (state.user.friends.find((friend) => friend.id === action.payload.id))
+        return;
+      state.user.friends = [...state.user.friends, action.payload];
+    },
+    removeSentFriendRequest(state, action) {
+      const sentFriendRequests = state.user.sentFriendRequests.filter(
+        (friendRequest) => friendRequest.id !== action.payload
+      );
+      state.user = {
+        ...state.user,
+        sentFriendRequests,
       };
     },
     removeChatInvite(state: AuthState, action) {
@@ -146,6 +161,8 @@ export const {
   updateFriendRequest,
   setUserChatInvites,
   addSentFriendRequest,
+  removeSentFriendRequest,
+  addFriend,
 } = authSlice.actions;
 
 export default authSlice.reducer;
