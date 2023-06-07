@@ -150,17 +150,22 @@ router.delete(
   authenticate,
   async (req: AuthRequest, res: Response) => {
     const user = req.user;
-    if (!user || user.id !== req.params.friendId) {
-      console.log("Not authorized");
-      return res.status(403).json({ error: "Not Authorized" });
+    if (!user || user.id !== req.params.id) {
+      throw new ApiError(403, "Not Authorized");
     }
-    const friend = await friendService.removeFriend(
-      req.params.friendId,
-      req.params.id
+    const updatedFriends = await friendService.removeFriend(
+      req.params.id,
+      req.params.friendId
     );
-    console.log("friend removed", friend.toJSON());
+    console.log(updatedFriends);
 
-    res.status(204).json();
+    res.json({
+      friends: updatedFriends[user.id],
+    });
+
+    io.to(req.params.friendId).emit("userUpdated", {
+      friends: updatedFriends[req.params.friendId],
+    });
   }
 );
 
