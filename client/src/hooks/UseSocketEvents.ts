@@ -2,6 +2,7 @@ import {
   addFriend,
   addFriendRequest,
   removeFriendRequest,
+  updateUser,
 } from "@/features/auth/authSlice";
 import { useEffect, useRef } from "react";
 import { addMessage, getChatById } from "../features/chats/chatsSlice";
@@ -61,11 +62,17 @@ const useSocketEvents = (): void => {
      * TODO: refactor all the related code to use the new event so we dont need to specify every change we want to listen to
      **/
 
+    const onUserUpdate = (data) => {
+      console.log("user update received", data);
+      dispatch(updateUser(data));
+    };
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("message", onMessage);
     socket.on("friend-request", onFriendRequest);
     socket.on("friend-request-accepted", onFriendRequestAccepted);
+    socket.on("userUpdate", onUserUpdate);
 
     socket.auth = { token };
     socket.connect();
@@ -77,6 +84,7 @@ const useSocketEvents = (): void => {
       socket.off("message", onMessage);
       socket.off("friend-request", onFriendRequest);
       socket.off("friend-request-accepted", onFriendRequestAccepted);
+      socket.off("userUpdate", onUserUpdate);
       socket.disconnect();
     };
   }, [token, dispatch, dispatchThunk]);
