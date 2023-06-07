@@ -56,6 +56,11 @@ const useSocketEvents = (): void => {
       dispatch(removeFriendRequest(data.friendRequest));
     };
 
+    /**
+     * TODO: implement socket.on("userUpdate", onUserUpdate); to update the current users data whenever it changes
+     * TODO: refactor all the related code to use the new event so we dont need to specify every change we want to listen to
+     **/
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("message", onMessage);
