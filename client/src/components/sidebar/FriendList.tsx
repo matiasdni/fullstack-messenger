@@ -1,5 +1,6 @@
 import { User } from "@/features/users/types";
-import { useUser } from "hooks/useAuth";
+import { removeFriend } from "@/services/user";
+import { useAuth } from "hooks/useAuth";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -14,11 +15,13 @@ import {
 } from "../common/alert-dialog";
 
 const FriendList = () => {
-  const user = useUser();
+  const { user, token } = useAuth();
   const [selectedUser, setSelectedUser] = useState<User>();
 
   const handleRemoveFriend = async (friendId: string) => {
-    console.log("handleRemoveFriend", selectedUser);
+    console.log("handleRemoveFriend", friendId);
+    const data = await removeFriend(user.id, friendId, token);
+    console.log("data", data);
   };
 
   return user.friends.length === 0 ? (
@@ -40,7 +43,10 @@ const FriendList = () => {
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction className="p-2 text-white bg-red-500 rounded-md hover:bg-red-600">
-              <div className="" onClick={() => handleRemoveFriend(user.id)}>
+              <div
+                className=""
+                onClick={() => handleRemoveFriend(selectedUser.id)}
+              >
                 Delete
               </div>
             </AlertDialogAction>
