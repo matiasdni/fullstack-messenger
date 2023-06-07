@@ -1,6 +1,6 @@
 import axios from "axios";
+import { Chats, InviteAttributes, Senders } from "../../../shared/types";
 import { User, friendRequest } from "../features/users/types";
-import { Senders, Chats, InviteAttributes } from "../../../shared/types";
 
 const BASE_URL = "/api/users";
 
@@ -64,6 +64,27 @@ const fetchUserRequests = async (
   return response.data;
 };
 
+const removeFriend = async (
+  userId: string,
+  friendId: string,
+  token: string
+) => {
+  const response = await axios.delete(
+    `${BASE_URL}/${userId}/friends/${friendId}`,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  console.log("response", response);
+
+  console.log("response data", response.data);
+
+  return response.data;
+};
+
 const acceptFriendRequest = async (
   userId: string,
   friendId: string,
@@ -119,11 +140,12 @@ const sendFriendRequest = async (
 };
 
 export {
+  acceptFriendRequest,
   createUser,
-  searchUsersByName,
   fetchUserChats,
   fetchUserRequests,
-  acceptFriendRequest,
   rejectFriendRequest,
+  removeFriend,
+  searchUsersByName,
   sendFriendRequest,
 };
