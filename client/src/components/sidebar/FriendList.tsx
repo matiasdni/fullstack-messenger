@@ -1,5 +1,7 @@
+import { updateUser } from "@/features/auth/authSlice";
 import { User } from "@/features/users/types";
 import { removeFriend } from "@/services/user";
+import { useAppDispatch } from "@/store";
 import { useAuth } from "hooks/useAuth";
 import { useState } from "react";
 import {
@@ -17,11 +19,13 @@ import {
 const FriendList = () => {
   const { user, token } = useAuth();
   const [selectedUser, setSelectedUser] = useState<User>();
+  const dispatch = useAppDispatch();
 
   const handleRemoveFriend = async (friendId: string) => {
-    console.log("handleRemoveFriend", friendId);
     const data = await removeFriend(user.id, friendId, token);
-    console.log("data", data);
+    if (data) {
+      dispatch(updateUser(data));
+    }
   };
 
   return user.friends.length === 0 ? (
