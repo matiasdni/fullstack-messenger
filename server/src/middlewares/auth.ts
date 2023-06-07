@@ -1,7 +1,9 @@
-import { getUserByToken } from "../services/userService";
 import { NextFunction, Request, Response } from "express";
-import { User } from "../models/initModels";
 import { mySocket } from "../listeners/types";
+import { User } from "../models/initModels";
+import { getUserByToken } from "../services/userService";
+import { ApiError } from "../utils/ApiError";
+import logger from "../utils/logger";
 
 export interface AuthRequest extends Request {
   user: User;
@@ -15,14 +17,14 @@ const authenticate = async (
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    console.log("no auth header");
-    return res.status(401).json({ error: "unauthorized" });
+    logger.error("header missing token");
+    throw new ApiError(401 as const, "header missing token");
   }
 
   const user = await getUserByToken(token);
   if (!user) {
-    console.log("token not valid");
-    return res.status(401).send({ error: "unauthorized" });
+    logger.error("failed to authenticate");
+    throw new ApiError(401 as const, "failed to authenticate");
   }
 
   req.user = user;
