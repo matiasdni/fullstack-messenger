@@ -127,6 +127,13 @@ const authSlice = createSlice({
         },
       };
     },
+    // for delta updates from socket
+    updateUser(state, action) {
+      state.user = {
+        ...state.user,
+        ...action.payload,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
@@ -163,6 +170,7 @@ export const {
   addSentFriendRequest,
   removeSentFriendRequest,
   addFriend,
+  updateUser,
 } = authSlice.actions;
 
 export default authSlice.reducer;
