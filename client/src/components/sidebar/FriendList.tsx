@@ -28,19 +28,19 @@ const FriendList = () => {
       <AlertDialog>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Remove friend?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              Are you sure you want to remove{" "}
+              <span className="font-semibold">{selectedUser?.username}</span>{" "}
+              from your friends?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>
-              <div
-                className="p-2 text-sm font-semibold text-white bg-red-500 rounded-md hover:bg-red-600"
-                onClick={() => handleRemoveFriend(user.id)}
-              >
+            <AlertDialogCancel className="p-2 text-white rounded-md bg-neutral-500 hover:bg-neutral-600">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction className="p-2 text-white bg-red-500 rounded-md hover:bg-red-600">
+              <div className="" onClick={() => handleRemoveFriend(user.id)}>
                 Delete
               </div>
             </AlertDialogAction>
