@@ -33,7 +33,12 @@ const friendService = {
       },
       attributes: ["id", "username"],
     });
-    return friendsList;
+    return friendsList.map((friend) => {
+      return {
+        id: friend.id as String,
+        username: friend.username,
+      };
+    });
   },
   getFriendRequests: async (userId: string) => {
     const friendRequests = await UserFriends.findAll({
@@ -184,31 +189,33 @@ const friendService = {
   removeFriend: async (userId: string, friendId: string) => {
     const t = await sequelize.transaction();
     try {
-      const friendRequest = await UserFriends.findOne({
+      const friendRequests: UserFriends[] = await UserFriends.findAll({
         where: {
-          userId,
-          friendId,
-          status: "accepted",
+          [Op.or]: [
+            { userId, friendId, status: "accepted" },
+            { userId: friendId, friendId: userId, status: "accepted" },
+          ],
         },
       });
-      if (!friendRequest) {
-        throw new Error("Friend request not found");
+      if (!friendRequests || friendRequests.length === 0) {
+        throw new ApiError(404, "Friend not found");
       }
-      await friendRequest.destroy({ transaction: t });
-
-      const reverseFriendRequest = await UserFriends.findOne({
-        where: {
-          userId: friendId,
-          friendId: userId,
-          status: "accepted",
-        },
-      });
-      if (reverseFriendRequest) {
-        await reverseFriendRequest.destroy({ transaction: t });
-      }
-
+      // delete friend requests from both users
+      await Promise.all(
+        friendRequests.map((friendRequest) =>
+          friendRequest.destroy({ transaction: t })
+        )
+      );
       await t.commit();
-      return friendRequest;
+
+      // return the new friend lists of both users
+      const friends = await friendService.getFriends(userId);
+      const friendsOfFriend = await friendService.getFriends(friendId);
+
+      return {
+        [userId]: friends,
+        [friendId]: friendsOfFriend,
+      };
     } catch (error) {
       await t.rollback();
       throw error;
