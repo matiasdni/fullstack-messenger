@@ -163,7 +163,7 @@ router.delete(
       friends: updatedFriends[user.id],
     });
 
-    io.to(req.params.friendId).emit("userUpdated", {
+    io.to(req.params.friendId).emit("userUpdate", {
       friends: updatedFriends[req.params.friendId],
     });
   }
