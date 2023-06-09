@@ -8,11 +8,10 @@ import {
   Model,
   NonAttribute,
   Sequelize,
-  Transaction,
 } from "sequelize";
-import { User } from "./user";
-import { Message } from "./message";
 import { Invite } from "./Invite";
+import { Message } from "./message";
+import { User } from "./user";
 
 class Chat extends Model {
   declare id: string;
@@ -21,12 +20,14 @@ class Chat extends Model {
   declare chat_type: "group" | "private";
   declare users: NonAttribute<User[]>;
   declare messages: NonAttribute<Message[]>;
+  declare invites: NonAttribute<Invite[]>;
 
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 
   declare getUsers: HasManyGetAssociationsMixin<User>;
   declare getMessages: HasManyGetAssociationsMixin<Message>;
+  declare getInvites: HasManyGetAssociationsMixin<Invite>;
 
   declare createUser: HasManyCreateAssociationMixin<User, "id">;
   declare createMessage: HasManyCreateAssociationMixin<Message, "chatId">;

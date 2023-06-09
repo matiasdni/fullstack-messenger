@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
+import { AuthRequest } from "../middlewares/auth";
+import { Chat } from "../models/chat";
+import { Message } from "../models/message";
+import { User } from "../models/user";
+import { io } from "../server";
 import {
   createChatWithUsers,
   findOrCreatePrivateChat,
 } from "../services/chatService";
-import { Chat } from "../models/chat";
-import { User } from "../models/user";
-import { Message } from "../models/message";
-import { io } from "../server";
-import { AuthRequest } from "../middlewares/auth";
 import { createMessage } from "../services/messageService";
+import { ApiError } from "../utils/ApiError";
 
 interface AuthenticatedRequest extends Request {
   user: User;
@@ -34,7 +35,7 @@ export const createChat = async (req: AuthenticatedRequest, res: Response) => {
   const { name, description, chat_type, userIds } = req.body as ChatData;
   const currentUser: User = req.user;
 
-  let chat;
+  let chat: Chat;
 
   if (chat_type === "private") {
     const user = await User.findByPk(currentUser.id);
@@ -79,8 +80,22 @@ export const createChat = async (req: AuthenticatedRequest, res: Response) => {
   }
 
   res.status(200).json(chat.toJSON());
+
   if (chat.chat_type === "group") {
-    io.to(userIds).emit("invite", chat);
+    const invites = chat.invites;
+    invites.forEach((invite) => {
+      io.to(invite.recipientId).emit("chat-invite", {
+        invite,
+        chat: {
+          id: chat.id,
+          name: chat.name,
+        },
+        sender: {
+          id: currentUser.id,
+          username: currentUser.username,
+        },
+      });
+    });
   } else {
     io.to(userIds).emit("join-room", chat.id);
   }
@@ -118,9 +133,7 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
 
   const chat = await Chat.findByPk(chatId);
 
-  if (!chat) {
-    return res.status(404).json({ error: "Chat not found" });
-  }
+  if (!chat) throw new ApiError(404, "Chat not found");
 
   const newMessage = await createMessage(message, user.id, chatId);
 

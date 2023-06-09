@@ -57,18 +57,20 @@ const invitesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(updateInviteStatus.fulfilled, (state, action) => {
-      console.log(action.payload);
-      const updateInvite: InviteAttributes = action.payload;
-      const inviteIndex = state.findIndex(
-        (invite) => invite.id === updateInvite.id
+      console.log(
+        "builder.addCase(updateInviteStatus.fulfilled)",
+        action.payload
       );
+      const inviteIndex = state.findIndex(
+        (invite) => invite.id === action.payload.id
+      );
+      console.log("inviteIndex", inviteIndex);
       if (inviteIndex !== -1) {
         state[inviteIndex] = {
           ...state[inviteIndex],
-          status: updateInvite.status,
+          status: action.payload.status,
         };
       }
-      console.log("acceptInvite.fulfilled after", state);
     });
 
     builder.addCase(updateInviteStatus.rejected, (state, action) => {

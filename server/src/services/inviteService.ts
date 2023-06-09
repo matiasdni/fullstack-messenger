@@ -1,18 +1,18 @@
-import { Invite as InviteModel, User } from "../models/initModels";
 import {
+  Chats,
   CreateInviteInput,
-  InviteAttributes,
-  AcceptInviteInput,
-  RejectInviteInput,
   GetPendingInvitesInput,
   GetPendingInvitesOutput,
-  Status,
+  Invite,
+  InviteAttributes,
+  RejectInviteInput,
   Sender,
   Senders,
+  Status,
   TChat,
-  Chats,
 } from "../../../shared/types";
-import { Invite } from "../../../shared/types";
+import { Invite as InviteModel, User } from "../models/initModels";
+import { ApiError } from "../utils/ApiError";
 
 // senderId: The id of the user who is sending the invite.
 // chatId: The id of the chat to invite the user to.
@@ -56,7 +56,7 @@ const updateInvite = async (
   });
 
   if (!invite) {
-    throw new Error("invite not found or already accepted/rejected");
+    throw new ApiError(404, "invite not found or already accepted/rejected");
   }
 
   console.log("invite", invite.toJSON(), "updatedInvite", updatedInvite);
@@ -66,7 +66,7 @@ const updateInvite = async (
       updatedInvite.status === "accepted" || updatedInvite.status === "rejected"
     )
   ) {
-    throw new Error("invalid invite status");
+    throw new ApiError(400, "invalid invite status");
   }
   await invite.update({ status: updatedInvite.status });
 
@@ -138,4 +138,4 @@ const getPendingInvites = async ({
   return { invites: inviteAttributes, senders, chats };
 };
 
-export { createInvite, updateInvite, getPendingInvites, rejectInvite };
+export { createInvite, getPendingInvites, rejectInvite, updateInvite };

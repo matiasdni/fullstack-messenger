@@ -1,4 +1,8 @@
-import { updateFriendRequest, updateUser } from "features/auth/authSlice";
+import {
+  removeChatInvite,
+  updateFriendRequest,
+  updateUser,
+} from "features/auth/authSlice";
 import { addChat } from "features/chats/chatsSlice";
 import { rejectInvite, updateInviteStatus } from "features/invites/inviteSlice";
 import { Invite } from "features/invites/types";
@@ -112,9 +116,13 @@ const InviteList: FC = () => {
       );
 
       if (action.meta.requestStatus === "fulfilled") {
+        console.log("action.payload", action.payload);
+
         const result = action.payload as InviteAttributes;
-        console.log("accepted invite", result);
         dispatch(addChat(result.chat));
+        console.log("result", result);
+
+        dispatch(removeChatInvite(result));
       }
     }
   };

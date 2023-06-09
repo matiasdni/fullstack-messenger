@@ -82,6 +82,16 @@ const chatsSlice = createSlice({
         chat.updatedAt = action.payload.createdAt;
       }
     },
+    updateChat: (state, action) => {
+      const { id, ...chatData } = action.payload;
+      const chatIndex = state.chats?.findIndex((chat) => chat.id === id);
+      if (chatIndex !== -1) {
+        state.chats[chatIndex] = {
+          ...state.chats[chatIndex],
+          ...chatData,
+        };
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getChats.fulfilled, (state, action) => {
@@ -114,5 +124,6 @@ export const selectActiveChat = (state: RootState) => {
   return state.chats.chats.find((chat) => chat.id === activeChatId);
 };
 
-export const { setActiveChat, addMessage, addChat } = chatsSlice.actions;
+export const { setActiveChat, addMessage, addChat, updateChat } =
+  chatsSlice.actions;
 export default chatsSlice.reducer;

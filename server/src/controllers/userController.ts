@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import _ from "lodash";
 import authenticate, { AuthRequest } from "../middlewares/auth";
 import { validateUserData } from "../middlewares/validationMiddleware";
 import { io } from "../server";
@@ -102,27 +103,24 @@ router.post(
 );
 
 router.put(
-  "/:id/friends/:friendId/accept",
+  "/:senderId/friends/:receiverId/accept",
   authenticate,
   async (req: AuthRequest, res: Response) => {
     const user = req.user;
-    if (!user || user.id !== req.params.friendId) {
-      console.log("Not authorized");
-      return res.status(403).json({ error: "Not Authorized" });
+    if (!user || user.id !== req.params.receiverId) {
+      throw new ApiError(403, "Not Authorized to accept this request");
     }
     const friend = await friendService.acceptFriendRequest(
-      req.params.friendId,
-      req.params.id
+      req.params.receiverId,
+      req.params.senderId
     );
     logger.info(`Friend request accepted ${JSON.stringify(friend)}`);
 
-    res.json(friend.toJSON());
-    const friendUser = await getUserById(friend.userId);
+    res.json(friend[user.id]);
+    const otherUserId = _.keys(friend).filter((key) => key !== user.id);
+
     // todo: send notification to friend
-    io.to(friend.userId).emit("friend-request-accepted", {
-      friend,
-      friendUser,
-    });
+    io.to(otherUserId).emit("userUpdate", friend[otherUserId as any]);
   }
 );
 

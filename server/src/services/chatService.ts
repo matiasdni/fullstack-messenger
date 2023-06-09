@@ -1,21 +1,18 @@
-import { Chat } from "../models/chat";
-import { User } from "../models/user";
-import { Message } from "../models/message";
-import { UserChat } from "../models/userChat";
+import _ from "lodash";
+import { Op, Transaction } from "sequelize";
 import { ChatData } from "../controllers/chatController";
 import { Invite } from "../models/Invite";
-import { Op } from "sequelize";
-import { Transaction } from "sequelize";
-import _ from "lodash";
+import { Chat } from "../models/chat";
+import { User } from "../models/user";
 
 export async function addUserToChat(user: User, chat: Chat) {
   await chat.addUser(user);
 }
 
-export async function findChats(ids: UserChat[]) {
+export async function findChats(ids: string[]): Promise<Chat[]> {
   const chats = await Chat.findAll({
     where: {
-      id: ids.map((chat: any) => chat.chat_id),
+      id: ids,
     },
     include: [
       {
@@ -69,6 +66,7 @@ export const createChatWithUsers = async (
   chatData: ChatData,
   transaction?: Transaction
 ): Promise<Chat> => {
+  // create chat
   const chat = await Chat.create(
     {
       name: chatData.name,
@@ -77,7 +75,7 @@ export const createChatWithUsers = async (
     },
     { transaction }
   );
-
+  // create invitations
   const invitations: Invite[] = await Promise.all(
     chatData.userIds.map((userId) =>
       Invite.create(
@@ -91,33 +89,28 @@ export const createChatWithUsers = async (
     )
   );
 
+  // add invitations to chat
   await chat.addInvites(invitations, { transaction });
-
+  // add current user to chat (owner / creator)
   await chat.addUser(chatData.currentUser!, { transaction });
 
   await chat.reload({
     include: [
       {
-        model: User,
-        as: "users",
+        association: "users",
         attributes: ["id", "username"],
-        through: { attributes: [] },
       },
       {
-        model: Message,
-        as: "messages",
-        attributes: ["id", "content", "createdAt", "updatedAt"],
+        association: "messages",
         include: [
           {
-            model: User,
-            as: "user",
+            association: "user",
             attributes: ["id", "username"],
           },
         ],
       },
       {
         association: "invites",
-        attributes: ["sender_id", "recipient_id", "chat_id"],
       },
     ],
     transaction,

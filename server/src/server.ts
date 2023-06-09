@@ -10,6 +10,7 @@ import { mySocket } from "./listeners/types";
 import { authenticateSocket } from "./middlewares/auth";
 import errorHandler from "./middlewares/errorHandler";
 import chatRouter from "./routes/chats";
+import { getChatIds } from "./services/userChatService";
 import logger from "./utils/logger";
 
 const app = express();
@@ -40,28 +41,43 @@ app.use(errorHandler);
 
 io.use(authenticateSocket);
 
-const connectedClients: mySocket[] = [];
+// connected clients, user id is the key for the socket. Multiple sockets can be connected to the same user.
+// Use lodash for mapping sockets to user ids for easier access
+const connectedClients: { [key: string]: mySocket[] } = {};
+
 io.sockets.on("connection", (socket: mySocket) => {
-  connectedClients.push(socket);
-  logger.info(
-    `User ${socket.user?.username} connected, connected clients: ${io.engine.clientsCount}`
-  );
+  const user = socket.user;
+  if (!user) {
+    return;
+  }
+  connectedClients[user.id] = connectedClients[user.id] || [];
+  connectedClients[user.id].push(socket);
+  logger.info(`User ${socket.user?.username} connected`);
 
-  const uniqueUsers = connectedClients.reduce((acc: any, curr: any) => {
-    if (!acc.includes(curr.user.username)) {
-      acc.push(curr.user.username);
-    }
-    return acc;
-  }, []);
+  const uniqueUsers = Object.keys(connectedClients);
 
-  logger.info(`Unique users: ${uniqueUsers.length}`);
+  logger.info(`Number of connected users: ${uniqueUsers.length}`);
 
   socket.join(socket.user!.id);
+  // join user chat rooms
+  getChatIds(socket.user!.id).then((ids: string[]) => {
+    ids.forEach((id) => {
+      socket.join(id);
+    });
+  });
 
   socket.on("disconnect", () => {
     logger.info(`User disconnected: ${socket.user?.username}`);
-    const index = connectedClients.indexOf(socket);
-    connectedClients.splice(index, 1);
+    const sockets = connectedClients[user.id];
+    const index = sockets.indexOf(socket);
+    if (index > -1) {
+      sockets.splice(index, 1);
+    }
+
+    if (sockets.length === 0) {
+      delete connectedClients[user.id];
+    }
+
     socket.disconnect();
   });
 });

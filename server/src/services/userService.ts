@@ -1,10 +1,11 @@
-import { User } from "../models/user";
-import jwt from "jsonwebtoken";
-import { jwtSecret } from "../config";
-import { Op } from "sequelize";
-import { getChatIds } from "./userChatService";
-import { Chat } from "../models/chat";
 import { Request as ExpressRequest } from "express";
+import jwt from "jsonwebtoken";
+import { Op } from "sequelize";
+import { jwtSecret } from "../config";
+import { Chat } from "../models/chat";
+import { User } from "../models/user";
+import { ApiError } from "../utils/ApiError";
+import { getChatIds } from "./userChatService";
 
 interface Request extends ExpressRequest {
   user?: User;
@@ -13,10 +14,24 @@ interface Request extends ExpressRequest {
 export const getUserByToken = async (token: string): Promise<User | null> => {
   try {
     const decoded = jwt.verify(token, jwtSecret) as User;
-    return await User.findByPk(decoded.dataValues.id);
+    return await User.findByPk(decoded.dataValues.id, {
+      attributes: { exclude: ["password"] },
+      include: [
+        {
+          association: "chats",
+          attributes: ["id"],
+          include: [
+            {
+              association: "users",
+              attributes: ["id"],
+            },
+          ],
+        },
+      ],
+    });
   } catch (error) {
     console.error(error);
-    return null;
+    throw new ApiError(401 as const, "failed to authenticate");
   }
 };
 

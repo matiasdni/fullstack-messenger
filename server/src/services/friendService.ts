@@ -3,6 +3,16 @@ import { UserFriends } from "../models/UserFriends";
 import { User, sequelize } from "../models/initModels";
 import { ApiError } from "../utils/ApiError";
 
+const findAllWithId = async (userId: string, friendId: string, ...args: any) =>
+  UserFriends.findAll({
+    where: {
+      [Op.or]: [
+        { userId, friendId, status: "accepted", ...args },
+        { userId: friendId, friendId: userId, ...args },
+      ],
+    },
+  });
+
 const friendService = {
   getFriends: async (userId: string) => {
     const friends = await UserFriends.findAll({
@@ -119,38 +129,43 @@ const friendService = {
     return friend;
   },
   acceptFriendRequest: async (userId: string, friendId: string) => {
-    const t = await sequelize.transaction();
-
-    try {
-      const friendRequest = await UserFriends.findOne({
-        where: {
-          userId: friendId,
-          friendId: userId,
-        },
-      });
-      if (!friendRequest) {
-        throw new Error("Friend request not found");
-      }
-      friendRequest.status = "accepted";
-      await friendRequest.save({ transaction: t });
-
-      const reverseFriendRequest = await UserFriends.findOne({
-        where: {
-          userId,
-          friendId,
-        },
-      });
-      if (reverseFriendRequest) {
-        reverseFriendRequest.status = "accepted";
-        await reverseFriendRequest.save({ transaction: t });
-      }
-
-      await t.commit();
-      return friendRequest;
-    } catch (error) {
-      await t.rollback();
-      throw error;
+    const friendRequests = await findAllWithId(userId, friendId);
+    if (!friendRequests || friendRequests.length === 0) {
+      throw new ApiError(404, "Friend request not found");
     }
+    await Promise.all(
+      friendRequests.map(async (friendRequest) => {
+        friendRequest.status = "accepted";
+        await friendRequest.save();
+      })
+    );
+
+    const friendLists = await Promise.all([
+      friendService.getFriends(userId),
+      friendService.getFriends(friendId),
+    ]);
+
+    const friendRequestLists = await Promise.all([
+      friendService.getFriendRequests(userId),
+      friendService.getFriendRequests(friendId),
+    ]);
+
+    const sentFriendRequestLists = await Promise.all([
+      friendService.getSentFriendRequests(userId),
+      friendService.getSentFriendRequests(friendId),
+    ]);
+    return {
+      [userId]: {
+        friends: friendLists[0],
+        friendRequests: friendRequestLists[0],
+        sentFriendRequestLists: sentFriendRequestLists[0],
+      },
+      [friendId]: {
+        friends: friendLists[1],
+        friendRequests: friendRequestLists[1],
+        sentFriendRequestLists: sentFriendRequestLists[1],
+      },
+    };
   },
   rejectFriendRequest: async (userId: string, friendId: string) => {
     const t = await sequelize.transaction();

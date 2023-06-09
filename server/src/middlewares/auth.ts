@@ -37,7 +37,7 @@ export const authenticateSocket = async (
 ) => {
   const token = socket.handshake.auth.token;
   getUserByToken(token)
-    .then((user) => {
+    .then((user: any) => {
       if (!token || !user) {
         return next(new Error("unauthorized"));
       }

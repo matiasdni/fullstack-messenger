@@ -96,7 +96,7 @@ const authSlice = createSlice({
     },
     removeChatInvite(state: AuthState, action) {
       const inviteToRemove = state.user.chatInvites.invites.find(
-        (invite) => invite.id === action.payload
+        (invite) => invite.id === action.payload.id
       );
 
       state.user = {
@@ -104,7 +104,7 @@ const authSlice = createSlice({
         chatInvites: {
           ...state.user.chatInvites,
           invites: state.user.chatInvites.invites.filter(
-            (invite) => invite.id !== action.payload
+            (invite) => invite.id !== action.payload.id
           ),
           chats: Object.keys(state.user.chatInvites.chats).reduce(
             (acc, key) => {
@@ -125,6 +125,21 @@ const authSlice = createSlice({
             {}
           ),
         },
+      };
+    },
+    addChatInvite(state, action) {
+      const { chat, sender, invite } = action.payload;
+      state.user.chatInvites.invites = [
+        ...state.user.chatInvites.invites,
+        invite,
+      ];
+      state.user.chatInvites.chats = {
+        ...state.user.chatInvites.chats,
+        [invite.chatId]: chat,
+      };
+      state.user.chatInvites.senders = {
+        ...state.user.chatInvites.senders,
+        [invite.senderId]: sender,
       };
     },
     // for delta updates from socket
@@ -171,6 +186,8 @@ export const {
   removeSentFriendRequest,
   addFriend,
   updateUser,
+  removeChatInvite,
+  addChatInvite,
 } = authSlice.actions;
 
 export default authSlice.reducer;

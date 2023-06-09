@@ -1,8 +1,9 @@
 import { Response } from "express";
-import authenticate, { AuthRequest } from "../middlewares/auth";
-import { rejectInvite, updateInvite } from "../services/inviteService";
 import { Invite } from "../../../shared/types";
+import authenticate, { AuthRequest } from "../middlewares/auth";
 import { Chat } from "../models/initModels";
+import { connectedClients, io } from "../server";
+import { rejectInvite, updateInvite } from "../services/inviteService";
 
 const router = require("express").Router();
 
@@ -29,7 +30,9 @@ router.put("/", authenticate, async (req: AuthRequest, res: Response) => {
       },
     ],
   });
-  chat!.addUser(user);
+  await chat!.addUser(user);
+
+  await chat!.reload();
 
   const returnResult = {
     ...result,
@@ -38,6 +41,18 @@ router.put("/", authenticate, async (req: AuthRequest, res: Response) => {
       messages: [],
     },
   };
+
+  // broadcast to all users in the chat
+  const chatId = result.chatId;
+  io.to(chatId).emit("chatUpdate", {
+    id: chat!.id,
+    users: chat!.users,
+  });
+
+  // join user socket to chat room
+  const socket = connectedClients[user.id];
+  socket.join(chatId);
+
   res.status(200).json(returnResult);
 });
 
