@@ -74,6 +74,7 @@ async function main() {
     // Add users to the general chat
     await addUserToChat(user1, generalChat);
     await addUserToChat(user2, generalChat);
+    await generalChat.addUsers(users);
 
     // Create sample messages in the general chat
     await createMessage("Hello, everyone!", user1.id, generalChat.id);

@@ -1,8 +1,6 @@
-/** @type {import("tailwindcss").Config} */
-/** @type {import("@tailwindcss/forms")} */
-/** @type {import("@tailwindcss/typography")} */
+import type { Config } from "tailwindcss";
 
-module.exports = {
+export default {
   darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -121,5 +119,12 @@ module.exports = {
     require("@tailwindcss/typography"),
     require("@tailwindcss/container-queries"),
     require("@tailwindcss/aspect-ratio"),
+    require("@tailwindcss/line-clamp"),
+    require("daisyui"),
   ],
-};
+  daisyui: {
+    themes: false,
+    darkTheme: false,
+    base: false,
+  },
+} satisfies Config;
