@@ -63,12 +63,6 @@ const useSocketEvents = (): void => {
     };
 
     const onChatInvite = (data: any) => dispatch(addChatInvite(data));
-
-    /**
-     * TODO: implement socket.on("userUpdate", onUserUpdate); to update the current users data whenever it changes
-     * TODO: refactor all the related code to use the new event so we dont need to specify every change we want to listen to
-     **/
-
     const onUserUpdate = (data) => dispatch(updateUser(data));
     const onChatUpdate = (data) => dispatch(updateChat(data));
 
