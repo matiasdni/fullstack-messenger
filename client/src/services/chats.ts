@@ -1,6 +1,6 @@
 import axios from "axios";
-import { Chat } from "../features/chats/types";
 import { ChatType } from "../features/chats/chatsSlice";
+import { Chat } from "../features/chats/types";
 
 const BASE_URL = "/api/chat";
 
@@ -53,4 +53,19 @@ const sendMessage = async (chatId: string, message: string, token: string) => {
   else throw new Error("message sending failed");
 };
 
-export { newChat, fetchChatById, sendMessage };
+const removeUserFromChat = async (
+  chatId: string,
+  userId: string,
+  token: string
+) => {
+  const response = await axios.delete(`${BASE_URL}/${chatId}/users/${userId}`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (response.status === 200) return response.data;
+  else throw new Error("Removing user failed");
+};
+
+export { fetchChatById, newChat, removeUserFromChat, sendMessage };

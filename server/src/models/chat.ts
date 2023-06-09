@@ -1,6 +1,7 @@
 import {
   CreationOptional,
   DataTypes,
+  ForeignKey,
   HasManyAddAssociationMixin,
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
@@ -18,6 +19,7 @@ class Chat extends Model {
   declare name: string;
   declare description: CreationOptional<string>;
   declare chat_type: "group" | "private";
+  declare ownerId: ForeignKey<User>;
   declare users: NonAttribute<User[]>;
   declare messages: NonAttribute<Message[]>;
   declare invites: NonAttribute<Invite[]>;

@@ -1,4 +1,6 @@
 import { User } from "@/features/users/types";
+import { useToken } from "@/hooks/useAuth";
+import { removeUserFromChat } from "@/services/chats";
 import { FC, useState } from "react";
 import { Chat as ChatType } from "../../features/chats/types";
 import { Avatar } from "../common/Avatar";
@@ -12,10 +14,13 @@ interface ChatInfoProps {
   setShowChatInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const UserTable = ({ users }: { users: User[] }) => {
-  const handleKick = (id: string) => {
-    console.log(id);
-  };
+const UserTable = ({
+  users,
+  handleUserRemoval,
+}: {
+  users: User[];
+  handleUserRemoval: (userId: string) => Promise<void>;
+}) => {
   const usersWithStatus = users.map((user) => ({
     ...user,
     status: "online",
@@ -80,7 +85,7 @@ const UserTable = ({ users }: { users: User[] }) => {
               <th>
                 <button
                   className="btn btn-error btn-sm bg-rose-600 text-accent-content capitalize"
-                  onClick={() => handleKick(user.id)}
+                  onClick={() => handleUserRemoval(user.id)}
                 >
                   Kick
                 </button>
@@ -96,6 +101,11 @@ const UserTable = ({ users }: { users: User[] }) => {
 const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
   const locale = navigator.language;
 
+  const token = useToken();
+  const handleKick = async (id: string) => {
+    console.log(id);
+    const response = await removeUserFromChat(activeChat.id, token, id);
+  };
   const localeDate = new Date(activeChat.createdAt).toLocaleString(locale, {
     year: "numeric",
     month: "long",
@@ -125,7 +135,6 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
             {activeChat?.users?.length - 3}
           </p>
         </div>
-        {/* <p className="mask">+{activeChat?.users?.length - 3}</p> */}
       </div>
     </div>
   );
@@ -202,7 +211,7 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
             </p>
           </div>
           <h1 className="font-semibold text-gray-500">Participants</h1>
-          <UserTable users={activeChat?.users} />
+          <UserTable users={activeChat?.users} handleUserRemoval={handleKick} />
         </div>
       </div>
     </div>
