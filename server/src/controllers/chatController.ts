@@ -84,6 +84,11 @@ const createChat = async (req: AuthenticatedRequest, res: Response) => {
 
   res.status(200).json(chat.toJSON());
 
+  const currentUserSockets = connectedClients[currentUser.id];
+  currentUserSockets.forEach((socket) => {
+    socket.join(chat.id);
+  });
+
   if (chat.chat_type === "group") {
     const invites = chat.invites;
     invites.forEach((invite) => {

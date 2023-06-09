@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { Invite } from "../../../shared/types";
+import { mySocket } from "../listeners/types";
 import authenticate, { AuthRequest } from "../middlewares/auth";
 import { Chat } from "../models/initModels";
 import { connectedClients, io } from "../server";
@@ -49,9 +50,10 @@ router.put("/", authenticate, async (req: AuthRequest, res: Response) => {
     users: chat!.users,
   });
 
-  // join user socket to chat room
-  const socket = connectedClients[user.id];
-  socket.join(chatId);
+  const userSockets = connectedClients[user.id];
+  userSockets.forEach((socket: mySocket) => {
+    socket.join(chatId);
+  });
 
   res.status(200).json(returnResult);
 });
