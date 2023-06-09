@@ -1,4 +1,4 @@
-import { updateFriendRequest } from "features/auth/authSlice";
+import { updateFriendRequest, updateUser } from "features/auth/authSlice";
 import { addChat } from "features/chats/chatsSlice";
 import { rejectInvite, updateInviteStatus } from "features/invites/inviteSlice";
 import { Invite } from "features/invites/types";
@@ -101,7 +101,7 @@ const InviteList: FC = () => {
       console.log("accepting friend request", invite);
       const { userId, friendId } = invite as friendRequest;
       const data = await acceptFriendRequest(userId, friendId, token);
-      dispatch(updateFriendRequest(data));
+      dispatch(updateUser(data));
     } else {
       console.log("accepting invite", invite);
       const action = await thunkDispatch(
@@ -181,7 +181,11 @@ const InviteList: FC = () => {
     <div className="flex flex-col w-full p-2 space-y-4 overflow-scroll divide-y">
       {sortedInvites.map((pendingInvite) => (
         <InviteItem
-          key={pendingInvite.id}
+          key={
+            pendingInvite.type === "friendRequest"
+              ? pendingInvite["userId"]
+              : pendingInvite.id
+          }
           pendingInvite={pendingInvite}
           handleAccept={handleAccept}
           handleReject={handleReject}
