@@ -23,7 +23,7 @@ const authenticate = async (
 
   const user = await getUserByToken(token);
   if (!user) {
-    logger.error("failed to authenticate");
+    logger.error("failed to authenticate in middleware");
     throw new ApiError(401 as const, "failed to authenticate");
   }
 
@@ -39,6 +39,7 @@ export const authenticateSocket = async (
   getUserByToken(token)
     .then((user: any) => {
       if (!token || !user) {
+        logger.error("failed to authenticate in middleware");
         return next(new Error("unauthorized"));
       }
       socket.user = user;

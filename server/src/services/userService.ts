@@ -15,7 +15,7 @@ export const getUserByToken = async (token: string): Promise<User | null> => {
   try {
     const decoded = jwt.verify(token, jwtSecret) as User;
     return await User.findByPk(decoded.dataValues.id, {
-      attributes: { exclude: ["password"] },
+      attributes: { exclude: ["password", "password_hash"] },
       include: [
         {
           association: "chats",

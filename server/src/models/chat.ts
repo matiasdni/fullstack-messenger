@@ -6,6 +6,8 @@ import {
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
   HasManyRemoveAssociationMixin,
+  HasOneGetAssociationMixin,
+  HasOneSetAssociationMixin,
   Model,
   NonAttribute,
   Sequelize,
@@ -19,7 +21,7 @@ class Chat extends Model {
   declare name: string;
   declare description: CreationOptional<string>;
   declare chat_type: "group" | "private";
-  declare ownerId: ForeignKey<User>;
+  declare ownerId: ForeignKey<User["id"]>;
   declare users: NonAttribute<User[]>;
   declare messages: NonAttribute<Message[]>;
   declare invites: NonAttribute<Invite[]>;
@@ -30,6 +32,8 @@ class Chat extends Model {
   declare getUsers: HasManyGetAssociationsMixin<User>;
   declare getMessages: HasManyGetAssociationsMixin<Message>;
   declare getInvites: HasManyGetAssociationsMixin<Invite>;
+  declare getOwner: HasOneGetAssociationMixin<User>;
+  declare setOwner: HasOneSetAssociationMixin<User, "id">;
 
   declare createUser: HasManyCreateAssociationMixin<User, "id">;
   declare createMessage: HasManyCreateAssociationMixin<Message, "chatId">;
@@ -63,6 +67,17 @@ const initChat = (sequelize: Sequelize): void => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false,
+        unique: true,
+
+        validate: {
+          isUUID: {
+            args: 4,
+            msg: "id must be a valid uuid",
+          },
+          notNull: {
+            msg: "id cannot be null",
+          },
+        },
       },
       name: {
         type: DataTypes.STRING(32),
@@ -77,9 +92,27 @@ const initChat = (sequelize: Sequelize): void => {
         values: ["private", "group"],
         allowNull: false,
         defaultValue: "private",
+        validate: {
+          isIn: [["private", "group"]],
+        },
+      },
+      ownerId: {
+        type: DataTypes.UUID,
+        allowNull: true,
       },
     },
     {
+      validate: {
+        async ownerExists() {
+          if (this.ownerId) {
+            const user = await User.findByPk(this.ownerId.toString());
+            if (!user) {
+              // todo: make a custom error class for database errors
+              throw new Error("Owner does not exist");
+            }
+          }
+        },
+      },
       tableName: "chat",
       sequelize,
     }

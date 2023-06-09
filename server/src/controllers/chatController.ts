@@ -10,6 +10,7 @@ import {
 } from "../services/chatService";
 import { createMessage } from "../services/messageService";
 import { ApiError } from "../utils/ApiError";
+import logger from "../utils/logger";
 
 interface AuthenticatedRequest extends Request {
   user: User;
@@ -78,6 +79,8 @@ const createChat = async (req: AuthenticatedRequest, res: Response) => {
       currentUser,
     });
   }
+
+  logger.info(chat.toJSON());
 
   res.status(200).json(chat.toJSON());
 

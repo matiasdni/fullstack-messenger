@@ -57,9 +57,9 @@ export async function createChat(
   name: string,
   description?: string,
   chat_type?: string,
-  owner_id?: string
+  ownerId?: string
 ) {
-  return await Chat.create({ name, description, chat_type, owner_id });
+  return await Chat.create({ name, description, chat_type, ownerId });
 }
 
 export const createChatWithUsers = async (
@@ -72,6 +72,7 @@ export const createChatWithUsers = async (
       name: chatData.name,
       description: chatData.description,
       chat_type: chatData.chat_type,
+      ownerId: chatData.currentUser?.id,
     },
     { transaction }
   );
@@ -96,6 +97,10 @@ export const createChatWithUsers = async (
 
   await chat.reload({
     include: [
+      {
+        association: "owner",
+        attributes: ["id", "username"],
+      },
       {
         association: "users",
         attributes: ["id", "username"],

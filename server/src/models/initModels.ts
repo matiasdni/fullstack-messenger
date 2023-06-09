@@ -1,12 +1,12 @@
-import { Sequelize } from "sequelize";
-import { Chat, initChat } from "./chat";
 import { Pool } from "pg";
-import { initUser, User } from "./user";
-import { initMessage, Message } from "./message";
-import { initUserChat, UserChat } from "./userChat";
+import { Sequelize } from "sequelize";
 import { config } from "../config";
-import { initInvites, Invite } from "./Invite";
-import { initUserFriends, UserFriends } from "./UserFriends";
+import { Invite, initInvites } from "./Invite";
+import { UserFriends, initUserFriends } from "./UserFriends";
+import { Chat, initChat } from "./chat";
+import { Message, initMessage } from "./message";
+import { User, initUser } from "./user";
+import { UserChat, initUserChat } from "./userChat";
 
 const db: any = config.database;
 
@@ -42,6 +42,10 @@ const setupAssociations = (): void => {
 
   User.hasMany(Invite, { foreignKey: "senderId", as: "sentInvites" });
   Invite.belongsTo(User, { foreignKey: "senderId", as: "sender" });
+
+  User.belongsTo(Chat, { foreignKey: "ownerId", as: "ownedChat" });
+  User.hasMany(Chat, { foreignKey: "ownedChats" });
+  Chat.belongsTo(User, { foreignKey: "ownerId", as: "owner" });
 };
 
 const sequelize = new Sequelize(db.database, db.username, db.password, {
@@ -99,4 +103,4 @@ const initModels = async (): Promise<void> => {
   }
 };
 
-export { initModels, sequelize, User, Message, Chat, Invite, UserChat };
+export { Chat, Invite, Message, User, UserChat, initModels, sequelize };
