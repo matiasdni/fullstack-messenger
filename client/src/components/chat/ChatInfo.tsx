@@ -1,6 +1,8 @@
 import { Chat } from "@/features/chats/types";
 import { useToken } from "@/hooks/useAuth";
 import { removeUserFromChat } from "@/services/chats";
+import { useState } from "react";
+import { MdOutlineEdit } from "react-icons/md";
 import { Avatar } from "../common/Avatar";
 import UserTable from "./UserTable";
 
@@ -10,6 +12,12 @@ interface ChatInfoProps {
 }
 
 const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [chatName, setChatName] = useState<string>(activeChat.name);
+  const [username, setUsername] = useState<string>("");
+  const [chatDescription, setChatDescription] = useState<string>(
+    activeChat.description
+  );
   const locale = navigator.language;
 
   const token = useToken();
@@ -60,7 +68,13 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
       <div className="relative bg-white dark:bg-gray-800 rounded-md py-6 px-4">
         <div className=" space-y-4 flex flex-col">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Chat Info</h2>
+            <div className="flex items-center space-x-2">
+              <h2 className="text-lg font-semibold">Chat Info </h2>
+              <span className="inline-block" onClick={() => setEditMode(true)}>
+                <MdOutlineEdit size={20} />
+              </span>
+            </div>
+
             <button
               className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
               onClick={() => setShowChatInfo(false)}
@@ -103,10 +117,41 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
             </figure>
             <div className="flex items-center justify-center w-full">
               <div className="ml-4 basis-3/4">
-                <h3>{activeChat?.name}</h3>
-                <p className="text-xs text-gray-500 break-inside-avoid">
-                  {activeChat?.description}
-                </p>
+                {editMode ? (
+                  <>
+                    <div className="form-control space-y-2 pt-4">
+                      <input
+                        type="text"
+                        className=" input input-bordered input-sm w-full max-w-xs"
+                        value={activeChat?.name}
+                        onChange={(e) => setChatName(e.target.value)}
+                      />
+
+                      <textarea
+                        className=" textarea textarea-bordered text-xs text-gray-500 break-inside-avoid textarea-lg"
+                        onChange={(e) => setChatDescription(e.target.value)}
+                        maxLength={64}
+                        value={chatDescription}
+                      >
+                        {chatDescription}
+                      </textarea>
+                      {/* Characters remain max 64 */}
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-gray-500">
+                          {chatDescription.length}/64
+                        </p>
+                        <button className="btn btn-sm btn-ghost">Save</button>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h3>{activeChat?.name}</h3>
+                    <p className="text-xs text-gray-500 break-inside-avoid">
+                      {activeChat?.description}
+                    </p>
+                  </>
+                )}
               </div>
               <div className="relative grow"></div>
               {avatarStack}
@@ -127,6 +172,28 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
             </p>
           </div>
           <h1 className="font-semibold text-gray-500">Participants</h1>
+          {editMode ? (
+            <>
+              <label className="label prose-h3:prose font-semibold">
+                <h3 className="label-text">Invite Your Friends!</h3>
+              </label>
+              <div className="flex items-center justify-between">
+                <input
+                  type="text"
+                  className="input input-bordered input-sm w-full max-w-sm "
+                  placeholder="Enter Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+                <button
+                  className="btn btn-sm btn-ghost"
+                  //   onClick={handleInvite}
+                >
+                  Invite
+                </button>
+              </div>
+            </>
+          ) : null}
           <UserTable
             users={activeChat?.users}
             handleUserRemoval={handleKick}

@@ -1,8 +1,8 @@
 import { useUser } from "hooks/useAuth";
 import { FC, useState } from "react";
+import { MdGroupAdd, MdOutlineMessage } from "react-icons/md";
 import { GroupForm } from "../GroupForm";
 import { UserSearch } from "../UserSearch";
-import { Avatar } from "../common/Avatar";
 import { Modal } from "../common/Modal";
 import { SidebarTabs, Tab } from "./SidebarTab";
 
@@ -24,28 +24,49 @@ export const SidebarHeader: FC<SidebarHeaderProps> = ({
 
   return (
     <>
-      <div className="px-3 py-2 space-y-2 bg-neutral-100 dark:bg-gray-800">
-        <div className="flex items-center mx-auto space-x-3 text-xl">
-          <div className="w-10 h-10">
-            <Avatar />
-          </div>
-          <h1>
-            Welcome, <span>{user?.username}</span>
-          </h1>
-          <div className="flex-1"></div>
-          <span
-            className="p-2 cursor-pointer"
-            onClick={(): void => {
-              setIsGroupModalOpen(true);
-            }}
-          >
-            <svg
-              viewBox="0 0 1024 1024"
-              className="w-6 h-6 fill-current hover:fill-gray-700 dark:fill-gray-400 dark:hover:fill-gray-300"
+      <div className="flex flex-col items-center px-3 py-2 space-y-2 bg-neutral-100 dark:bg-gray-800">
+        <div className="flex items-center space-x-3 w-full">
+          <div className="dropdown z-50">
+            <label
+              tabIndex={0}
+              className="btn-ghost avatar aspect-1 h-10 w-10 btn-circle mask mask-squircle"
             >
-              <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" />
-              <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" />
-            </svg>
+              <div className="avatar h-9 w-9 aspect-1">
+                <div className=" aspect-1 rounded-full">
+                  <img
+                    src={`https://avatars.dicebear.com/api/identicon/${user.username}.svg`}
+                  />
+                </div>
+              </div>
+            </label>
+            <ul
+              tabIndex={0}
+              className="p-2 shadow menu menu-xs dropdown-content bg-base-100 rounded-box w-28"
+            >
+              <li>
+                <a>Profile</a>
+              </li>
+              <li>
+                <a>Logout</a>
+              </li>
+            </ul>
+          </div>
+          <div className="flex-1"></div>
+          <span className="p-2 flex items-center space-x-4">
+            <MdOutlineMessage
+              onClick={(): void => {
+                setIsModalOpen(true);
+              }}
+              className="text-gray-500 dark:text-gray-400  hover:text-gray-900 dark:hover:text-gray-50 cursor-pointer"
+              size={24}
+            />
+            <MdGroupAdd
+              size={24}
+              onClick={(): void => {
+                setIsGroupModalOpen(true);
+              }}
+              className="text-gray-500 dark:text-gray-400  hover:text-gray-900 dark:hover:text-gray-50 cursor-pointer"
+            />
           </span>
         </div>
         <button
@@ -54,7 +75,7 @@ export const SidebarHeader: FC<SidebarHeaderProps> = ({
             setIsModalOpen(true);
           }}
         >
-          Start a new chat...
+          Search for users
         </button>
       </div>
 
