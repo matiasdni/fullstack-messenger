@@ -20,6 +20,8 @@ export interface Chat {
   createdAt: Date;
   messages?: Message[];
   users?: User[];
+  owner?: User;
+  ownerId?: string;
   chat_type: string;
 }
 

@@ -1,8 +1,8 @@
+import ChatHeader from "@/components/chat/ChatHeader";
 import { useToken } from "hooks/useAuth";
 import { selectActiveChat } from "../../features/chats/chatsSlice";
 import { Chat as ChatType } from "../../features/chats/types";
 import { useAppSelector } from "../../store";
-import { ChatHeader } from "./ChatHeader";
 import ChatInputForm from "./ChatInputForm";
 import { MessageList } from "./MessageList";
 

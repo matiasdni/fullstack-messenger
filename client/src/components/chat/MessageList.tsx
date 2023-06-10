@@ -1,6 +1,6 @@
-import { Message } from "./Message";
+import { ChatHeaderProps } from "@/components/chat/ChatHeader";
 import React, { useEffect, useRef } from "react";
-import { ChatHeaderProps } from "./ChatHeader";
+import { Message } from "./Message";
 
 export const MessageList: React.FC<ChatHeaderProps> = ({ activeChat }) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
