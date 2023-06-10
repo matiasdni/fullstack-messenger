@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { Sidebar } from "./sidebar/Sidebar";
+import useSocketEvents from "../hooks/UseSocketEvents";
 import { Chat } from "./chat/Chat";
 import DarkModeToggle from "./common/DarkModeToggle";
 import { LoadingChat } from "./common/LoadingChat";
-import useSocketEvents from "../hooks/UseSocketEvents";
+import { Sidebar } from "./sidebar/Sidebar";
 
 export const Home = () => {
   const [loading, setLoading] = useState<boolean>(true);

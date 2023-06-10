@@ -17,6 +17,8 @@ export interface User {
   chatInvites?: GetPendingInvitesOutput;
   friendRequests?: friendRequest[];
   sentFriendRequests?: friendRequest[];
+  bio?: string;
+  github?: string;
 }
 
 export type UsersInitialState = User[];
