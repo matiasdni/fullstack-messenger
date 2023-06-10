@@ -18,6 +18,7 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
   const [chatDescription, setChatDescription] = useState<string>(
     activeChat.description
   );
+  const [file, setFile] = useState<File | null>(null);
   const locale = navigator.language;
 
   const token = useToken();
@@ -95,7 +96,7 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
             </button>
           </div>
           <div className="flex items-center">
-            <figure className="relative w-16 h-16 shrink-0">
+            <figure className="relative w-16 h-16 shrink-0 relative">
               <Avatar />
               <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-out bg-black bg-opacity-50 rounded-full opacity-0 hover:opacity-100">
                 <button className="p-1 rounded-full bg-gray-50 dark:bg-gray-900">
@@ -111,7 +112,24 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
                       strokeWidth="2"
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     ></path>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer peer"
+                    />
                   </svg>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    onChange={(e) => {
+                      console.log(e.target.files);
+                      if (e.target.files) {
+                        setFile(e.target.files[0]);
+                        console.log(file);
+                      }
+                    }}
+                  />
                 </button>
               </div>
             </figure>
