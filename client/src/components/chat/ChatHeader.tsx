@@ -104,7 +104,12 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
   const token = useToken();
   const handleKick = async (id: string) => {
     console.log(id);
-    const response = await removeUserFromChat(activeChat.id, token, id);
+    const response = await removeUserFromChat({
+      chatId: activeChat.id,
+      token,
+      userId: id,
+    });
+    console.log(response);
   };
   const localeDate = new Date(activeChat.createdAt).toLocaleString(locale, {
     year: "numeric",
@@ -115,7 +120,7 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
   const avatarStack = (
     <div className="flex -space-x-2 overflow-hidden">
       {activeChat.users.slice(0, 3).map((user) => (
-        <div>
+        <div key={user.id}>
           <img
             className={
               "inline-block w-8 h-8 rounded-full ring-2 ring-white bg-current dark:bg-gray-400 dark:ring-gray-800"

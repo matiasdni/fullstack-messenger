@@ -184,6 +184,7 @@ const removeUserFromChat = async (
   if (usersToRemove) {
     usersToRemove.forEach((socket) => {
       socket.leave(req.params.chatId);
+      socket.emit("leave-room", updatedChat?.id);
     });
   }
 

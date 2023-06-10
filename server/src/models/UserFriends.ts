@@ -32,6 +32,36 @@ const initUserFriends = (sequelize: Sequelize): void => {
       },
     },
     {
+      hooks: {
+        afterCreate: async (userFriends, options) => {
+          const friend = await UserFriends.findOne({
+            where: {
+              userId: userFriends.friendId,
+              friendId: userFriends.userId,
+            },
+          });
+          if (friend) {
+            await friend.update({ status: "accepted" }, options);
+            await userFriends.update({ status: "accepted" }, options);
+          }
+        },
+        afterSave(instance, options) {
+          if (instance.changed("status")) {
+            instance.friend.changed("status" as any, true);
+          }
+          if (instance.changed("status") && instance.status === "accepted") {
+            instance.friend.changed("status" as any, true);
+          }
+          if (instance.changed("status") && instance.status === "rejected") {
+            instance.friend.changed("status" as any, true);
+          }
+          if (instance.changed("status") && instance.status === "pending") {
+            instance.friend.changed("status" as any, true);
+          }
+          instance.updatedAt.setTime(Date.now());
+          instance.friend.save(options);
+        },
+      },
       sequelize,
       tableName: "user_friends",
       underscored: true,

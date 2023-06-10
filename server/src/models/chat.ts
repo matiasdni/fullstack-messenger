@@ -113,6 +113,17 @@ const initChat = (sequelize: Sequelize): void => {
           }
         },
       },
+      hooks: {
+        afterSave: async (chat, options) => {
+          if (chat.changed()) {
+            const users = await chat.getUsers();
+            if (users.length === 0) {
+              await chat.destroy(options);
+            }
+          }
+          chat.updatedAt.setTime(Date.now());
+        },
+      },
       tableName: "chat",
       sequelize,
     }

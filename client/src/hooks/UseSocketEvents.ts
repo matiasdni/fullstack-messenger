@@ -9,6 +9,7 @@ import { useEffect, useRef } from "react";
 import {
   addMessage,
   getChatById,
+  removeChat,
   updateChat,
 } from "../features/chats/chatsSlice";
 import { Chat, Message } from "../features/chats/types";
@@ -65,6 +66,7 @@ const useSocketEvents = (): void => {
     const onChatInvite = (data: any) => dispatch(addChatInvite(data));
     const onUserUpdate = (data) => dispatch(updateUser(data));
     const onChatUpdate = (data) => dispatch(updateChat(data));
+    const onLeaveRoom = (data) => dispatch(removeChat(data));
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
@@ -74,6 +76,7 @@ const useSocketEvents = (): void => {
     socket.on("userUpdate", onUserUpdate);
     socket.on("chatUpdate", onChatUpdate);
     socket.on("chat-invite", onChatInvite);
+    socket.on("leave-room", onLeaveRoom);
 
     socket.auth = { token };
     socket.connect();
@@ -88,6 +91,7 @@ const useSocketEvents = (): void => {
       socket.off("userUpdate", onUserUpdate);
       socket.off("chatUpdate", onChatUpdate);
       socket.off("chat-invite", onChatInvite);
+      socket.off("leave-room", onLeaveRoom);
       socket.disconnect();
     };
   }, [token, dispatch, dispatchThunk]);

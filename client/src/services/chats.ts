@@ -53,11 +53,15 @@ const sendMessage = async (chatId: string, message: string, token: string) => {
   else throw new Error("message sending failed");
 };
 
-const removeUserFromChat = async (
-  chatId: string,
-  userId: string,
-  token: string
-) => {
+const removeUserFromChat = async ({
+  chatId,
+  userId,
+  token,
+}: {
+  chatId: string;
+  userId: string;
+  token: string;
+}) => {
   const response = await axios.delete(`${BASE_URL}/${chatId}/users/${userId}`, {
     withCredentials: true,
     headers: {
