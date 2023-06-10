@@ -2,7 +2,7 @@ import axios from "axios";
 import { ChatType } from "../features/chats/chatsSlice";
 import { Chat } from "../features/chats/types";
 
-const BASE_URL = "/api/chat";
+const BASE_URL = "/api/chats";
 
 export interface chatData {
   name: string;
@@ -72,4 +72,20 @@ const removeUserFromChat = async ({
   else throw new Error("Removing user failed");
 };
 
-export { fetchChatById, newChat, removeUserFromChat, sendMessage };
+const updateChatInfo = async ({ chatId, token, data }) => {
+  const response = await axios.put(`${BASE_URL}/${chatId}`, data, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (response.status === 200) return response.data;
+  else throw new Error("Updating chat failed");
+};
+export {
+  fetchChatById,
+  newChat,
+  removeUserFromChat,
+  sendMessage,
+  updateChatInfo,
+};

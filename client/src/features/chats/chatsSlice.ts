@@ -134,4 +134,5 @@ export const selectActiveChat = (state: RootState) => {
 
 export const { setActiveChat, addMessage, addChat, updateChat, removeChat } =
   chatsSlice.actions;
+
 export default chatsSlice.reducer;

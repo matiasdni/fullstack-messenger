@@ -33,7 +33,7 @@ app.use("/api/login", loginRouter);
 
 app.use("/api/users", usersRouter);
 
-app.use("/api/chat", chatRouter);
+app.use("/api/chats", chatRouter);
 
 app.use("/api/invites", inviteRouter);
 

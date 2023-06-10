@@ -1,6 +1,8 @@
+import { updateChat } from "@/features/chats/chatsSlice";
 import { Chat } from "@/features/chats/types";
 import { useToken } from "@/hooks/useAuth";
-import { removeUserFromChat } from "@/services/chats";
+import { removeUserFromChat, updateChatInfo } from "@/services/chats";
+import { useAppDispatch } from "@/store";
 import { useState } from "react";
 import { MdOutlineEdit } from "react-icons/md";
 import { Avatar } from "../common/Avatar";
@@ -19,9 +21,11 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
     activeChat.description
   );
   const [file, setFile] = useState<File | null>(null);
+  const dispatch = useAppDispatch();
   const locale = navigator.language;
 
   const token = useToken();
+
   const handleKick = async (id: string) => {
     console.log(id);
     const response = await removeUserFromChat({
@@ -31,11 +35,33 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
     });
     console.log(response);
   };
+
+  const handleSave = async () => {
+    setEditMode(false);
+    const data = await updateChatInfo({
+      chatId: activeChat.id,
+      token,
+      data: {
+        name: chatName,
+        description: chatDescription,
+      },
+    });
+    dispatch(updateChat(data));
+  };
+
   const localeDate = new Date(activeChat.createdAt).toLocaleString(locale, {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
+
+  const handleFileChange = async (e) => {
+    console.log(e.target.files);
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+      console.log(file);
+    }
+  };
 
   const avatarStack = (
     <div className="flex -space-x-2 overflow-hidden">
@@ -112,23 +138,12 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
                       strokeWidth="2"
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     ></path>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer peer"
-                    />
                   </svg>
                   <input
                     type="file"
                     accept="image/*"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    onChange={(e) => {
-                      console.log(e.target.files);
-                      if (e.target.files) {
-                        setFile(e.target.files[0]);
-                        console.log(file);
-                      }
-                    }}
+                    onChange={handleFileChange}
                   />
                 </button>
               </div>
@@ -141,8 +156,9 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
                       <input
                         type="text"
                         className=" input input-bordered input-sm w-full max-w-xs"
-                        value={activeChat?.name}
                         onChange={(e) => setChatName(e.target.value)}
+                        value={chatName}
+                        maxLength={32}
                       />
 
                       <textarea
@@ -158,7 +174,12 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
                         <p className="text-xs text-gray-500">
                           {chatDescription.length}/64
                         </p>
-                        <button className="btn btn-sm btn-ghost">Save</button>
+                        <button
+                          className="btn btn-sm btn-ghost"
+                          onClick={handleSave}
+                        >
+                          Save
+                        </button>
                       </div>
                     </div>
                   </>

@@ -13,4 +13,6 @@ router.post("/:id/message", chatController.sendMessage);
 
 router.delete("/:chatId/users/:userId", chatController.removeUserFromChat);
 
+router.put("/:chatId", chatController.updateChat);
+
 export default router;

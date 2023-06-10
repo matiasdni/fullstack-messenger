@@ -193,9 +193,39 @@ const removeUserFromChat = async (
   io.to(req.params.chatId).emit("chatUpdate", updatedChat?.toJSON());
 };
 
+const updateChat = async (req: AuthRequest, res: Response) => {
+  const { name, description } = req.body;
+  const { chatId } = req.params;
+  const currentUser = req.user;
+
+  const chat = await Chat.findByPk(chatId);
+  if (!chat) throw new ApiError(404, "Chat not found");
+
+  if (chat.ownerId !== currentUser.id)
+    throw new ApiError(403, "You do not have permission to update this chat");
+
+  const affectedRows = await Chat.update(
+    { name, description },
+    {
+      where: { id: chatId },
+      returning: true,
+    }
+  );
+
+  const updatedChat = affectedRows[1][0];
+
+  logger.info(affectedRows);
+  logger.info(await affectedRows[1][0].getUsers());
+
+  res.json(updatedChat.toJSON());
+
+  io.to(chatId).emit("chatUpdate", updatedChat.toJSON());
+};
+
 export default {
   createChat,
   chatById,
   sendMessage,
   removeUserFromChat,
+  updateChat,
 };

@@ -12,6 +12,7 @@ import {
   NonAttribute,
   Sequelize,
 } from "sequelize";
+import { ApiError } from "../utils/ApiError";
 import { Invite } from "./Invite";
 import { Message } from "./message";
 import { User } from "./user";
@@ -108,20 +109,9 @@ const initChat = (sequelize: Sequelize): void => {
             const user = await User.findByPk(this.ownerId.toString());
             if (!user) {
               // todo: make a custom error class for database errors
-              throw new Error("Owner does not exist");
+              throw new ApiError(400, "Owner does not exist");
             }
           }
-        },
-      },
-      hooks: {
-        afterSave: async (chat, options) => {
-          if (chat.changed()) {
-            const users = await chat.getUsers();
-            if (users.length === 0) {
-              await chat.destroy(options);
-            }
-          }
-          chat.updatedAt.setTime(Date.now());
         },
       },
       tableName: "chat",

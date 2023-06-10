@@ -45,22 +45,6 @@ const initUserFriends = (sequelize: Sequelize): void => {
             await userFriends.update({ status: "accepted" }, options);
           }
         },
-        afterSave(instance, options) {
-          if (instance.changed("status")) {
-            instance.friend.changed("status" as any, true);
-          }
-          if (instance.changed("status") && instance.status === "accepted") {
-            instance.friend.changed("status" as any, true);
-          }
-          if (instance.changed("status") && instance.status === "rejected") {
-            instance.friend.changed("status" as any, true);
-          }
-          if (instance.changed("status") && instance.status === "pending") {
-            instance.friend.changed("status" as any, true);
-          }
-          instance.updatedAt.setTime(Date.now());
-          instance.friend.save(options);
-        },
       },
       sequelize,
       tableName: "user_friends",
