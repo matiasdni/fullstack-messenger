@@ -8,8 +8,8 @@ const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  logger.error(err);
   if (err instanceof ApiError) {
-    logger.error(err);
     res.status(err.statusCode).json({ error: err.message });
   } else {
     res.status(500).json({ error: "Unexpected error" });
