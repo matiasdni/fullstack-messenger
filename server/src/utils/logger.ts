@@ -1,17 +1,15 @@
 import pino from "pino";
 
-const logger = pino({
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true,
-      translateTime: "HH:MM:ss dd-mm yyyy ",
-      ignore: "pid,hostname",
-      hideObject: false,
-      messageFormat: false,
-      
-    },
+const transport = pino.transport({
+  target: "pino-pretty",
+  options: {
+    colorize: true,
+    colorizeObjects: true,
+    translateTime: "SYS:HH:MM:ss o dd-mm-yy",
+    ignore: "pid,hostname",
+    hideObject: false,
   },
 });
 
+const logger = pino(transport);
 export default logger;
