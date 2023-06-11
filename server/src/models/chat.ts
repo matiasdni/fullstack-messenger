@@ -26,6 +26,7 @@ class Chat extends Model {
   declare users: NonAttribute<User[]>;
   declare messages: NonAttribute<Message[]>;
   declare invites: NonAttribute<Invite[]>;
+  declare avatar: CreationOptional<Buffer>;
 
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
@@ -99,6 +100,10 @@ const initChat = (sequelize: Sequelize): void => {
       },
       ownerId: {
         type: DataTypes.UUID,
+        allowNull: true,
+      },
+      avatar: {
+        type: DataTypes.BLOB,
         allowNull: true,
       },
     },

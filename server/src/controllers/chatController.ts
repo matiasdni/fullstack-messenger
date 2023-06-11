@@ -194,32 +194,35 @@ const removeUserFromChat = async (
 };
 
 const updateChat = async (req: AuthRequest, res: Response) => {
+  logger.info(req);
   const { name, description } = req.body;
+  logger.info(req.body);
+  // const profilePicture = req.file;
   const { chatId } = req.params;
   const currentUser = req.user;
 
-  const chat = await Chat.findByPk(chatId);
-  if (!chat) throw new ApiError(404, "Chat not found");
+  // const chat = await Chat.findByPk(chatId);
+  // if (!chat) throw new ApiError(404, "Chat not found");
 
-  if (chat.ownerId !== currentUser.id)
-    throw new ApiError(403, "You do not have permission to update this chat");
+  // if (chat.ownerId !== currentUser.id)
+  //   throw new ApiError(403, "You do not have permission to update this chat");
+  // // const profilePictureblob = profilePicture.buffer.toString("base64");
+  // const affectedRows = await Chat.update(
+  //   { name, description },
+  //   {
+  //     where: { id: chatId },
+  //     returning: true,
+  //   }
+  // );
 
-  const affectedRows = await Chat.update(
-    { name, description },
-    {
-      where: { id: chatId },
-      returning: true,
-    }
-  );
+  // const updatedChat = affectedRows[1][0];
 
-  const updatedChat = affectedRows[1][0];
+  // logger.info(affectedRows);
+  // logger.info(await affectedRows[1][0].getUsers());
 
-  logger.info(affectedRows);
-  logger.info(await affectedRows[1][0].getUsers());
+  // res.json(updatedChat.toJSON());
 
-  res.json(updatedChat.toJSON());
-
-  io.to(chatId).emit("chatUpdate", updatedChat.toJSON());
+  // io.to(chatId).emit("chatUpdate", updatedChat.toJSON());
 };
 
 export default {

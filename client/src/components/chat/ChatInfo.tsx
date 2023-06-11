@@ -1,9 +1,8 @@
-import { updateChat } from "@/features/chats/chatsSlice";
 import { Chat } from "@/features/chats/types";
 import { useToken } from "@/hooks/useAuth";
 import { removeUserFromChat, updateChatInfo } from "@/services/chats";
 import { useAppDispatch } from "@/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdOutlineEdit } from "react-icons/md";
 import { Avatar } from "../common/Avatar";
 import UserTable from "./UserTable";
@@ -17,14 +16,20 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [chatName, setChatName] = useState<string>(activeChat.name);
   const [username, setUsername] = useState<string>("");
+  const [avatar, setAvatar] = useState<File>(activeChat.avatar);
   const [chatDescription, setChatDescription] = useState<string>(
     activeChat.description
   );
-  const [file, setFile] = useState<File | null>(null);
   const dispatch = useAppDispatch();
   const locale = navigator.language;
 
   const token = useToken();
+
+  useEffect(() => {
+    setChatName(activeChat.name);
+    setAvatar(activeChat.avatar);
+    setChatDescription(activeChat.description);
+  }, [editMode]);
 
   const handleKick = async (id: string) => {
     console.log(id);
@@ -37,16 +42,24 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
   };
 
   const handleSave = async () => {
-    setEditMode(false);
-    const data = await updateChatInfo({
+    const formData = new FormData();
+    const data = {
       chatId: activeChat.id,
       token,
       data: {
         name: chatName,
         description: chatDescription,
       },
-    });
-    dispatch(updateChat(data));
+    };
+    formData.append("chatId", activeChat.id);
+    // formData.append("token", token);
+    // formData.append("data", data);
+    formData.append("name", chatName);
+    formData.append("description", chatDescription);
+    formData.append("image", avatar);
+    const responseData = await updateChatInfo({ formData, token });
+    // dispatch(updateChat(responseData));
+    setEditMode(false);
   };
 
   const localeDate = new Date(activeChat.createdAt).toLocaleString(locale, {
@@ -55,11 +68,11 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
     day: "numeric",
   });
 
-  const handleFileChange = async (e) => {
+  const handleAvatarChange = async (e) => {
     console.log(e.target.files);
     if (e.target.files) {
-      setFile(e.target.files[0]);
-      console.log(file);
+      console.log(e.target.files[0]);
+      setAvatar(e.target.files[0]);
     }
   };
 
@@ -96,8 +109,11 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
         <div className=" space-y-4 flex flex-col">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <h2 className="text-lg font-semibold">Chat Info </h2>
-              <span className="inline-block" onClick={() => setEditMode(true)}>
+              <h2 className="text-lg font-semibold select-none">Chat Info </h2>
+              <span
+                className="inline-block cursor-pointer hover:text-black/50"
+                onClick={() => setEditMode(!editMode)}
+              >
                 <MdOutlineEdit size={20} />
               </span>
             </div>
@@ -143,7 +159,7 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
                     type="file"
                     accept="image/*"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    onChange={handleFileChange}
+                    onChange={handleAvatarChange}
                   />
                 </button>
               </div>

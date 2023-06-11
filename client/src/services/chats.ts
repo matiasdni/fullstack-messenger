@@ -72,13 +72,18 @@ const removeUserFromChat = async ({
   else throw new Error("Removing user failed");
 };
 
-const updateChatInfo = async ({ chatId, token, data }) => {
-  const response = await axios.put(`${BASE_URL}/${chatId}`, data, {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+const updateChatInfo = async ({ token, formData }) => {
+  console.log(formData.get("image"));
+  const response = await axios.putForm(
+    `${BASE_URL}/${formData.get("chatId")}`,
+    formData,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   if (response.status === 200) return response.data;
   else throw new Error("Updating chat failed");
 };

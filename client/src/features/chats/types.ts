@@ -23,6 +23,7 @@ export interface Chat {
   owner?: User;
   ownerId?: string;
   chat_type: string;
+  avatar?: File;
 }
 
 export type ChatState = {
