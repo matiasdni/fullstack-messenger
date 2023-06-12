@@ -11,6 +11,7 @@ export interface friendRequest {
 }
 
 export interface User {
+  image?: string;
   id: string;
   username: string;
   friends?: User[];

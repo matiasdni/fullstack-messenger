@@ -80,10 +80,8 @@ const ChatItem = ({ chat }) => {
     </li>
   );
 };
-type Props = {
-  chats: Chat[];
-};
-export const ChatList = ({ chats }: Props) => {
+
+export const ChatList = ({ chats }: { chats: Chat[] }) => {
   const sortedChats = useMemo(
     () =>
       [...chats].sort((a, b) => {

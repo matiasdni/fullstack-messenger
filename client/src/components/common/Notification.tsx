@@ -25,7 +25,7 @@ const Notification = () => {
 
   return (
     <div
-      className={`alert alert-${status} fixed left-1/2 right-1/2 -translate-x-1/2 -translate-y-1/2 top-0 z-[100] my-12 max-w-md w-full flex items-center justify-between`}
+      className={`alert alert-success shadow-sm shadow-base-content/75 fixed left-1/2 right-1/2 -translate-x-1/2 -translate-y-1/2 top-0 z-[100] my-12 max-w-md w-full flex items-center justify-between`}
     >
       <div className="flex-1">
         <label>{message}</label>
