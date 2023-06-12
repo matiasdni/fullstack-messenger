@@ -1,9 +1,9 @@
+import { Chat } from "features/chats/types";
 import { lazy, Suspense, useState } from "react";
 import { useAppSelector } from "../../store";
 import { ChatList } from "./ChatList";
-import { SidebarHeader } from "./SidebarHeader";
+import SidebarHeader from "./SidebarHeader";
 import { Tab } from "./SidebarTab";
-import { Chat } from "features/chats/types";
 
 const FriendList = lazy(() => import("./FriendList"));
 const InviteList = lazy(() => import("./InviteList"));
@@ -31,7 +31,7 @@ function SidebarContent(props: {
   );
 }
 
-export const Sidebar = () => {
+const Sidebar = () => {
   const allChats = useAppSelector((state) => state.chats.chats);
   const [activeTab, setActiveTab] = useState<Tab>("chats");
 
@@ -56,3 +56,5 @@ export const Sidebar = () => {
     </>
   );
 };
+
+export default Sidebar;

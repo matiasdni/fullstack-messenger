@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
 
 const DarkModeToggle = () => {
   const [darkMode, setDarkMode] = useState<boolean>(false);
@@ -13,11 +14,11 @@ const DarkModeToggle = () => {
   };
 
   return (
-    <div>
-      <button onClick={toggleDarkMode}>
-        {darkMode ? "Light Mode" : "Dark Mode"}
-      </button>
-    </div>
+    <label className="swap swap-rotate">
+      <input type="checkbox" className="hidden" onChange={toggleDarkMode} />
+      <MdOutlineLightMode className="swap-on fill-current w-8 h-8" />
+      <MdOutlineDarkMode className="swap-off fill-current w-8 h-8 " />
+    </label>
   );
 };
 

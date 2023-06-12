@@ -60,7 +60,6 @@ const SearchListItem = ({ user }) => {
       user.id,
       token
     );
-    console.log(friendRequest);
     dispatch(addSentFriendRequest(friendRequest));
   };
 

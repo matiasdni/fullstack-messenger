@@ -1,5 +1,8 @@
 import { logOut } from "@/features/auth/authSlice";
+import { setNotification } from "@/features/notification/notificationSlice";
 import { useAppDispatch } from "@/store";
+import { Tooltip } from "components/common/Tooltip";
+import { UserProfile } from "components/profile/UserProfile";
 import { useUser } from "hooks/useAuth";
 import { FC, useState } from "react";
 import { MdGroupAdd, MdOutlineMessage } from "react-icons/md";
@@ -7,8 +10,6 @@ import { GroupForm } from "../GroupForm";
 import { UserSearch } from "../UserSearch";
 import { Modal } from "../common/Modal";
 import { SidebarTabs, Tab } from "./SidebarTab";
-import { Tooltip } from "components/common/Tooltip";
-import { UserProfile } from "components/profile/UserProfile";
 
 interface SidebarHeaderProps {
   activeTab: Tab;
@@ -26,6 +27,9 @@ const DropdownMenu = () => {
   const handleLogOut = () => {
     dispatch(logOut());
     // todo: when notifications are implemented display success message
+    dispatch(
+      setNotification({ message: "Logged out successfully", status: "success" })
+    );
   };
 
   return (
@@ -50,7 +54,7 @@ const DropdownMenu = () => {
   );
 };
 
-export const SidebarHeader: FC<SidebarHeaderProps> = ({
+const SidebarHeader: FC<SidebarHeaderProps> = ({
   activeTab,
   onChangeTab,
 }: SidebarHeaderProps) => {
@@ -140,3 +144,5 @@ export const SidebarHeader: FC<SidebarHeaderProps> = ({
     </>
   );
 };
+
+export default SidebarHeader;
