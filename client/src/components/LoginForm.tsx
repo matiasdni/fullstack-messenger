@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppDispatch } from "../store";
-import { login } from "../features/auth/authSlice";
+import { useAppDispatch } from "@/store";
+import { login } from "@/features/auth/authSlice";
 import { isFulfilled } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router";
-import { getChats } from "../features/chats/chatsSlice";
+import { getChats } from "@/features/chats/chatsSlice";
+import { setNotification } from "features/notification/notificationSlice";
 
 export const LoginForm = ({ onRegisterClick }) => {
   const [username, setUsername] = useState("");
@@ -20,6 +21,12 @@ export const LoginForm = ({ onRegisterClick }) => {
           dispatch(getChats(action.payload.token)).then((action) => {
             if (isFulfilled(action)) {
               navigate("/");
+              dispatch(
+                setNotification({
+                  message: "Login successful",
+                  status: "success",
+                })
+              );
             }
           });
         } else {
