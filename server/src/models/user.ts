@@ -15,6 +15,7 @@ class User extends Model {
   declare id: CreationOptional<string>;
   declare username: string;
   declare password: string;
+  declare image: string | null;
   declare ownedChats: NonAttribute<Chat["id"]>;
   declare getMessages: HasManyGetAssociationsMixin<Message>;
   declare getChats: HasManyGetAssociationsMixin<Chat>;
@@ -83,6 +84,9 @@ const initUser = (sequelize: Sequelize): void => {
             msg: "Password cannot be null",
           },
         },
+      },
+      image: {
+        type: DataTypes.STRING,
       },
     },
     {

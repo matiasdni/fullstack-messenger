@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import fs from "fs";
 import { AuthRequest } from "../middlewares/auth";
 import { Chat } from "../models/chat";
 import { Message } from "../models/message";
@@ -194,35 +195,48 @@ const removeUserFromChat = async (
 };
 
 const updateChat = async (req: AuthRequest, res: Response) => {
-  logger.info(req);
-  const { name, description } = req.body;
-  logger.info(req.body);
-  // const profilePicture = req.file;
   const { chatId } = req.params;
   const currentUser = req.user;
 
-  // const chat = await Chat.findByPk(chatId);
-  // if (!chat) throw new ApiError(404, "Chat not found");
+  const chat = await Chat.findByPk(chatId);
+  if (!chat) throw new ApiError(404, "Chat not found");
 
-  // if (chat.ownerId !== currentUser.id)
-  //   throw new ApiError(403, "You do not have permission to update this chat");
-  // // const profilePictureblob = profilePicture.buffer.toString("base64");
-  // const affectedRows = await Chat.update(
-  //   { name, description },
-  //   {
-  //     where: { id: chatId },
-  //     returning: true,
-  //   }
-  // );
+  if (chat.ownerId !== currentUser.id)
+    throw new ApiError(403, "You do not have permission to update this chat");
 
-  // const updatedChat = affectedRows[1][0];
+  let chatUpdateData: Partial<Chat> = {
+    name: req.body.name,
+    description: req.body.description,
+    image: req.file?.path,
+  };
 
-  // logger.info(affectedRows);
-  // logger.info(await affectedRows[1][0].getUsers());
+  if (chatUpdateData.image) {
+    // delete old image
+    if (chat.image) {
+      fs.unlink(chat.image, (err) => {
+        if (err) throw err;
+        logger.info("Old image deleted");
+      });
+    }
+  }
 
-  // res.json(updatedChat.toJSON());
+  logger.info(chatUpdateData);
 
-  // io.to(chatId).emit("chatUpdate", updatedChat.toJSON());
+  const affectedRows = await Chat.update(chatUpdateData, {
+    where: {
+      id: chatId,
+    },
+    returning: true,
+  });
+
+  const updatedChat = affectedRows[1][0];
+
+  logger.info(affectedRows);
+  logger.info(await affectedRows[1][0].getUsers());
+
+  res.json(updatedChat);
+
+  io.to(chatId).emit("chatUpdate", updatedChat.toJSON());
 };
 
 export default {

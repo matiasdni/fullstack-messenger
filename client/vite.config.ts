@@ -48,6 +48,7 @@ export default defineConfig({
         target: "http://localhost:3001",
         ws: true,
       },
+      "/images": "http://localhost:3001",
     },
   },
 });

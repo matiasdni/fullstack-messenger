@@ -51,7 +51,15 @@ const ChatItem = ({ chat }) => {
     >
       <div className="flex items-center space-x-2">
         <figure className="h-10 w-10 flex-none">
-          <Avatar />
+          {chat.image ? (
+            <img
+              className="w-full h-full rounded-full"
+              src={chat.image}
+              alt=""
+            />
+          ) : (
+            <Avatar />
+          )}
         </figure>
         <div className="flex w-full flex-col truncate">
           <div className="flex justify-between">

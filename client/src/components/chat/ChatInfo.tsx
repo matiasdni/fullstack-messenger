@@ -1,3 +1,4 @@
+import { updateChat } from "@/features/chats/chatsSlice";
 import { Chat } from "@/features/chats/types";
 import { useToken } from "@/hooks/useAuth";
 import { removeUserFromChat, updateChatInfo } from "@/services/chats";
@@ -16,10 +17,11 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [chatName, setChatName] = useState<string>(activeChat.name);
   const [username, setUsername] = useState<string>("");
-  const [avatar, setAvatar] = useState<File>(activeChat.avatar);
+  const [image, setImage] = useState<string>(activeChat.image);
   const [chatDescription, setChatDescription] = useState<string>(
     activeChat.description
   );
+  const [formData, setFormData] = useState<FormData>(new FormData());
   const dispatch = useAppDispatch();
   const locale = navigator.language;
 
@@ -27,8 +29,9 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
 
   useEffect(() => {
     setChatName(activeChat.name);
-    setAvatar(activeChat.avatar);
     setChatDescription(activeChat.description);
+    setImage(activeChat.image);
+    console.log(activeChat);
   }, [editMode]);
 
   const handleKick = async (id: string) => {
@@ -42,23 +45,19 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
   };
 
   const handleSave = async () => {
-    const formData = new FormData();
-    const data = {
+    setFormData((prev) => {
+      prev.set("name", chatName);
+      prev.set("description", chatDescription);
+      return prev;
+    });
+
+    const responseData = await updateChatInfo({
       chatId: activeChat.id,
+      formData,
       token,
-      data: {
-        name: chatName,
-        description: chatDescription,
-      },
-    };
-    formData.append("chatId", activeChat.id);
-    // formData.append("token", token);
-    // formData.append("data", data);
-    formData.append("name", chatName);
-    formData.append("description", chatDescription);
-    formData.append("image", avatar);
-    const responseData = await updateChatInfo({ formData, token });
-    // dispatch(updateChat(responseData));
+    });
+    console.log(responseData);
+    dispatch(updateChat(responseData));
     setEditMode(false);
   };
 
@@ -68,11 +67,15 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
     day: "numeric",
   });
 
-  const handleAvatarChange = async (e) => {
-    console.log(e.target.files);
+  const handleImageChange = async (e) => {
     if (e.target.files) {
-      console.log(e.target.files[0]);
-      setAvatar(e.target.files[0]);
+      const image: File = e.target.files[0];
+      setFormData((prev) => {
+        prev.set("image", image, image.name);
+        return prev;
+      });
+      const imageUrl = URL.createObjectURL(image);
+      setImage(imageUrl);
     }
   };
 
@@ -105,7 +108,7 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative bg-white dark:bg-gray-800 rounded-md py-6 px-4">
+      <div className="relative max-h-5/6 bg-white dark:bg-gray-800 rounded-md py-6 px-4">
         <div className=" space-y-4 flex flex-col">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -138,10 +141,22 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
             </button>
           </div>
           <div className="flex items-center">
-            <figure className="relative w-16 h-16 shrink-0 relative">
-              <Avatar />
-              <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-out bg-black bg-opacity-50 rounded-full opacity-0 hover:opacity-100">
-                <button className="p-1 rounded-full bg-gray-50 dark:bg-gray-900">
+            <figure className="w-16 h-16 shrink-0 relative">
+              {image ? (
+                <img
+                  className="w-full h-full rounded-full"
+                  src={image}
+                  alt=""
+                />
+              ) : (
+                <Avatar />
+              )}
+              <div
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-out bg-black bg-opacity-50 rounded-full opacity-0  ${
+                  editMode ? "hover:opacity-100 cursor-pointer" : null
+                }`}
+              >
+                <button className="p-1 rounded-full bg-gray-50 dark:bg-gray-900 cursor-default">
                   <svg
                     className="w-6 h-6 text-gray-500"
                     fill="none"
@@ -155,12 +170,14 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     ></path>
                   </svg>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    onChange={handleAvatarChange}
-                  />
+                  {editMode && (
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      onChange={handleImageChange}
+                    />
+                  )}
                 </button>
               </div>
             </figure>
@@ -178,14 +195,13 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
                       />
 
                       <textarea
-                        className=" textarea textarea-bordered text-xs text-gray-500 break-inside-avoid textarea-lg"
+                        className=" textarea textarea-sm textarea-bordered break-inside-avoid"
                         onChange={(e) => setChatDescription(e.target.value)}
                         maxLength={64}
                         value={chatDescription}
                       >
                         {chatDescription}
                       </textarea>
-                      {/* Characters remain max 64 */}
                       <div className="flex items-center justify-between">
                         <p className="text-xs text-gray-500">
                           {chatDescription.length}/64
@@ -209,7 +225,7 @@ const ChatInfo = ({ activeChat, setShowChatInfo }: ChatInfoProps) => {
                 )}
               </div>
               <div className="relative grow"></div>
-              {avatarStack}
+              {!editMode && avatarStack}
             </div>
           </div>
           <div className="flex items-center justify-between mb-4">

@@ -17,7 +17,7 @@ const UserTable = ({
     status: "online",
   }));
   return (
-    <div className="h-96 overflow-auto scroll-smooth">
+    <div className="h-64 overflow-auto scroll-smooth">
       <table className="table table-sm">
         {/* head */}
         <thead>

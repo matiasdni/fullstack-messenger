@@ -22,11 +22,11 @@ class Chat extends Model {
   declare name: string;
   declare description: CreationOptional<string>;
   declare chat_type: "group" | "private";
+  declare image: string | null;
   declare ownerId: ForeignKey<User["id"]>;
   declare users: NonAttribute<User[]>;
   declare messages: NonAttribute<Message[]>;
   declare invites: NonAttribute<Invite[]>;
-  declare avatar: CreationOptional<Buffer>;
 
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
@@ -89,6 +89,9 @@ const initChat = (sequelize: Sequelize): void => {
         type: DataTypes.STRING(32),
         allowNull: true,
       },
+      image: {
+        type: DataTypes.STRING,
+      },
       chat_type: {
         type: DataTypes.ENUM,
         values: ["private", "group"],
@@ -100,10 +103,6 @@ const initChat = (sequelize: Sequelize): void => {
       },
       ownerId: {
         type: DataTypes.UUID,
-        allowNull: true,
-      },
-      avatar: {
-        type: DataTypes.BLOB,
         allowNull: true,
       },
     },
@@ -119,6 +118,7 @@ const initChat = (sequelize: Sequelize): void => {
           }
         },
       },
+
       tableName: "chat",
       sequelize,
     }
