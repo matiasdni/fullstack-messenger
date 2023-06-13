@@ -4,17 +4,47 @@ import { removeFriend } from "@/services/user";
 import { useAppDispatch } from "@/store";
 import { useAuth } from "hooks/useAuth";
 import { useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../common/alert-dialog";
+import { createPortal } from "react-dom";
+
+const RemoveFriendModal = ({ user, handleRemoveFriend }) => {
+  return (
+    <>
+      <dialog
+        id="friendRemove_modal"
+        className="modal bg-gray-900/25 dark:bg-black/25"
+      >
+        <form
+          method="dialog"
+          className="modal-box prose prose-h3:mt-0 max-w-prose bg-base-200 dark:bg-gray-800 dark:prose-invert"
+        >
+          <button className="btn-sm hover:bg-transparent absolute right-2 top-2">
+            ✕
+          </button>
+          <h3>Remove friend?</h3>
+          <p className="">
+            Are you sure you want to remove{" "}
+            <span className="font-semibold">{user?.username}</span> from your
+            friends?
+          </p>
+          <div className="modal-action">
+            <button className="btn btn-neutral normal-case text-base">
+              Cancel
+            </button>
+            <button
+              className="btn border-0 text-neutral-content bg-red-500 rounded-md hover:bg-red-600 text-base normal-case"
+              onClick={() => handleRemoveFriend(user.id)}
+            >
+              Delete
+            </button>
+          </div>
+        </form>
+        <form method="dialog" className="modal-backdrop">
+          <button className="cursor-default">close</button>
+        </form>
+      </dialog>
+    </>
+  );
+};
 
 const FriendCard = ({ friend, setSelectedUser }) => {
   const dispatch = useAppDispatch();
@@ -55,15 +85,20 @@ const FriendCard = ({ friend, setSelectedUser }) => {
           </svg>
         </svg>
         {/* remove friend */}
-        <AlertDialogTrigger onClick={() => setSelectedUser(friend)}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 448 512"
-            className="w-5 h-5 fill-neutral-300 hover:fill-neutral-700"
-          >
-            <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z" />
-          </svg>
-        </AlertDialogTrigger>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 448 512"
+          className="w-5 h-5 fill-neutral-300 hover:fill-neutral-700"
+          onClick={() => {
+            setSelectedUser(friend);
+            const modal = document.getElementById(
+              "friendRemove_modal"
+            ) as HTMLDialogElement;
+            modal.show();
+          }}
+        >
+          <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z" />
+        </svg>
       </div>
     </div>
   );
@@ -84,31 +119,15 @@ const FriendList = () => {
   return user.friends.length === 0 ? (
     <div className="flex justify-center w-full h-full">No friends yet</div>
   ) : (
-    <div className="relative flex flex-col w-full p-2 space-y-6">
-      <AlertDialog>
-        <AlertDialogContent className="bg-base-200">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Remove friend?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to remove{" "}
-              <span className="font-semibold">{selectedUser?.username}</span>{" "}
-              from your friends?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="p-2 text-white rounded-md bg-neutral-500 hover:bg-neutral-600">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction className="p-2 text-white bg-red-500 rounded-md hover:bg-red-600">
-              <div
-                className=""
-                onClick={() => handleRemoveFriend(selectedUser.id)}
-              >
-                Delete
-              </div>
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
+    <>
+      {createPortal(
+        <RemoveFriendModal
+          user={selectedUser}
+          handleRemoveFriend={handleRemoveFriend}
+        />,
+        document.body
+      )}
+      <div className="relative flex flex-col w-full p-2 space-y-6">
         {user.friends.map((friend) => (
           <FriendCard
             key={friend.id}
@@ -116,8 +135,8 @@ const FriendList = () => {
             setSelectedUser={setSelectedUser}
           />
         ))}
-      </AlertDialog>
-    </div>
+      </div>
+    </>
   );
 };
 
