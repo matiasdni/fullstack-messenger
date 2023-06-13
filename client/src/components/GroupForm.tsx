@@ -32,16 +32,6 @@ const formatOptionLabel = ({ value, label, avatar }) => (
   </div>
 );
 
-interface UserSelectProps {
-  selectedUsers: UserOption[];
-  onUserSelect: (selected: User[]) => void;
-  searchUsersByName: (
-    inputValue: string,
-    token: string
-  ) => Promise<UserOption[]>;
-  token: string;
-}
-
 const UserSelect = ({ onUserSelect, searchUsersByName, token }) => {
   const loadOptions = useCallback(
     async (inputValue): Promise<UserOption[]> => {
