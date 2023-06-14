@@ -1,7 +1,7 @@
 import { useUser } from "@/hooks/useAuth";
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 
-type Tab = "chats" | "friends" | "invites";
+type Tab = "chats" | "friends" | "invites" | "friend_requests";
 
 interface Props {
   activeTab: Tab;
@@ -9,7 +9,6 @@ interface Props {
 }
 
 const SidebarTabs: FC<Props> = ({ activeTab, onChangeTab }) => {
-  const [tabs] = useState<Tab[]>(["chats", "friends", "invites"]);
   const currentUser = useUser();
 
   const pendingInviteCount = useMemo(() => {
@@ -24,30 +23,31 @@ const SidebarTabs: FC<Props> = ({ activeTab, onChangeTab }) => {
     return pendingChatInvites.length + pendingFriendRequests.length;
   }, [currentUser.chatInvites.invites, currentUser.friendRequests]);
 
+  const onTabClick = (tab: Tab) => {
+    onChangeTab(tab);
+  };
+
   return (
-    <>
-      <div className="flex justify-between px-1 py-2 space-x-1 bg-neutral-100 dark:bg-gray-800/75">
-        {activeTab === "chats" && (
-          <>
-            <div className="tabs w-full relative">
-              <a className="tab tab-bordered tab-active text-base w-1/2">
-                Chats
-              </a>
-              <a className="tab tab-bordered text-base w-1/2">Invites</a>
-            </div>
-          </>
-        )}
-        {activeTab === "friends" && (
-          <>
-            <div className="tabs w-full relative">
-              <a className="tab tab-bordered text-base w-1/2">Friends</a>
-              <a className="tab tab-bordered tab-active text-base w-1/2 whitespace-nowrap">
-                Friend Requests
-              </a>
-            </div>
-          </>
-        )}
-        {/* {tabs.map((tab) => (
+    <div className="flex w-full justify-between px-1 py-2 space-x-1 bg-neutral-100 dark:bg-gray-800/75">
+      {activeTab === "chats" && (
+        <>
+          <div className="tabs w-full relative">
+            <a className="tab tab-bordered tab-active text-base w-1/2">Chats</a>
+            <a className="tab tab-bordered text-base w-1/2">Invites</a>
+          </div>
+        </>
+      )}
+      {activeTab === "friends" && (
+        <>
+          <div className="tabs w-full relative">
+            <a className="tab tab-bordered text-base w-1/2">Friends</a>
+            <a className="tab tab-bordered tab-active text-base w-1/2 whitespace-nowrap">
+              Friend Requests
+            </a>
+          </div>
+        </>
+      )}
+      {/* {tabs.map((tab) => (
           <div className="flex-1 shadow-sm" key={tab}>
             <button
               key={tab}
@@ -71,8 +71,7 @@ const SidebarTabs: FC<Props> = ({ activeTab, onChangeTab }) => {
             </button>
           </div>
         ))} */}
-      </div>
-    </>
+    </div>
   );
 };
 

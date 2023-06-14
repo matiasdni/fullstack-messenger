@@ -45,11 +45,11 @@ const ChatItem = ({ chat }) => {
       : chat.users?.find((u: User) => u.id !== user.id)?.username;
 
   return (
-    <li
-      className={` p-2 cursor-pointer shadow-sm hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700 ${activeChatClass}`}
-      onClick={handleChatItemClick}
-    >
-      <div className="flex items-center space-x-2">
+    <li>
+      <div
+        className={`flex p-2 space-x-2 items-center cursor-pointer shadow-sm hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700 ${activeChatClass}`}
+        onClick={handleChatItemClick}
+      >
         <figure className="h-10 w-10 flex-none">
           {chat.image ? (
             <img
@@ -61,16 +61,12 @@ const ChatItem = ({ chat }) => {
             <Avatar />
           )}
         </figure>
-        <div className="flex w-full flex-col truncate">
-          <div className="flex justify-between">
-            <span className="max-w-[85%] truncate font-semibold">
-              {nameToDisplay}
-            </span>
-            <span className="self-center whitespace-nowrap text-xs">
-              {time}
-            </span>
+        <div className="whitespace-nowrap truncate w-full">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold truncate">{nameToDisplay}</span>
+            <span className=" text-xs">{time}</span>
           </div>
-          <p className="truncate text-sm">
+          <p className="truncate text-sm w-full">
             {(messages?.length > 0 &&
               (includeUsername ? userNameInclude : lastMessage.content)) ||
               "No messages"}
@@ -100,7 +96,7 @@ export const ChatList = ({ chats }: { chats: Chat[] }) => {
   );
 
   return (
-    <ul className="box-content w-full divide-y divide-gray-300 dark:divide-gray-700">
+    <ul className="h-full max-w-full divide-y overflow-hidden truncate overflow-y-auto overscroll-contain divide-gray-300 dark:divide-gray-700">
       {sortedChats?.map((chat) => (
         <ChatItem key={chat?.id} chat={chat} />
       ))}

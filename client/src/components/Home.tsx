@@ -21,13 +21,20 @@ export const Home = () => {
     return <LoadingChat />;
   }
 
+  const colors =
+    "divide-gray-300 border border-neutral-200  dark:divide-gray-800 dark:border-gray-800";
+
   return (
-    <div className="text-neutral-900 dark:text-neutral-300">
+    <div className="h-screen w-screen overflow-hidden">
       <DarkModeToggle />
-      <div className="container relative h-[768px] max-w-7xl">
-        <div className="flex h-full w-full divide-x-[1px] divide-gray-300 border border-neutral-200 shadow-md dark:divide-gray-800 dark:border-gray-800">
-          <Sidebar />
-          <Chat />
+      <div className="container absolute right-0 left-0 max-w-7xl text-neutral-800 dark:text-neutral-300 antialiased">
+        <div className="h-[768px]">
+          <div className={`flex min-h-full divide-x-[1px] shadow-md ${colors}`}>
+            <Sidebar />
+            <main className="flex-1 min-w-0 overflow-auto">
+              <Chat />
+            </main>
+          </div>
         </div>
       </div>
     </div>

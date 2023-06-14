@@ -47,7 +47,9 @@ const ChatHeader: FC<ChatHeaderProps> = ({ activeChat }) => {
             <Avatar />
           </figure>
           <div className="ml-4">
-            <h3 className="prose">{activeChat?.name}</h3>
+            <h3 className="prose whitespace-nowrap truncate">
+              {activeChat?.name}
+            </h3>
             <p className="text-xs truncate">
               {activeChat?.users?.map((user) => user.username).join(", ")}
             </p>

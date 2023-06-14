@@ -8,6 +8,7 @@ import { FiLogOut } from "react-icons/fi";
 import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
 import { IconContext } from "react-icons/lib";
 import { useAppSelector } from "../../store";
+import { UserProfile } from "../profile/UserProfile";
 import { ChatList } from "./ChatList";
 import SidebarHeader from "./SidebarHeader";
 import { Tab } from "./SidebarTab";
@@ -15,13 +16,18 @@ import { Tab } from "./SidebarTab";
 const FriendList = lazy(() => import("./FriendList"));
 const InviteList = lazy(() => import("./InviteList"));
 
+interface myWindow extends Window {
+  openDialog: () => void;
+  user_profile: HTMLDialogElement;
+}
+
 function SidebarContent(props: {
-  activeTab: "chats" | "friends" | "invites";
+  activeTab: "chats" | "friends" | "invites" | "friend_requests";
   chats: Chat[];
   fallback: JSX.Element;
 }) {
   return (
-    <div className="flex w-full h-full overflow-x-hidden overflow-y-auto ">
+    <>
       {/* chats list */}
       {props.activeTab === "chats" && <ChatList chats={props.chats} />}
       {props.activeTab === "friends" && (
@@ -34,7 +40,7 @@ function SidebarContent(props: {
           <InviteList />
         </Suspense>
       )}
-    </div>
+    </>
   );
 }
 
@@ -49,15 +55,29 @@ const Sidebar = () => {
   const loading = <div>Loading...</div>;
 
   return (
-    <div className="basis-1/5 flex flex-nowrap">
-      <VerticalNav activeTab={activeTab} handleTabChange={handleTabChange} />
-      <div className="grow-0">
-        <SidebarHeader activeTab={activeTab} onChangeTab={handleTabChange} />
-        <SidebarContent
-          activeTab={activeTab}
-          chats={allChats}
-          fallback={loading}
-        />
+    <div className="w-[21rem] flex-none">
+      <div className="w-full h-full flex">
+        <nav className="w-28 z-[200]">
+          <VerticalNav
+            activeTab={activeTab}
+            handleTabChange={handleTabChange}
+          />
+        </nav>
+        <div className="relative w-full h-full">
+          <div className="absolute inset-0 flex flex-col max-h-full">
+            <SidebarHeader
+              activeTab={activeTab}
+              onChangeTab={handleTabChange}
+            />
+            <div className="overflow-y-auto">
+              <SidebarContent
+                activeTab={activeTab}
+                chats={allChats}
+                fallback={loading}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -65,6 +85,7 @@ const Sidebar = () => {
 
 const VerticalNav = ({ handleTabChange, activeTab }) => {
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
 
   const handleLogOut = () => {
     dispatch(logOut());
@@ -80,7 +101,7 @@ const VerticalNav = ({ handleTabChange, activeTab }) => {
           "text-neutral-500 dark:text-neutral-400 inline-block text-2xl align-middle place-self-center",
       }}
     >
-      <ul className="menu m-0 px-0 z-[100] w-16 space-y-2 rounded-box menu-vertical">
+      <ul className="menu h-full flex-1 z-[100] space-y-2 rounded-box menu-vertical relative p-3">
         <li>
           <a
             className={`tooltip tooltip-right p-0 w-12 h-12 self-center relative hover:bg-neutral-100 ${
@@ -123,8 +144,60 @@ const VerticalNav = ({ handleTabChange, activeTab }) => {
             </div>
           </a>
         </li>
+        <div className="flex-1"></div>
+        <div className="dropdown z-50 place-self-center dropdown-right">
+          <label
+            tabIndex={0}
+            className="btn-ghost avatar aspect-1 h-10 w-10 btn-circle mask shadow-md hover:shadow-lg cursor-pointer select-none"
+          >
+            <img
+              src={
+                user?.image
+                  ? user.image
+                  : `https://avatars.dicebear.com/api/identicon/${user.username}.svg`
+              }
+              alt={`${user.username}'s avatar`}
+              className="rounded-full"
+            />
+          </label>
+          <UserProfile />
+          <DropdownMenu />
+        </div>
       </ul>
     </IconContext.Provider>
+  );
+};
+
+const DropdownMenu = () => {
+  const dispatch = useAppDispatch();
+
+  const handleLogOut = () => {
+    dispatch(logOut());
+    // todo: when notifications are implemented display success message
+    dispatch(
+      setNotification({ message: "Logged out successfully", status: "success" })
+    );
+  };
+
+  return (
+    <>
+      <ul
+        tabIndex={0}
+        className="p-2 shadow menu menu-xs dropdown-content bg-base-100 rounded-box w-28"
+      >
+        <li
+          onClick={() => {
+            const user_profile = (window as unknown as myWindow).user_profile;
+            user_profile.showModal();
+          }}
+        >
+          <a>Profile</a>
+        </li>
+        <li className="dropdown" onClick={handleLogOut}>
+          <a>Logout</a>
+        </li>
+      </ul>
+    </>
   );
 };
 

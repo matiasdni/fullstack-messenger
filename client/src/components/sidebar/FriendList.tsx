@@ -119,7 +119,7 @@ const FriendList = () => {
   return user.friends.length === 0 ? (
     <div className="flex justify-center w-full h-full">No friends yet</div>
   ) : (
-    <div className="relative overflow-y-scroll">
+    <>
       {createPortal(
         <RemoveFriendModal
           user={selectedUser}
@@ -127,7 +127,7 @@ const FriendList = () => {
         />,
         document.body
       )}
-      <ul className="w-full overflow-x-hidden overflow-y-auto overscroll-contain p-2 space-y-4">
+      <ul className="flex-1 h-full p-2 space-y-4">
         {user.friends.map((friend) => (
           <FriendCard
             key={friend.id}
@@ -136,7 +136,7 @@ const FriendList = () => {
           />
         ))}
       </ul>
-    </div>
+    </>
   );
 };
 
