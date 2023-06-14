@@ -49,25 +49,15 @@ const Sidebar = () => {
   const loading = <div>Loading...</div>;
 
   return (
-    <div className="basis-2/6">
-      <div className="min-h-full min-w-full select-none max-w-sm overflow-hidden relative">
-        <div className="flex absolute inset-0">
-          <VerticalNav
-            activeTab={activeTab}
-            handleTabChange={handleTabChange}
-          />
-          <div className="w-full relative overflow-hidden">
-            <SidebarHeader
-              activeTab={activeTab}
-              onChangeTab={handleTabChange}
-            />
-            <SidebarContent
-              activeTab={activeTab}
-              chats={allChats}
-              fallback={loading}
-            />
-          </div>
-        </div>
+    <div className="basis-1/5 flex flex-nowrap">
+      <VerticalNav activeTab={activeTab} handleTabChange={handleTabChange} />
+      <div className="grow-0">
+        <SidebarHeader activeTab={activeTab} onChangeTab={handleTabChange} />
+        <SidebarContent
+          activeTab={activeTab}
+          chats={allChats}
+          fallback={loading}
+        />
       </div>
     </div>
   );
