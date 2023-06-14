@@ -5,6 +5,8 @@ import { Tooltip } from "components/common/Tooltip";
 import { UserProfile } from "components/profile/UserProfile";
 import { useUser } from "hooks/useAuth";
 import { FC, useState } from "react";
+import { IoIosNotifications } from "react-icons/io";
+import { IconContext } from "react-icons/lib";
 import { MdGroupAdd, MdOutlineMessage } from "react-icons/md";
 import { GroupForm } from "../GroupForm";
 import { UserSearch } from "../UserSearch";
@@ -60,11 +62,15 @@ const SidebarHeader: FC<SidebarHeaderProps> = ({
 }: SidebarHeaderProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState<boolean>(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] =
+    useState<boolean>(false);
   const user = useUser();
 
   const handleGroupModalClose = (): void => {
     setIsGroupModalOpen(false);
   };
+
+  const openNotificationsPanel = (): void => setIsNotificationsOpen(true);
 
   return (
     <>
@@ -80,7 +86,11 @@ const SidebarHeader: FC<SidebarHeaderProps> = ({
               <div className="avatar h-9 w-9 aspect-1">
                 <div className=" aspect-1 rounded-full">
                   <img
-                    src={`https://avatars.dicebear.com/api/identicon/${user.username}.svg`}
+                    src={
+                      user?.image
+                        ? user.image
+                        : `https://avatars.dicebear.com/api/identicon/${user.username}.svg`
+                    }
                     alt={`${user.username}'s avatar`}
                   />
                 </div>
@@ -89,36 +99,51 @@ const SidebarHeader: FC<SidebarHeaderProps> = ({
             <DropdownMenu />
           </div>
           <div className="flex-1"></div>
-          <span className="p-2 flex items-center space-x-4">
-            <Tooltip label="Start a Chat">
-              <MdOutlineMessage
-                onClick={(): void => {
-                  setIsModalOpen(true);
-                }}
-                className="text-gray-500 dark:text-gray-400  hover:text-gray-900 dark:hover:text-gray-50 cursor-pointer"
-                size={24}
-              />
-            </Tooltip>
+          <IconContext.Provider
+            value={{
+              className:
+                "text-gray-500 dark:text-gray-400 h-6 w-6 hover:text-gray-900 dark:hover:text-gray-50 cursor-pointer align-middle transition-colors duration-200 ease-in-out",
+            }}
+          >
+            <span className="p-2 flex items-center w-full space-x-4 justify-end z-[200]">
+              <Tooltip label="Start a Chat">
+                <MdOutlineMessage
+                  onClick={(): void => {
+                    setIsModalOpen(true);
+                  }}
+                />
+              </Tooltip>
 
-            <Tooltip label="Create Group">
-              <MdGroupAdd
-                size={24}
-                onClick={(): void => {
-                  setIsGroupModalOpen(true);
-                }}
-                className="text-gray-500 dark:text-gray-400  hover:text-gray-900 dark:hover:text-gray-50 cursor-pointer"
-              />
-            </Tooltip>
-          </span>
+              <Tooltip label="Create Group">
+                <MdGroupAdd
+                  onClick={(): void => {
+                    setIsGroupModalOpen(true);
+                  }}
+                />
+              </Tooltip>
+              <div className="dropdown">
+                <label
+                  tabIndex={0}
+                  className="btn p-0 bg-transparent hover:bg-transparent border-none "
+                >
+                  <IoIosNotifications onClick={openNotificationsPanel} />
+                </label>
+                <ul className="p-2 shadow absolute menu-vertical dropdown-content bg-base-100 rounded-box w-52">
+                  <li>
+                    <a>Item 1</a>
+                  </li>
+                  <li>
+                    <a>Item 2</a>
+                  </li>
+                </ul>
+              </div>
+            </span>
+          </IconContext.Provider>
         </div>
-        <button
-          className="min-w-full px-3 py-1 text-left border border-gray-400 rounded shadow-sm cursor-pointer bg-neutral-100 dark:border-gray-600 dark:bg-gray-700"
-          onClick={(): void => {
-            setIsModalOpen(true);
-          }}
-        >
-          Search for users
-        </button>
+        <input
+          className="min-w-full px-3 py-1 text-left border border-gray-400 rounded shadow-sm bg-neutral-100 dark:border-gray-600 dark:bg-gray-700"
+          placeholder="Search for users"
+        />
       </div>
 
       {isModalOpen && (
