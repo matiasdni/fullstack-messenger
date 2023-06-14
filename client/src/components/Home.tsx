@@ -25,7 +25,7 @@ export const Home = () => {
     <div className="text-neutral-900 dark:text-neutral-300">
       <DarkModeToggle />
       <div className="container relative h-[768px] max-w-7xl">
-        <div className="flex h-full divide-x divide-gray-300 border border-neutral-200 shadow-md dark:divide-gray-800 dark:border-gray-800">
+        <div className="flex h-full w-full divide-x-[1px] divide-gray-300 border border-neutral-200 shadow-md dark:divide-gray-800 dark:border-gray-800">
           <Sidebar />
           <Chat />
         </div>

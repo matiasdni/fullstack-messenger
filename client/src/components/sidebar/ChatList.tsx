@@ -46,7 +46,7 @@ const ChatItem = ({ chat }) => {
 
   return (
     <li
-      className={`max-w-full cursor-pointer p-1 shadow-sm hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700 ${activeChatClass}`}
+      className={` p-2 cursor-pointer shadow-sm hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700 ${activeChatClass}`}
       onClick={handleChatItemClick}
     >
       <div className="flex items-center space-x-2">
@@ -100,7 +100,7 @@ export const ChatList = ({ chats }: { chats: Chat[] }) => {
   );
 
   return (
-    <ul className="w-full divide-y divide-gray-300 dark:divide-gray-700">
+    <ul className="box-content w-full divide-y divide-gray-300 dark:divide-gray-700">
       {sortedChats?.map((chat) => (
         <ChatItem key={chat?.id} chat={chat} />
       ))}

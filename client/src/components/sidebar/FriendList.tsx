@@ -53,7 +53,7 @@ const FriendCard = ({ friend, setSelectedUser }) => {
   };
 
   return (
-    <div className="relative flex items-center space-x-2">
+    <li className="flex items-center space-x-2">
       {friend.image ? (
         <img
           src={
@@ -71,7 +71,7 @@ const FriendCard = ({ friend, setSelectedUser }) => {
           className="w-8 h-8 rounded-full"
         />
       )}
-      <span>{friend.username}</span>
+      <span className="truncate">{friend.username}</span>
       <div className="grow"></div>
       <div className="flex space-x-4">
         <svg
@@ -100,7 +100,7 @@ const FriendCard = ({ friend, setSelectedUser }) => {
           <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z" />
         </svg>
       </div>
-    </div>
+    </li>
   );
 };
 
@@ -119,7 +119,7 @@ const FriendList = () => {
   return user.friends.length === 0 ? (
     <div className="flex justify-center w-full h-full">No friends yet</div>
   ) : (
-    <>
+    <div className="relative overflow-y-scroll">
       {createPortal(
         <RemoveFriendModal
           user={selectedUser}
@@ -127,7 +127,7 @@ const FriendList = () => {
         />,
         document.body
       )}
-      <div className="relative flex flex-col w-full p-2 space-y-6">
+      <ul className="w-full overflow-x-hidden overflow-y-auto overscroll-contain p-2 space-y-4">
         {user.friends.map((friend) => (
           <FriendCard
             key={friend.id}
@@ -135,8 +135,8 @@ const FriendList = () => {
             setSelectedUser={setSelectedUser}
           />
         ))}
-      </div>
-    </>
+      </ul>
+    </div>
   );
 };
 
