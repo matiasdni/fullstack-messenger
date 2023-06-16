@@ -1,6 +1,8 @@
 import { configureStore, ThunkDispatch } from "@reduxjs/toolkit";
 import { ActionsFromAsyncThunk } from "@reduxjs/toolkit/src/matchers";
+import notificationReducer from "features/notification/notificationSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import { RootState } from "types";
 import authReducer, { login } from "./features/auth/authSlice";
 import chatsReducer, {
   createChat,
@@ -13,8 +15,6 @@ import inviteReducer, {
   updateInviteStatus,
 } from "./features/invites/inviteSlice";
 import usersReducer from "./features/users/usersSlice";
-import { RootState } from "types";
-import notificationReducer from "features/notification/notificationSlice";
 
 const store = configureStore({
   reducer: {
@@ -24,15 +24,6 @@ const store = configureStore({
     invites: inviteReducer,
     notifications: notificationReducer,
   },
-  // preloadedState: {
-  //   auth: {
-  //     token: localStorage.getItem("token"),
-  //     user: {
-  //       id: localStorage.getItem("id"),
-  //       username: localStorage.getItem("username"),
-  //     },
-  //   },
-  // },
 });
 
 export type AppDispatch = typeof store.dispatch;
