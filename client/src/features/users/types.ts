@@ -22,4 +22,7 @@ export interface User {
   github?: string;
 }
 
-export type UsersInitialState = User[];
+export type UsersInitialState = {
+  users: User[];
+  selectedUser: User | null;
+};
