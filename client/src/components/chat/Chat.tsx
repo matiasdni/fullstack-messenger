@@ -11,17 +11,14 @@ export const Chat = () => {
   const activeChat: ChatType = useAppSelector(selectActiveChat);
 
   return activeChat ? (
-    <div className="flex h-full flex-col flex-1">
-      <div className="flex flex-1 flex-col divide-y divide-neutral-200 dark:divide-neutral-700">
-        <ChatHeader activeChat={activeChat} />
-        <MessageList activeChat={activeChat} />
-      </div>
-
+    <div className="absolute inset-0 flex flex-col">
+      <ChatHeader activeChat={activeChat} />
+      <MessageList activeChat={activeChat} />
       {/*input*/}
       <ChatInputForm activeChat={activeChat} token={token} />
     </div>
   ) : (
-    <div className="flex h-full flex-col basis-full divide-y divide-neutral-200 dark:divide-neutral-700  dark:bg-gray-700/5 ">
+    <div className="flex flex-col h-full divide-y basis-full divide-neutral-200 dark:divide-neutral-700 dark:bg-gray-700/5 ">
       <ChatHeader />
       {/*messages*/}
       <MessageList />

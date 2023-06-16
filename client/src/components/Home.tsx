@@ -9,7 +9,7 @@ import { LoadingChat } from "./common/LoadingChat";
 import Sidebar from "./sidebar/Sidebar";
 
 const container =
-  "container absolute right-0 left-0 max-w-7xl text-neutral-800 dark:text-neutral-300 bg-white dark:bg-gray-900 antialiased";
+  "container absolute right-0 left-0 text-neutral-800 dark:text-neutral-300 bg-white dark:bg-gray-900 antialiased shadow-md";
 
 export const Home = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -27,15 +27,17 @@ export const Home = () => {
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
+    <div className="w-screen h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
       <DarkModeToggle />
       <div className={container}>
         <DrawerProvider>
           <DrawerWrapper>
             <DrawerContent>
-              <Sidebar />
-              <main className="flex-1 min-w-0 overflow-auto">
-                <Chat />
+              <main className="flex flex-1 max-w-7xl">
+                <Sidebar />
+                <article className="relative w-full h-full">
+                  <Chat />
+                </article>
               </main>
             </DrawerContent>
             <DrawerSide />

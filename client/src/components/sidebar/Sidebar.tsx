@@ -2,7 +2,6 @@
 import { useDrawer } from "@/contexts/DrawerContext";
 import { logOut } from "@/features/auth/authSlice";
 import { setNotification } from "@/features/notification/notificationSlice";
-import { useUser } from "@/hooks/useAuth";
 import { useAppDispatch } from "@/store";
 import { Chat } from "features/chats/types";
 import { lazy, Suspense, useState } from "react";
@@ -12,7 +11,6 @@ import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
 import { IconContext } from "react-icons/lib";
 import { useAppSelector } from "../../store";
 import { ShowDrawerBtn } from "../Drawer";
-import { UserProfile } from "../profile/UserProfile";
 import { ChatList } from "./ChatList";
 import SidebarHeader from "./SidebarHeader";
 import { Tab } from "./SidebarTab";
@@ -102,8 +100,8 @@ export const VerticalNav = ({ handleTabChange, activeTab }) => {
           "text-neutral-500 dark:text-neutral-400 inline-block text-2xl align-middle place-self-center",
       }}
     >
-      <nav>
-        <ul className="menu h-full w-full flex-1 max-w-[72px] menu-vertical relative dark:bg-gray-900">
+      <nav className="flex flex-col items-center h-full max-w-[72px]">
+        <ul className="menu menu-vertical flex-1">
           <li>
             <a
               className={`tooltip tooltip-right p-0 w-12 h-12 self-center relative hover:bg-neutral-100 ${
@@ -149,12 +147,14 @@ export const VerticalNav = ({ handleTabChange, activeTab }) => {
               </div>
             </a>
           </li>
-          <div className="flex-1"></div>
-          <div className="dropdown z-50 place-self-center dropdown-right">
-            <label
-              tabIndex={0}
-              className="btn-ghost avatar aspect-1 h-10 w-10 btn-circle mask shadow-md hover:shadow-lg cursor-pointer select-none"
-            >
+        </ul>
+
+        <div>
+          <label
+            tabIndex={0}
+            className="btn-ghost avatar aspect-1 h-10 w-10 btn-circle mask shadow-md hover:shadow-lg cursor-pointer select-none"
+          >
+            <ShowDrawerBtn drawerContent="user">
               <img
                 src={
                   user?.image
@@ -164,56 +164,11 @@ export const VerticalNav = ({ handleTabChange, activeTab }) => {
                 alt={`${user.username}'s avatar`}
                 className="rounded-full"
               />
-            </label>
-            <UserProfile />
-            <DropdownMenu />
-          </div>
-        </ul>
+            </ShowDrawerBtn>
+          </label>
+        </div>
       </nav>
     </IconContext.Provider>
-  );
-};
-
-const DropdownMenu = () => {
-  const dispatch = useAppDispatch();
-  const currentUser = useUser();
-  const { setDrawerContent } = useDrawer();
-
-  const handleLogOut = () => {
-    dispatch(logOut());
-    // todo: when notifications are implemented display success message
-    dispatch(
-      setNotification({ message: "Logged out successfully", status: "success" })
-    );
-  };
-
-  return (
-    <>
-      <ul
-        tabIndex={0}
-        className="p-2 shadow menu menu-xs dropdown-content bg-base-100 rounded-box w-28"
-      >
-        <li
-          onClick={() => {
-            // const user_profile = (window as unknown as myWindow).user_profile;
-            // user_profile.showModal();
-          }}
-        >
-          <ShowDrawerBtn>
-            <a
-              onClick={() => {
-                setDrawerContent("user");
-              }}
-            >
-              Profile
-            </a>
-          </ShowDrawerBtn>
-        </li>
-        <li className="dropdown" onClick={handleLogOut}>
-          <a>Logout</a>
-        </li>
-      </ul>
-    </>
   );
 };
 

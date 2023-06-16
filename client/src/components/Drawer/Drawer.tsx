@@ -7,6 +7,7 @@ import InviteList from "./InviteList";
 
 interface Props {
   children: React.ReactNode;
+  drawerContent?: "chat" | "user" | "notifications";
 }
 
 const colors = "border-0 divide-x-0";
@@ -21,7 +22,9 @@ const DrawerWrapper: FC<Props> = ({ children }) => {
 
 const DrawerContent: FC<Props> = ({ children }) => {
   return (
-    <div className={`drawer-content flex-1 flex shadow-md ${colors}`}>
+    <div
+      className={`drawer-content flex-1 flex max-w-full shadow-md ${colors}`}
+    >
       {/* Main content here */}
       {children}
     </div>
@@ -46,10 +49,10 @@ const DrawerSide: FC = () => {
   };
 
   return (
-    <div className="drawer-side absolute h-full shadow-md">
+    <div className="absolute h-full shadow-md drawer-side">
       <label
         htmlFor="my-drawer"
-        className="drawer-overlay hover:cursor-default"
+        className="drawer-overlay hover:cursor-default transition-opacity opacity-25 duration-[10000] ease-in-out"
       ></label>
       {/* Sidebar content here */}
       <div className="bg-teal-100 h-full w-[29%] overscroll-contain">
@@ -59,10 +62,12 @@ const DrawerSide: FC = () => {
   );
 };
 
-const ShowDrawerBtn: FC<Props> = ({ children }) => {
+const ShowDrawerBtn: FC<Props> = ({ children, drawerContent }) => {
+  const { setDrawerContent } = useDrawer();
+
   return (
     <label htmlFor="my-drawer" className="drawer-button">
-      {children}
+      <div onClick={() => setDrawerContent(drawerContent)}>{children}</div>
     </label>
   );
 };

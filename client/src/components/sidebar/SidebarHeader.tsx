@@ -31,16 +31,16 @@ const SidebarHeader: FC<SidebarHeaderProps> = ({
   const setDrawerContext = (): void => setDrawerContent("notifications");
 
   return (
-    <div className="px-3 py-2 space-y-2 bg-neutral-100 dark:bg-gray-800">
+    <div className="p-2 space-y-4 bg-neutral-100 dark:bg-gray-800">
       {/* Header */}
-      <div className="flex w-full items-center justify-between">
+      <div className="flex items-center justify-between mx-1 my-2">
         {/* Tab title */}
-        <h2 className="text-lg capitalize font-semibold text-gray-900 dark:text-gray-50 m-2">
+        <h2 className="w-full text-xl font-semibold text-gray-900 capitalize dark:text-gray-50">
           {activeTab}
         </h2>
 
         {/* action buttons */}
-        <div className="join join-horizontal space-x-2">
+        <div className="space-x-2 join join-horizontal">
           <IconContext.Provider
             value={{
               className:
@@ -76,10 +76,12 @@ const SidebarHeader: FC<SidebarHeaderProps> = ({
       </div>
 
       {/* Search input */}
-      <input
-        className="min-w-full px-3 py-1 text-left border border-gray-400 rounded shadow-sm bg-neutral-100 dark:border-gray-600 dark:bg-gray-700"
-        placeholder="Search for users"
-      />
+      <div className="pb-1">
+        <input
+          className="min-w-full p-1 space-y-0 text-left border border-gray-400 rounded shadow-sm form-input bg-neutral-100 dark:border-gray-600 dark:bg-gray-700"
+          placeholder="Search for users"
+        />
+      </div>
 
       {/*
         TODO: Refactor this to parent container where the main content is

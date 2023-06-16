@@ -10,7 +10,7 @@ export const MessageList: React.FC<ChatHeaderProps> = ({ activeChat }) => {
   }, [activeChat?.messages]);
 
   return (
-    <div className="flex-1 overflow-y-auto px-3 py-2 shadow-sm">
+    <div className="flex-1 h-full px-3 py-2 overflow-y-auto shadow-sm">
       {activeChat?.messages?.map((message, index) => (
         <Message key={index} message={message} />
       ))}

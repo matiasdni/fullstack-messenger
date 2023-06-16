@@ -24,7 +24,7 @@ const ChatHeader: FC<ChatHeaderProps> = ({ activeChat }) => {
             <Avatar />
           </figure>
           <div className="ml-4">
-            <h1 className=" chat">Chat</h1>
+            <h1 className="">Chat</h1>
             <p className="text-xs">No chat selected</p>
           </div>
         </div>
@@ -39,18 +39,16 @@ const ChatHeader: FC<ChatHeaderProps> = ({ activeChat }) => {
       )}
 
       <header
-        className="cursor-pointer select-none bg-neutral-50/50 dark:bg-gray-800 w-full"
+        className="cursor-pointer select-none bg-neutral-50/50 dark:bg-gray-800"
         onClick={handleChatHeaderClick}
       >
-        <div className="flex items-center p-4 h-full">
+        <div className="flex items-center h-full p-4 space-x-2">
           <figure className="w-10 h-10 chat-image aspect-1">
             <Avatar />
           </figure>
-          <div className="ml-4">
-            <h3 className="prose whitespace-nowrap truncate">
-              {activeChat?.name}
-            </h3>
-            <p className="text-xs truncate">
+          <div className="flex flex-col justify-center truncate justify-items-center">
+            <p className="truncate whitespace-nowrap">{activeChat?.name}</p>
+            <p className="w-full text-sm truncate">
               {activeChat?.users?.map((user) => user.username).join(", ")}
             </p>
           </div>
