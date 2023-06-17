@@ -105,12 +105,12 @@ const FriendCard = ({ friend, setSelectedUser }) => {
 };
 
 const FriendList = () => {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const [selectedUser, setSelectedUser] = useState<User>();
   const dispatch = useAppDispatch();
 
   const handleRemoveFriend = async (friendId: string) => {
-    const data = await removeFriend(user.id, friendId, token);
+    const data = await removeFriend(user.id, friendId);
     if (data) {
       dispatch(updateUser(data));
     }

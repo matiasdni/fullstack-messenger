@@ -39,11 +39,7 @@ const ChatInfo: FC<ChatInfoProps> = ({ activeChat, setShowChatInfo }) => {
   const handleKick = useCallback(
     async (id: string) => {
       try {
-        const response = await removeUserFromChat({
-          chatId: activeChat.id,
-          token,
-          userId: id,
-        });
+        const response = await removeUserFromChat(activeChat.id, id);
       } catch (error) {
         console.error(error);
         // notify error
@@ -60,11 +56,7 @@ const ChatInfo: FC<ChatInfoProps> = ({ activeChat, setShowChatInfo }) => {
         return prev;
       });
 
-      const responseData = await updateChatInfo({
-        chatId: activeChat.id,
-        formData,
-        token,
-      });
+      const responseData = await updateChatInfo(activeChat.id, formData);
       dispatch(updateChat(responseData));
       setEditMode(false);
     } catch (error) {

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { chatData, fetchChatById, newChat } from "../../services/chats";
-import { fetchUserChats } from "../../services/user";
-import { RootState } from "../../types";
+import { chatData, fetchChatById, newChat } from "services/chats";
+import { fetchUserChats } from "services/user";
+import { RootState } from "types";
 import { Chat } from "./types";
 
 const initialState = {
@@ -21,7 +21,7 @@ export const getChats = createAsyncThunk(
   async (token: string, { rejectWithValue, getState }) => {
     try {
       const userId = (getState() as RootState).auth.user.id;
-      return await fetchUserChats(userId, token);
+      return await fetchUserChats(userId);
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -30,10 +30,9 @@ export const getChats = createAsyncThunk(
 
 export const createChat = createAsyncThunk(
   "chats/createChat",
-  async (chatData: chatData, { rejectWithValue, getState }): Promise<Chat> => {
-    const token = (getState() as RootState).auth.token;
+  async (chatData: chatData, { rejectWithValue }): Promise<Chat> => {
     try {
-      return await newChat(chatData, token);
+      return await newChat(chatData);
     } catch (error) {
       rejectWithValue(error);
     }
@@ -42,10 +41,9 @@ export const createChat = createAsyncThunk(
 
 export const getChatById = createAsyncThunk(
   "chats/getChatById",
-  async (chatId: string, { rejectWithValue, getState }): Promise<Chat> => {
-    const token = (getState() as RootState).auth.token;
+  async (chatId: string, { rejectWithValue }): Promise<Chat> => {
     try {
-      return await fetchChatById(chatId, token);
+      return await fetchChatById(chatId);
     } catch (error) {
       rejectWithValue(error);
     }
@@ -123,9 +121,6 @@ const chatsSlice = createSlice({
     });
   },
 });
-
-export const selectChats = (state: RootState) => state.chats.chats;
-
 export const selectActiveChat = (state: RootState) => {
   const activeChatId = state.chats.activeChatId;
   if (!activeChatId) return null;

@@ -1,8 +1,8 @@
 import {
-  Dispatch,
-  PayloadAction,
   createAsyncThunk,
   createSlice,
+  Dispatch,
+  PayloadAction,
 } from "@reduxjs/toolkit";
 import { deleteInvite, updateInvite } from "services/invite";
 import { fetchUserRequests } from "services/user";
@@ -21,26 +21,22 @@ export const updateInviteStatus = createAsyncThunk<
   }
 >(
   "invites/updateInviteStatus",
-  async (invite: Invite, { getState }): Promise<InviteAttributes> => {
-    const token = (getState() as RootState).auth.token;
-    return await updateInvite(invite, token);
+  async (invite: Invite): Promise<InviteAttributes> => {
+    return await updateInvite(invite);
   }
 );
 
 export const rejectInvite = createAsyncThunk(
   "invites/rejectInvite",
-  async (invite: Invite, { getState }) => {
-    const token = (getState() as RootState).auth.token;
-    return await deleteInvite(invite, token);
+  async (invite: Invite) => {
+    return await deleteInvite(invite);
   }
 );
 
 export const getInvites = createAsyncThunk(
   "invites/getInvites",
-  async (userId: string, { getState }) => {
-    const token = (getState() as RootState).auth.token;
-    const data = await fetchUserRequests(userId, token);
-    return data;
+  async (userId: string) => {
+    return await fetchUserRequests(userId);
   }
 );
 

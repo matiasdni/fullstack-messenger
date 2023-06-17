@@ -1,10 +1,10 @@
 import { addSentFriendRequest } from "features/auth/authSlice";
 import { useAuth } from "hooks/useAuth";
 import { useState } from "react";
-import { createChat } from "../features/chats/chatsSlice";
-import { chatData } from "../services/chats";
-import { searchUsersByName, sendFriendRequest } from "../services/user";
-import { useAppDispatch, useAppSelector, useThunkDispatch } from "../store";
+import { createChat } from "features/chats/chatsSlice";
+import { chatData } from "services/chats";
+import { searchUsersByName, sendFriendRequest } from "services/user";
+import { useAppDispatch, useThunkDispatch } from "store";
 
 const StatusIndicator = ({ online }) => {
   return (
@@ -40,7 +40,7 @@ export const UserSearch = () => {
 };
 
 const SearchListItem = ({ user }) => {
-  const { user: currentUser, token } = useAuth();
+  const { user: currentUser } = useAuth();
   const dispatch = useAppDispatch();
   const thunkDispatch = useThunkDispatch();
 
@@ -55,11 +55,7 @@ const SearchListItem = ({ user }) => {
   };
 
   const handleAddFriendClick = async () => {
-    const friendRequest = await sendFriendRequest(
-      currentUser.id,
-      user.id,
-      token
-    );
+    const friendRequest = await sendFriendRequest(currentUser.id, user.id);
     dispatch(addSentFriendRequest(friendRequest));
   };
 
@@ -113,14 +109,13 @@ const SearchResults = ({ results }) => {
 
 const UserSearchForm = ({ setResults }) => {
   const [username, setUsername] = useState("");
-  const token = useAppSelector((state) => state.auth.token);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const username = e.target.username.value;
 
     if (username) {
-      const users = await searchUsersByName(username, token);
+      const users = await searchUsersByName(username);
       setResults(users);
     }
   };

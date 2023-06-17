@@ -1,6 +1,6 @@
 import { addMessage } from "features/chats/chatsSlice";
 import { Chat } from "features/chats/types";
-import { FC, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import { sendMessage } from "services/chats";
 import { useAppDispatch } from "store";
 
@@ -9,15 +9,15 @@ interface InputFormProps {
   token: string;
 }
 
-const ChatInputForm: FC<InputFormProps> = ({ activeChat, token }) => {
+const ChatInputForm: FC<InputFormProps> = ({ activeChat }) => {
   const [input, setInput] = useState<string>("");
   const dispatch = useAppDispatch();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (input.trim().length > 0) {
       try {
-        const data = await sendMessage(activeChat.id, input, token);
+        const data = await sendMessage(activeChat.id, input);
         console.log("data", data);
         dispatch(addMessage(data));
         setInput("");

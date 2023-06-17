@@ -100,7 +100,7 @@ const InviteItem: FC<InviteItemProps> = ({
 const InviteList: FC = () => {
   const dispatch = useAppDispatch();
   const thunkDispatch = useThunkDispatch();
-  const { user: currentUser, token } = useAuth();
+  const { user: currentUser } = useAuth();
 
   const handleAccept = async (
     invite: PendingInvite,
@@ -109,7 +109,7 @@ const InviteList: FC = () => {
     if (isFriendRequest) {
       console.log("accepting friend request", invite);
       const { userId, friendId } = invite as friendRequest;
-      const data = await acceptFriendRequest(userId, friendId, token);
+      const data = await acceptFriendRequest(userId, friendId);
       dispatch(updateUser(data));
     } else {
       console.log("accepting invite", invite);
@@ -139,7 +139,7 @@ const InviteList: FC = () => {
     if (isFriendRequest) {
       console.log("rejecting friend request", invite);
       const { userId, friendId } = invite as friendRequest;
-      const response = await rejectFriendRequest(userId, friendId, token);
+      const response = await rejectFriendRequest(userId, friendId);
       dispatch(updateFriendRequest(response));
       console.log("response", response);
       return;
