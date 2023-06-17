@@ -1,8 +1,8 @@
-import axios from "axios";
-import { ChatType } from "../features/chats/chatsSlice";
-import { Chat } from "../features/chats/types";
+import { ChatType } from "features/chats/chatsSlice";
+import { Chat } from "features/chats/types";
+import api from "services/api";
 
-const BASE_URL = "/api/chats";
+const BASE_URL = "/chats";
 
 export interface chatData {
   name: string;
@@ -11,83 +11,27 @@ export interface chatData {
   description?: string;
 }
 
-const newChat = async (chatData: chatData, token: string): Promise<Chat> => {
-  console.log("chatData", chatData);
-  const response = await axios.post(BASE_URL, chatData, {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (response.status === 200) return response.data;
-  else throw new Error("chat creation failed");
+export const newChat = async (chatData: chatData): Promise<Chat> => {
+  const response = await api.post(BASE_URL, chatData);
+  return response.data;
 };
 
-const fetchChatById = async (chatId: string, token: string): Promise<Chat> => {
-  const response = await axios.get(`${BASE_URL}/${chatId}`, {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (response.status === 200) return response.data;
-  else throw new Error("chat creation failed");
+export const fetchChatById = async (chatId: string): Promise<Chat> => {
+  const response = await api.get(`${BASE_URL}/${chatId}`);
+  return response.data;
 };
 
-const sendMessage = async (chatId: string, message: string, token: string) => {
-  const response = await axios.post(
-    `${BASE_URL}/${chatId}/message`,
-    {
-      message,
-    },
-    {
-      withCredentials: true,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  if (response.status === 200) return response.data;
-  else throw new Error("message sending failed");
+export const sendMessage = async (chatId: string, message: string) => {
+  const response = await api.post(`${BASE_URL}/${chatId}/message`, { message });
+  return response.data;
 };
 
-const removeUserFromChat = async ({
-  chatId,
-  userId,
-  token,
-}: {
-  chatId: string;
-  userId: string;
-  token: string;
-}) => {
-  const response = await axios.delete(`${BASE_URL}/${chatId}/users/${userId}`, {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (response.status === 200) return response.data;
-  else throw new Error("Removing user failed");
+export const removeUserFromChat = async (chatId: string, userId: string) => {
+  const response = await api.delete(`${BASE_URL}/${chatId}/users/${userId}`);
+  return response.data;
 };
 
-const updateChatInfo = async ({ chatId, token, formData }) => {
-  console.log(formData.get("image"));
-  const response = await axios.put(`${BASE_URL}/${chatId}`, formData, {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    data: formData,
-  });
-  if (response.status === 200) return response.data;
-  else throw new Error("Updating chat failed");
-};
-export {
-  fetchChatById,
-  newChat,
-  removeUserFromChat,
-  sendMessage,
-  updateChatInfo,
+export const updateChatInfo = async (chatId: string, formData: any) => {
+  const response = await api.put(`${BASE_URL}/${chatId}`, formData);
+  return response.data;
 };

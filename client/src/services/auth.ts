@@ -1,6 +1,6 @@
-import axios from "axios";
+import api from "./api";
 
-const BASE_URL = "/api";
+const BASE_URL = "/auth";
 
 interface LoginData {
   username: string;
@@ -19,7 +19,7 @@ interface LoginResponse {
 export const loginUser = async (
   loginData: LoginData
 ): Promise<LoginResponse> => {
-  const response = await axios.post(`${BASE_URL}/login`, loginData);
+  const response = await api.post(BASE_URL, loginData);
   if (response.status === 200) return response.data;
   else throw new Error("Login failed");
 };

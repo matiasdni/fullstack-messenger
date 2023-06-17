@@ -1,59 +1,33 @@
-import axios from "axios";
 import { Invite } from "features/invites/types";
 import { InviteAttributes } from "../../../shared/types";
+import api from "services/api";
 
-const BASE_URL = "/api/invites";
+const BASE_URL = "/invites";
 
-export const createInvite = async (
-  invite: {
-    senderId: string;
-    chatId: string;
-    recipientId: string;
-  },
-  token: string
-): Promise<InviteAttributes> => {
-  const response = await axios.post(BASE_URL, invite, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export const createInvite = async (invite: {
+  senderId: string;
+  chatId: string;
+  recipientId: string;
+}): Promise<InviteAttributes> => {
+  const response = await api.post(BASE_URL, invite);
   return response.data;
 };
 
-export const getInvites = async (
-  token: string
-): Promise<InviteAttributes[]> => {
-  const response = await axios.get(BASE_URL, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export const getInvites = async (): Promise<InviteAttributes[]> => {
+  const response = await api.get(BASE_URL);
   return response.data;
 };
 
-// update invite status
 export const updateInvite = async (
-  invite: Invite,
-  token: string
+  invite: Invite
 ): Promise<InviteAttributes> => {
-  const response = await axios.put(BASE_URL, invite, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await api.put(BASE_URL, invite);
   return response.data;
 };
 
-export const deleteInvite = async (invite: Invite, token: string) => {
-  const response = await axios.delete(BASE_URL, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    data: invite,
-  });
+export const deleteInvite = async (invite: Invite) => {
+  const response = await api.delete(BASE_URL, { data: invite });
   if (response.status === 204) {
     return invite.id;
-  } else {
-    throw new Error("Error rejecting invite");
   }
 };
