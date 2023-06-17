@@ -57,7 +57,7 @@ const DrawerSide: FC<Partial<Props>> = ({ children }) => {
         id="drawer-overlay"
       ></label>
       {/* Sidebar content here */}
-      <div className="dark:bg-gray-800 bg-white h-full xl:w-[29%] overscroll-contain lg:w-1/3 md:w-[45%]">
+      <div className="dark:bg-gray-800 bg-white h-full xl:w-[29%] overflow-y-auto overscroll-contain lg:w-1/3 md:w-[45%]">
         {renderDrawerContent()}
         {children}
       </div>

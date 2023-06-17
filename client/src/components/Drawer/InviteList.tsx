@@ -10,7 +10,7 @@ import { friendRequest } from "features/users/types";
 import { useAuth } from "hooks/useAuth";
 import { FC, useMemo } from "react";
 import { acceptFriendRequest, rejectFriendRequest } from "services/user";
-import { useAppDispatch, useThunkDispatch } from "store";
+import { useAppDispatch } from "store";
 import { InviteAttributes } from "../../../../shared/types";
 import timeSince from "utils/timeSince";
 
@@ -99,7 +99,6 @@ const InviteItem: FC<InviteItemProps> = ({
 
 const InviteList: FC = () => {
   const dispatch = useAppDispatch();
-  const thunkDispatch = useThunkDispatch();
   const { user: currentUser } = useAuth();
 
   const handleAccept = async (
@@ -113,7 +112,7 @@ const InviteList: FC = () => {
       dispatch(updateUser(data));
     } else {
       console.log("accepting invite", invite);
-      const action = await thunkDispatch(
+      const action = await dispatch(
         updateInviteStatus({
           ...(invite as Invite),
           status: "accepted",
@@ -146,7 +145,7 @@ const InviteList: FC = () => {
     }
 
     console.log("rejecting invite", invite);
-    await thunkDispatch(rejectInvite(invite as Invite));
+    await dispatch(rejectInvite(invite as Invite));
   };
 
   const pendingInvites = useMemo(
@@ -191,7 +190,7 @@ const InviteList: FC = () => {
       <p className="text-center">No new invites</p>
     </div>
   ) : (
-    <div className="flex flex-col w-full p-2 space-y-4 overflow-scroll divide-y">
+    <div className="flex flex-col w-full p-2 space-y-4 divide-y">
       {sortedInvites.map((pendingInvite) => (
         <InviteItem
           key={
