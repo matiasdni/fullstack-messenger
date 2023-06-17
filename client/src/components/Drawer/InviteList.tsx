@@ -9,11 +9,10 @@ import { Invite } from "features/invites/types";
 import { friendRequest } from "features/users/types";
 import { useAuth } from "hooks/useAuth";
 import { FC, useMemo } from "react";
-import { IoMdCheckmark, IoMdClose } from "react-icons/io";
 import { acceptFriendRequest, rejectFriendRequest } from "services/user";
 import { useAppDispatch, useThunkDispatch } from "store";
-import timeSince from "utils/timeSince";
 import { InviteAttributes } from "../../../../shared/types";
+import timeSince from "utils/timeSince";
 
 type PendingInvite = Invite | friendRequest;
 
@@ -53,42 +52,48 @@ const InviteItem: FC<InviteItemProps> = ({
       : pendingInvite.sender.username;
 
   return (
-    <div className="flex flex-row items-center justify-center w-full space-x-2 grow-0">
-      <div className="shrink-0">
-        <img
-          src={`https://avatars.dicebear.com/api/identicon/${username}.svg`}
-          alt="avatar"
-          className="object-cover w-8 h-8 rounded-full"
-        />
-      </div>
-      <div className="w-full truncate">
-        <div className="flex items-center justify-between w-full">
-          <p className="font-semibold text-black dark:text-gray-300">
-            {username}
-          </p>
+    <>
+      <div className="flex flex-row items-center p-2 space-x-4">
+        <div className="relative py-2 flex-none">
+          <img
+            src={
+              `https://api.dicebear.com/6.x/avataaars/svg?seed=${username}` ||
+              ""
+            }
+            alt="avatar"
+            className="block object-cover w-16 h-16 bg-gray-200 rounded-full"
+          />
         </div>
-        <div className="flex flex-col space-y-2">
-          <p className="text-sm text-gray-500 truncate ">
+        <div className="flex flex-col items-start w-full py-2 overflow-x-hidden">
+          <div className="flex justify-between w-full place-items-center">
+            <h5 className="inline text-sm font-medium text-primary dark:text-gray-300">
+              {username}
+            </h5>
+            <small className="text-xs font-light dark:text-gray-400">
+              {timeSince(new Date(pendingInvite.createdAt))} ago
+            </small>
+          </div>
+          <small className="text-xs font-light dark:text-gray-400 w-full truncate">
             {formatInviteMessage(pendingInvite, isFriendRequest)}
-          </p>
+          </small>
+
+          <span className="inline-flex space-x-2 mt-1">
+            <button
+              className="py-1 px-3 capitalize rounded-lg text-white bg-emerald-500 shadow-sm text-xs duration-300 hover:bg-emerald-600"
+              onClick={() => handleAccept(pendingInvite, isFriendRequest)}
+            >
+              accept
+            </button>
+            <button
+              className="py-1 px-3 capitalize rounded-lg bg-[#ff4757] text-white shadow-sm dark:bg-primary text-xs duration-100 hover:bg-[#992a34]"
+              onClick={() => handleReject(pendingInvite, isFriendRequest)}
+            >
+              reject
+            </button>
+          </span>
         </div>
-        <p className="text-xs text-gray-500">
-          {timeSince(new Date(pendingInvite.createdAt))} ago
-        </p>
       </div>
-      <div className="space-y-1">
-        <IoMdCheckmark
-          className="fill-emerald-500 hover:fill-green-800"
-          size={24}
-          onClick={() => handleAccept(pendingInvite, isFriendRequest)}
-        />
-        <IoMdClose
-          className=" fill-rose-500 hover:fill-rose-900"
-          size={24}
-          onClick={() => handleReject(pendingInvite, isFriendRequest)}
-        />
-      </div>
-    </div>
+    </>
   );
 };
 
