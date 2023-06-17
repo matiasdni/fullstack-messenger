@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useDrawer } from "@/contexts/DrawerContext";
 import { logOut } from "@/features/auth/authSlice";
 import { setNotification } from "@/features/notification/notificationSlice";
 import { useAppDispatch } from "@/store";
@@ -9,8 +8,9 @@ import { FaUserFriends } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
 import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
 import { IconContext } from "react-icons/lib";
-import { useAppSelector } from "../../store";
-import { ShowDrawerBtn } from "../Drawer";
+import { useAppSelector } from "store";
+import Tooltip from "../common/Tooltip";
+import { ShowDrawerBtn } from "../Drawer/Drawer";
 import { ChatList } from "./ChatList";
 import SidebarHeader from "./SidebarHeader";
 import { Tab } from "./SidebarTab";
@@ -58,7 +58,7 @@ const Sidebar = () => {
 
   return (
     <div className="w-[21rem] flex-none min-h-full">
-      <div className="w-full h-full flex">
+      <div className="flex w-full h-full">
         <VerticalNav activeTab={activeTab} handleTabChange={handleTabChange} />
 
         <div className="relative w-full h-full">
@@ -83,7 +83,6 @@ const Sidebar = () => {
 
 export const VerticalNav = ({ handleTabChange, activeTab }) => {
   const dispatch = useAppDispatch();
-  const { setDrawerContent } = useDrawer();
   const user = useAppSelector((state) => state.auth.user);
 
   const handleLogOut = () => {
@@ -97,11 +96,11 @@ export const VerticalNav = ({ handleTabChange, activeTab }) => {
     <IconContext.Provider
       value={{
         className:
-          "text-neutral-500 dark:text-neutral-400 inline-block text-2xl align-middle place-self-center",
+          "text-neutral-500 dark:text-neutral-400 inline-block text-2xl align-middle place-self-center"
       }}
     >
       <nav className="flex flex-col items-center h-full max-w-[72px]">
-        <ul className="menu menu-vertical flex-1">
+        <ul className="flex-1 menu menu-vertical">
           <li>
             <a
               className={`tooltip tooltip-right p-0 w-12 h-12 self-center relative hover:bg-neutral-100 ${
@@ -112,9 +111,10 @@ export const VerticalNav = ({ handleTabChange, activeTab }) => {
               href="#"
               onClick={() => handleTabChange("chats")}
             >
-              <div className="indicator indicator-center translate-y-1/2">
+              <div className="translate-y-1/2 indicator indicator-center">
                 <HiOutlineChatBubbleLeftRight />
-                <span className="indicator-item badge badge-sm badge-ghost dark:bg-neutral-700 bg-neutral-200 text-neutral-900 dark:text-neutral-300 dark:border-0">
+                <span
+                  className="indicator-item badge badge-sm badge-ghost dark:bg-neutral-700 bg-neutral-200 text-neutral-900 dark:text-neutral-300 dark:border-0">
                   5
                 </span>
               </div>
@@ -130,43 +130,44 @@ export const VerticalNav = ({ handleTabChange, activeTab }) => {
               href="#"
               onClick={() => handleTabChange("friends")}
             >
-              <div className="indicator indicator-center translate-y-1/2">
+              <div className="translate-y-1/2 indicator indicator-center">
                 <FaUserFriends />
               </div>
             </a>
           </li>
           <li>
             <a
-              className="tooltip tooltip-right p-0 w-12 h-12 self-center"
+              className="self-center w-12 h-12 p-0 tooltip tooltip-right"
               data-tip="Log out"
               href="#"
               onClick={handleLogOut}
             >
-              <div className="indicator indicator-center translate-y-1/2">
+              <div className="translate-y-1/2 indicator indicator-center">
                 <FiLogOut />
               </div>
             </a>
           </li>
         </ul>
-
-        <div>
-          <label
-            tabIndex={0}
-            className="btn-ghost avatar aspect-1 h-10 w-10 btn-circle mask shadow-md hover:shadow-lg cursor-pointer select-none"
-          >
-            <ShowDrawerBtn drawerContent="user">
-              <img
-                src={
-                  user?.image
-                    ? user.image
-                    : `https://avatars.dicebear.com/api/identicon/${user.username}.svg`
-                }
-                alt={`${user.username}'s avatar`}
-                className="rounded-full"
-              />
-            </ShowDrawerBtn>
-          </label>
-        </div>
+        <Tooltip label={user.username} orientation="right">
+          <div>
+            <label
+              tabIndex={0}
+              className="w-10 h-10 shadow-md cursor-pointer select-none btn-ghost avatar aspect-1 btn-circle mask hover:shadow-lg"
+            >
+              <ShowDrawerBtn drawerContent="user">
+                <img
+                  src={
+                    user?.image
+                      ? user.image
+                      : `https://avatars.dicebear.com/api/identicon/${user.username}.svg`
+                  }
+                  alt={`${user.username}'s avatar`}
+                  className="rounded-full"
+                />
+              </ShowDrawerBtn>
+            </label>
+          </div>
+        </Tooltip>
       </nav>
     </IconContext.Provider>
   );
