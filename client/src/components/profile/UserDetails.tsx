@@ -1,19 +1,6 @@
-import { friendRequest, User } from "features/users/types";
-import { GetPendingInvitesOutput } from "../../../../shared/types";
+import { User } from "features/users/types";
 
-export function UserDetails(props: {
-  current: {
-    friendRequests?: friendRequest[];
-    image?: string;
-    github: string;
-    sentFriendRequests?: friendRequest[];
-    bio: string;
-    id: string;
-    chatInvites?: GetPendingInvitesOutput;
-    friends?: User[];
-    username: string;
-  };
-}) {
+export function UserDetails({ user }: { user: User }) {
   return (
     <>
       <div className="form-control">
@@ -22,8 +9,8 @@ export function UserDetails(props: {
         </label>
         <textarea
           placeholder="bio"
-          className="textarea textarea-bordered h-24 resize-none"
-          value={props.current?.bio}
+          className="h-24 resize-none textarea textarea-bordered"
+          value={user?.bio}
           readOnly
         ></textarea>
       </div>
@@ -35,7 +22,7 @@ export function UserDetails(props: {
           type="text"
           placeholder="github"
           className="input input-bordered"
-          value={props.current?.github}
+          value={user?.github}
           readOnly
         />
       </div>

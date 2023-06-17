@@ -9,7 +9,7 @@ import { LoadingChat } from "./common/LoadingChat";
 import Sidebar from "./sidebar/Sidebar";
 
 const container =
-  "container absolute right-0 left-0 text-neutral-800 dark:text-neutral-300 bg-white dark:bg-gray-900 antialiased shadow-md";
+  "container absolute right-0 left-0 text-neutral-800 dark:text-neutral-300 bg-white dark:bg-gray-900 antialiased shadow-md 2xl:max-w-screen-xl";
 
 export const Home = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -33,7 +33,7 @@ export const Home = () => {
         <DrawerProvider>
           <DrawerWrapper>
             <DrawerContent>
-              <main className="flex flex-1 max-w-7xl">
+              <main className="flex flex-1 max-w-screen-xl">
                 <Sidebar />
                 <article className="relative w-full h-full">
                   <Chat />

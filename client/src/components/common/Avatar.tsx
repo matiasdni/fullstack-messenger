@@ -1,17 +1,15 @@
-import React from "react";
-
 export const Avatar = ({ avatarUrl }: { avatarUrl?: string }) => {
   return (
-    <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-gray-100 dark:bg-gray-600">
+    <div className="flex items-center justify-center w-full h-full overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
       {avatarUrl ? (
         <img
           src={avatarUrl}
-          className="h-full w-full object-cover"
+          className="object-cover w-full h-full"
           alt="User avatar"
         />
       ) : (
         <svg
-          className="h-3/4 w-3/4 fill-current text-gray-400"
+          className="w-3/4 text-gray-400 fill-current h-3/4"
           viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg"
         >
