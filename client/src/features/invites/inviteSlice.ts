@@ -74,7 +74,7 @@ const invitesSlice = createSlice({
     });
 
     builder.addCase(updateInviteStatus.rejected, (state, action) => {
-      // implement when we have error handling in place and we want to show the user a message
+      // implement when we have error handling in place, and we want to show the user a message
       console.log(
         "acceptInvite.rejected",
         "prev state",
@@ -98,7 +98,7 @@ const invitesSlice = createSlice({
     });
 
     builder.addCase(getInvites.rejected, (state, action) => {
-      // implement when we have error handling in place and we want to show the user a message
+      // implement when we have error handling in place, and we want to show the user a message
       console.log("getInvites.rejected", "prev state", state, "action", action);
     });
 
@@ -108,7 +108,7 @@ const invitesSlice = createSlice({
     });
 
     builder.addCase(rejectInvite.rejected, (state, action) => {
-      // implement when we have error handling in place and we want to show the user a message
+      // implement when we have error handling in place, and we want to show the user a message
       console.log(
         "rejectInvite.rejected",
         "prev state",
