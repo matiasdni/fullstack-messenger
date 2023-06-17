@@ -31,7 +31,7 @@ app.use("/images", express.static("./images"));
 
 app.use("/api/register", usersRouter);
 
-app.use("/api/login", loginRouter);
+app.use("/api/auth", loginRouter);
 
 app.use("/api/users", usersRouter);
 
