@@ -6,10 +6,10 @@ const Layout = () => {
   return (
     <>
       <div className="dark:bg-gray-900 relative">
-        <main className="box-border relative dark:bg-gray-900">
+        <div>
           <Notification />
           <Outlet />
-        </main>
+        </div>
         <div id="modal" />
       </div>
     </>
