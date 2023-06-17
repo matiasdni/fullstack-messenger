@@ -5,7 +5,10 @@ import { User } from "features/users/types";
 
 export type RootState = {
   chats: ChatState;
-  users: User[];
+  users: {
+    users: User[];
+    selectedUser: User | null;
+  };
   auth: AuthState;
   invites: Invite[];
   notifications: {
