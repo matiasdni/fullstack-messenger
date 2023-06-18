@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { mySocket } from "../listeners/types";
-import { User } from "../models/initModels";
 import { getUserByToken } from "../services/userService";
 import { ApiError } from "../utils/ApiError";
 import logger from "../utils/logger";
+import { User } from "../models/user";
 
 export interface AuthRequest extends Request {
   user: User;
@@ -14,9 +14,13 @@ const authenticate = async (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "");
+  if (!req.header("Authorization")) {
+    logger.error("header missing token");
+    throw new ApiError(401 as const, "header missing");
+  }
+  const token = req.header("Authorization")!.replace("Bearer ", "");
 
-  if (!token) {
+  if (!token || token === "") {
     logger.error("header missing token");
     throw new ApiError(401 as const, "header missing token");
   }
@@ -24,7 +28,7 @@ const authenticate = async (
   const user = await getUserByToken(token);
   if (!user) {
     logger.error("failed to authenticate in middleware");
-    throw new ApiError(401 as const, "failed to authenticate");
+    throw new ApiError(401 as const, "invalid credentials");
   }
 
   req.user = user;
