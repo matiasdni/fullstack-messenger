@@ -18,11 +18,11 @@ export const LoginForm = ({ onRegisterClick }) => {
     e.preventDefault();
     dispatch(login({ username, password })).then((action) => {
       if (isFulfilled(action)) {
+        api.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${action.payload.token}`;
         dispatch(getChats(action.payload.token)).then((action) => {
           if (isFulfilled(action)) {
-            api.defaults.headers.common[
-              "Authorization"
-            ] = `Bearer ${action.payload.token}`;
             navigate("/");
             dispatch(
               setNotification({
