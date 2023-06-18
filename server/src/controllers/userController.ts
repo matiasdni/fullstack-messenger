@@ -87,6 +87,9 @@ router.post(
   authenticate,
   async (req: AuthRequest, res: Response) => {
     const user = req.user;
+    logger.info(
+      `User ${user.id} sending friend request ${req.params.friendId}`
+    );
     if (!user || user.id !== req.params.id) {
       console.log("Not authorized");
       throw new ApiError(403, "Not Authorized");
@@ -195,8 +198,11 @@ router.post(
   authenticate,
   async (req: AuthRequest, res: Response) => {
     const { name } = req.body;
-    const users = await searchUsers(name, req);
-    res.status(200).json(users);
+    const users = await searchUsers(name);
+
+    // filter out the current user
+    const filteredUsers = users.filter((user) => user.id !== req.user.id);
+    res.status(200).json(filteredUsers.map((user) => user.toJSON()));
   }
 );
 
