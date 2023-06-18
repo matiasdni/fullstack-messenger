@@ -131,3 +131,34 @@ export const { setActiveChat, addMessage, addChat, updateChat, removeChat } =
   chatsSlice.actions;
 
 export default chatsSlice.reducer;
+
+export const setActiveChatToUser = createAsyncThunk(
+  "chats/setActiveChatToUser",
+  async (userId: string, thunkAPI) => {
+    const state = thunkAPI.getState() as RootState;
+    const currentUserId = state.auth.user.id;
+    // get private chat with userId and currentUser.id
+    const privateChat = state.chats.chats.find((chat) => {
+      const chatUsers = chat.users.map((u) => u.id);
+      return (
+        chat.chat_type === "private" &&
+        chatUsers.includes(userId) &&
+        chatUsers.includes(currentUserId)
+      );
+    });
+    if (privateChat) {
+      thunkAPI.dispatch(setActiveChat(privateChat.id));
+      return;
+    }
+    // if not found, create new private chat
+    const newChatData: chatData = {
+      chat_type: "private",
+      name: `${state.auth.user.username}-${userId}`,
+      userIds: [userId, currentUserId],
+    };
+    const newChat = (await thunkAPI.dispatch(
+      createChat(newChatData)
+    )) as PayloadAction<Chat>;
+    thunkAPI.dispatch(setActiveChat(newChat.payload.id));
+  }
+);
