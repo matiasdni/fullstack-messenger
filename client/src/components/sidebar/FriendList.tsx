@@ -5,6 +5,10 @@ import { useAppDispatch } from "@/store";
 import { useAuth } from "hooks/useAuth";
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { MdMoreVert } from "react-icons/md";
+import { useDrawer } from "contexts/DrawerContext";
+import { ShowDrawerBtn } from "components/Drawer";
+import { setActiveChatToUser } from "features/chats/chatsSlice";
 
 const RemoveFriendModal = ({ user, handleRemoveFriend }) => {
   return (
@@ -46,27 +50,34 @@ const RemoveFriendModal = ({ user, handleRemoveFriend }) => {
   );
 };
 
-const FriendCard = ({ friend, setSelectedUser }) => {
+const FriendCard = ({ friend, setSelectedUser, selectedUser }) => {
   const dispatch = useAppDispatch();
+  const drawer = useDrawer();
   const handleUserClick = () => {
     // dispatch(updateUser(friend));
   };
 
   return (
-    <li className="flex items-center space-x-2">
+    <li
+      className="flex items-center space-x-2 p-2 rounded-md cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
+      onClick={async () => {
+        // set active chat to friend
+        dispatch(setActiveChatToUser(friend.id));
+      }}
+    >
       {friend.image ? (
         <img
           src={
             friend.image
               ? friend.image
-              : `https://avatars.dicebear.com/api/identicon/${friend.username}.svg`
+              : `https://api.dicebear.com/6.x/avataaars/svg?seed=${friend.username}`
           }
           alt="user"
           className="w-8 h-8 rounded-full"
         />
       ) : (
         <img
-          src={`https://avatars.dicebear.com/api/identicon/${friend.username}.svg`}
+          src={`https://api.dicebear.com/6.x/avataaars/svg?seed=${friend.username}`}
           alt="avatar"
           className="w-8 h-8 rounded-full"
         />
@@ -85,20 +96,47 @@ const FriendCard = ({ friend, setSelectedUser }) => {
           </svg>
         </svg>
         {/* remove friend */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 448 512"
-          className="w-5 h-5 fill-neutral-300 hover:fill-neutral-700"
-          onClick={() => {
-            setSelectedUser(friend);
-            const modal = document.getElementById(
-              "friendRemove_modal"
-            ) as HTMLDialogElement;
-            modal.show();
-          }}
-        >
-          <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z" />
-        </svg>
+        <div className="dropdown dropdown-left">
+          <MdMoreVert
+            className="w-5 h-5 fill-neutral-300 hover:fill-neutral-700"
+            tabIndex={0}
+            onClick={() => {
+              setSelectedUser(friend);
+            }}
+          />
+          <ul
+            tabIndex={0}
+            className="dropdown-content menu-xs menu p-2 shadow bg-base-100 rounded-box"
+          >
+            {/*  Open selected user profile */}
+            <li>
+              <ShowDrawerBtn drawerContent={"user"}>
+                <a
+                  onClick={() => {
+                    setSelectedUser(friend);
+                    drawer.setDrawerContent("user");
+                    drawer.setSelectedUser(friend);
+                  }}
+                >
+                  View profile
+                </a>
+              </ShowDrawerBtn>
+            </li>
+            <li>
+              <a
+                onClick={() => {
+                  setSelectedUser(friend);
+                  const modal = document.getElementById(
+                    "friendRemove_modal"
+                  ) as HTMLDialogElement;
+                  modal.show();
+                }}
+              >
+                Remove friend
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </li>
   );
@@ -125,14 +163,15 @@ const FriendList = () => {
           user={selectedUser}
           handleRemoveFriend={handleRemoveFriend}
         />,
-        document.body
+        document.getElementById("modal")
       )}
-      <ul className="flex-1 h-full p-2 space-y-4">
+      <ul className="absolute inset-0">
         {user.friends.map((friend) => (
           <FriendCard
             key={friend.id}
             friend={friend}
             setSelectedUser={setSelectedUser}
+            selectedUser={selectedUser}
           />
         ))}
       </ul>
