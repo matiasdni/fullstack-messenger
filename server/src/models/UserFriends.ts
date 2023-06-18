@@ -38,6 +38,7 @@ const initUserFriends = (sequelize: Sequelize): void => {
             where: {
               userId: userFriends.friendId,
               friendId: userFriends.userId,
+              status: "pending",
             },
           });
           if (friend) {
