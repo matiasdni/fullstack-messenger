@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 import OptionTypeBase from "react-select";
 import AsyncSelect from "react-select/async";
-import { createChat } from "../features/chats/chatsSlice";
-import { User } from "../features/users/types";
-import { chatData } from "../services/chats";
-import { searchUsersByName } from "../services/user";
-import { useAppSelector, useThunkDispatch } from "../store";
+import { createChat } from "features/chats/chatsSlice";
+import { User } from "features/users/types";
+import { chatData } from "services/chats";
+import { searchUsersByName } from "services/user";
+import { useAppDispatch, useAppSelector } from "store";
 
 interface UserOption extends OptionTypeBase {
   label: string;
@@ -89,7 +89,7 @@ const AddUsers = ({ setSelectedUsers }) => {
 };
 
 export const GroupForm = (props: { handleCloseModal: () => void }) => {
-  const thunkDispatch = useThunkDispatch();
+  const dispatch = useAppDispatch();
   const [groupName, setGroupName] = useState<string>("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [groupDescription, setGroupDescription] = useState<string>("");
@@ -102,7 +102,7 @@ export const GroupForm = (props: { handleCloseModal: () => void }) => {
       userIds: selectedUsers,
       chat_type: "group",
     };
-    const action = await thunkDispatch(createChat(data));
+    const action = await dispatch(createChat(data));
     if (action.meta.requestStatus === "fulfilled") {
       console.log("Group created");
       console.log(action.payload);
