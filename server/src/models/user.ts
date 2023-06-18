@@ -25,6 +25,7 @@ class User extends Model {
   declare ownedChatsCount: HasManyCountAssociationsMixin;
   declare messagesCount: HasManyCountAssociationsMixin;
   declare chatsCount: HasManyCountAssociationsMixin;
+
   comparePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
   }

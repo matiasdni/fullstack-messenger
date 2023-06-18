@@ -2,7 +2,7 @@ import { Response } from "express";
 import { Invite } from "../../../shared/types";
 import { mySocket } from "../listeners/types";
 import authenticate, { AuthRequest } from "../middlewares/auth";
-import { Chat } from "../models/initModels";
+import { Chat } from "../models/chat";
 import { connectedClients, io } from "../server";
 import { rejectInvite, updateInvite } from "../services/inviteService";
 
