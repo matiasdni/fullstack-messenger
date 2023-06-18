@@ -99,12 +99,30 @@ const friendService = {
     });
     const friendRequest = request[0];
 
+    await friendRequest.reload({
+      include: [
+        {
+          association: "user",
+          attributes: ["id", "username"],
+        },
+      ],
+    });
+
+    const sender = await User.findByPk(friendId, {
+      attributes: ["id", "username", "image"],
+    });
+    logger.info(`sender ${JSON.stringify(await sender!.toJSON())}`);
+    const receiver = await User.findByPk(userId, {
+      attributes: ["id", "username", "image"],
+    });
+    logger.info(`receiver ${JSON.stringify(await receiver!.toJSON())}`);
+
     if (friendRequest.status === "pending") {
       return {
         id: friendRequest.friendId,
         friendId: friendRequest.friendId,
         userId: friendRequest.userId,
-        username: friendRequest.friend.username,
+        username: receiver!.username,
         status: friendRequest.status,
         createdAt: friendRequest.createdAt,
       };
