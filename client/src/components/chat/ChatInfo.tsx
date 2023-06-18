@@ -1,7 +1,7 @@
 import { updateChat } from "@/features/chats/chatsSlice";
 import { Chat } from "@/features/chats/types";
 import { useToken } from "@/hooks/useAuth";
-import { removeUserFromChat, updateChatInfo } from "@/services/chats";
+import { removeUserFromChat, updateChatInfo } from "services/chatService";
 import { useAppDispatch } from "@/store";
 import { FC, useCallback, useEffect, useState } from "react";
 import { MdOutlineEdit } from "react-icons/md";

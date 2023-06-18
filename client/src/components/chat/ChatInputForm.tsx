@@ -1,7 +1,7 @@
 import { addMessage } from "features/chats/chatsSlice";
 import { Chat } from "features/chats/types";
 import { FC, FormEvent, useState } from "react";
-import { sendMessage } from "services/chats";
+import { sendMessage } from "services/chatService";
 import { useAppDispatch } from "store";
 
 interface InputFormProps {

@@ -3,7 +3,6 @@ import { FC, ReactNode } from "react";
 import { useDrawer } from "contexts/DrawerContext";
 import ChatInfo from "../chat/ChatInfo";
 import { UserProfile } from "../profile/UserProfile";
-import "./Drawer.css";
 import InviteList from "./InviteList";
 
 interface Props {

@@ -9,7 +9,7 @@ import { Invite } from "features/invites/types";
 import { friendRequest } from "features/users/types";
 import { useAuth } from "hooks/useAuth";
 import { FC, useMemo } from "react";
-import { acceptFriendRequest, rejectFriendRequest } from "services/user";
+import { acceptFriendRequest, rejectFriendRequest } from "services/userService";
 import { useAppDispatch } from "store";
 import { InviteAttributes } from "../../../../shared/types";
 import timeSince from "utils/timeSince";

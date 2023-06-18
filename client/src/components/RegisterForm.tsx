@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { createUser } from "../services/user";
+import { createUser } from "services/userService";
 
 interface Props {
   onLoginClick: () => void;

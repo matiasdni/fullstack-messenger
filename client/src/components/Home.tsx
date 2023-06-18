@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { DrawerProvider } from "@/contexts/DrawerContext";
 import useSocketEvents from "../hooks/UseSocketEvents";
-import { DrawerContent, DrawerSide, DrawerWrapper } from "./Drawer";
+import { DrawerContent, DrawerSide, DrawerWrapper } from "components/Drawer";
 import { Chat } from "./chat/Chat";
 import DarkModeToggle from "./common/DarkModeToggle";
 import { LoadingChat } from "./common/LoadingChat";

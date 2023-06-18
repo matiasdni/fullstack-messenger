@@ -4,8 +4,8 @@ import {
   Dispatch,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { deleteInvite, updateInvite } from "services/invite";
-import { fetchUserRequests } from "services/user";
+import { deleteInvite, updateInvite } from "services/inviteService";
+import { fetchUserRequests } from "services/userService";
 import { RootState } from "types";
 import { InviteAttributes } from "../../../../shared/types";
 import { Invite } from "./types";

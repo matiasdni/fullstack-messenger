@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { loginUser } from "services/auth";
+import { loginUser } from "services/authService";
 import { removeTokenFromStorage } from "utils/localStorage";
 import { User } from "../users/types";
 import { AuthInitialState, AuthState, LoginData } from "./types";

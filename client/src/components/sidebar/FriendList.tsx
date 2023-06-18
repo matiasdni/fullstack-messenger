@@ -1,6 +1,6 @@
 import { updateUser } from "@/features/auth/authSlice";
 import { User } from "@/features/users/types";
-import { removeFriend } from "@/services/user";
+import { removeFriend } from "services/userService";
 import { useAppDispatch } from "@/store";
 import { useAuth } from "hooks/useAuth";
 import { useState } from "react";

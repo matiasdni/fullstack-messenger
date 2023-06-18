@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { chatData, fetchChatById, newChat } from "services/chats";
-import { fetchUserChats } from "services/user";
+import { chatData, fetchChatById, newChat } from "services/chatService";
+import { fetchUserChats } from "services/userService";
 import { RootState } from "types";
 import { Chat } from "./types";
 
