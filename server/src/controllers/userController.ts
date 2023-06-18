@@ -198,11 +198,8 @@ router.post(
   authenticate,
   async (req: AuthRequest, res: Response) => {
     const { name } = req.body;
-    const users = await searchUsers(name);
-
-    // filter out the current user
-    const filteredUsers = users.filter((user) => user.id !== req.user.id);
-    res.status(200).json(filteredUsers.map((user) => user.toJSON()));
+    const users = await searchUsers(name, req.user);
+    res.status(200).json(users.map((user) => user.toJSON()));
   }
 );
 
