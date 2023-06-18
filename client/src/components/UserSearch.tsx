@@ -100,10 +100,14 @@ const SearchListItem = ({ user }) => {
 };
 
 const SearchResults = ({ results }) => {
-  const friends = useAppSelector((state) => state.auth.user.friends);
+  const currentUser = useAppSelector((state) => state.auth.user);
   const resultsWithFriends = results.map((user) => {
-    const friend = friends.find((friend) => friend.id === user.id);
-    return { ...user, friend: !!friend };
+    const friend = currentUser.friends.find((friend) => friend.id === user.id);
+
+    return {
+      ...user,
+      friend: !!friend,
+    };
   });
 
   return (
