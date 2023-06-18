@@ -27,11 +27,11 @@ app.use(cors());
 
 app.use(express.json());
 
+app.use("/api/auth", loginRouter);
+
 app.use("/images", express.static("./images"));
 
 app.use("/api/register", usersRouter);
-
-app.use("/api/auth", loginRouter);
 
 app.use("/api/users", usersRouter);
 
