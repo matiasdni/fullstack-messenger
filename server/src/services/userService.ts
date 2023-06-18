@@ -64,24 +64,15 @@ export async function getAllUsers() {
 
 export async function searchUsers(
   username: string,
-  req: Request
+  user: User
 ): Promise<User[]> {
-  if (!username) {
-    throw new Error("Username is required");
-  }
-
-  // Check if user is authenticated
-  if (!req.user) {
-    throw new Error("User is not authenticated");
-  }
-
   return await User.findAll({
     where: {
       username: {
         [Op.iLike]: `%${username}%`,
       },
       id: {
-        [Op.ne]: req.user?.id,
+        [Op.ne]: user?.id,
       },
     },
     attributes: ["id", "username"],
