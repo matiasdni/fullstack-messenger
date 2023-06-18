@@ -2,6 +2,7 @@ import { RootState } from "@/types";
 import { clearNotification } from "@/features/notification/notificationSlice";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "store";
+import { clsx } from "clsx";
 
 const Notification = () => {
   const dispatch = useAppDispatch();
@@ -15,7 +16,7 @@ const Notification = () => {
         dispatch(clearNotification());
       }, 5000);
     }
-  }, [message]);
+  }, [dispatch, message]);
 
   const handleClose = () => {
     dispatch(clearNotification());
@@ -25,7 +26,12 @@ const Notification = () => {
 
   return (
     <div
-      className={`alert alert-success shadow-sm shadow-base-content/75 fixed left-1/2 right-1/2 -translate-x-1/2 -translate-y-1/2 top-0 z-[100] my-12 max-w-md w-full flex items-center justify-between`}
+      className={clsx({
+        "alert-success": status === "success",
+        "alert-error": status === "error",
+        "alert shadow-sm shadow-base-content/75 fixed left-1/2 right-1/2 -translate-x-1/2 -translate-y-1/2 top-0 z-[100] my-12 max-w-md w-full flex items-center justify-between":
+          true,
+      })}
     >
       <div className="flex-1">
         <label>{message}</label>
