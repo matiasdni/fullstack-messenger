@@ -61,19 +61,19 @@ const Sidebar = () => {
       <div className="flex w-full h-full">
         <VerticalNav activeTab={activeTab} handleTabChange={handleTabChange} />
 
-        <div className="relative w-full h-full">
-          <div className="absolute inset-0 flex flex-col max-h-full">
+        <div className="relative flex-1">
+          <div className="absolute inset-0 flex flex-col">
             <SidebarHeader
               activeTab={activeTab}
               onChangeTab={handleTabChange}
             />
-            <div className="overflow-y-auto">
+            <section className="relative flex-1 overflow-hidden">
               <SidebarContent
                 activeTab={activeTab}
                 chats={allChats}
                 fallback={loading}
               />
-            </div>
+            </section>
           </div>
         </div>
       </div>
@@ -96,7 +96,7 @@ export const VerticalNav = ({ handleTabChange, activeTab }) => {
     <IconContext.Provider
       value={{
         className:
-          "text-neutral-500 dark:text-neutral-400 inline-block text-2xl align-middle place-self-center"
+          "text-neutral-500 dark:text-neutral-400 inline-block text-2xl align-middle place-self-center",
       }}
     >
       <nav className="flex flex-col items-center h-full max-w-[72px]">
@@ -113,8 +113,7 @@ export const VerticalNav = ({ handleTabChange, activeTab }) => {
             >
               <div className="translate-y-1/2 indicator indicator-center">
                 <HiOutlineChatBubbleLeftRight />
-                <span
-                  className="indicator-item badge badge-sm badge-ghost dark:bg-neutral-700 bg-neutral-200 text-neutral-900 dark:text-neutral-300 dark:border-0">
+                <span className="indicator-item badge badge-sm badge-ghost dark:bg-neutral-700 bg-neutral-200 text-neutral-900 dark:text-neutral-300 dark:border-0">
                   5
                 </span>
               </div>
