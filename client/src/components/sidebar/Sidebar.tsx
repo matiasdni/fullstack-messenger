@@ -18,11 +18,6 @@ import { Tab } from "./SidebarTab";
 const FriendList = lazy(() => import("./FriendList"));
 const InviteList = lazy(() => import("../Drawer/InviteList"));
 
-interface myWindow extends Window {
-  openDialog: () => void;
-  user_profile: HTMLDialogElement;
-}
-
 function SidebarContent(props: {
   activeTab: "chats" | "friends" | "invites" | "friend_requests";
   chats: Chat[];

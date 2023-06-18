@@ -25,17 +25,20 @@ export function UserProfileHeader(props: {
 }) {
   const { editMode, setEditMode, image, setImage, setFormData } = props;
 
-  const handleImageChange = useCallback(async (e) => {
-    if (e.target.files) {
-      const image: File = e.target.files[0];
-      setFormData((prev) => {
-        prev.set("image", image, image.name);
-        return prev;
-      });
-      const imageUrl = URL.createObjectURL(image);
-      setImage(imageUrl);
-    }
-  }, []);
+  const handleImageChange = useCallback(
+    async (e) => {
+      if (e.target.files) {
+        const image: File = e.target.files[0];
+        setFormData((prev) => {
+          prev.set("image", image, image.name);
+          return prev;
+        });
+        const imageUrl = URL.createObjectURL(image);
+        setImage(imageUrl);
+      }
+    },
+    [setFormData, setImage]
+  );
 
   return (
     <>

@@ -34,7 +34,7 @@ const ChatInfo: FC<ChatInfoProps> = ({ activeChat, setShowChatInfo }) => {
     setChatDescription(activeChat.description);
     setImage(activeChat.image);
     console.log(activeChat);
-  }, [editMode]);
+  }, [activeChat, editMode]);
 
   const handleKick = useCallback(
     async (id: string) => {
@@ -45,7 +45,7 @@ const ChatInfo: FC<ChatInfoProps> = ({ activeChat, setShowChatInfo }) => {
         // notify error
       }
     },
-    [activeChat.id, token]
+    [activeChat.id]
   );
 
   const handleSave = useCallback(async () => {
@@ -63,7 +63,7 @@ const ChatInfo: FC<ChatInfoProps> = ({ activeChat, setShowChatInfo }) => {
       console.error(error);
       // notify error
     }
-  }, [activeChat.id, chatName, chatDescription, formData, token, dispatch]);
+  }, [activeChat.id, chatName, chatDescription, formData, dispatch]);
 
   const handleImageChange = useCallback(async (e) => {
     if (e.target.files) {

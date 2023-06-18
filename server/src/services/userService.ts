@@ -1,4 +1,3 @@
-import { Request as ExpressRequest } from "express";
 import jwt from "jsonwebtoken";
 import { Op } from "sequelize";
 import { jwtSecret } from "../config";
@@ -6,10 +5,6 @@ import { Chat } from "../models/chat";
 import { User } from "../models/user";
 import { ApiError } from "../utils/ApiError";
 import { getChatIds } from "./userChatService";
-
-interface Request extends ExpressRequest {
-  user?: User;
-}
 
 export const getUserByToken = async (token: string): Promise<User | null> => {
   try {
