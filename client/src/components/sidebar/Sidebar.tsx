@@ -96,6 +96,32 @@ export const VerticalNav = ({ handleTabChange, activeTab }) => {
     >
       <nav className="flex flex-col items-center h-full max-w-[72px]">
         <ul className="flex-1 menu menu-vertical">
+          <div>
+            <Tooltip label={user.username} orientation="right">
+              <label
+                tabIndex={0}
+                className="shadow-md cursor-pointer select-none hover:shadow-lg"
+              >
+                <ShowDrawerBtn drawerContent="user">
+                  <div className="avatar">
+                    <div
+                      className={
+                        " w-12 rounded-[40px] bg-neutral-300 transition-all duration-800 delay-0 hover:rounded-[18px]"
+                      }
+                    >
+                      <img
+                        src={
+                          `https://api.dicebear.com/6.x/avataaars/svg?seed=${user.username}` ||
+                          ""
+                        }
+                        alt={`${user.username}'s avatar`}
+                      />
+                    </div>
+                  </div>
+                </ShowDrawerBtn>
+              </label>
+            </Tooltip>
+          </div>
           <li>
             <a
               className={`tooltip tooltip-right p-0 w-12 h-12 self-center relative hover:bg-neutral-100 ${
@@ -129,39 +155,19 @@ export const VerticalNav = ({ handleTabChange, activeTab }) => {
               </div>
             </a>
           </li>
-          <li>
-            <a
-              className="self-center w-12 h-12 p-0 tooltip tooltip-right"
-              data-tip="Log out"
-              href="#"
-              onClick={handleLogOut}
-            >
-              <div className="translate-y-1/2 indicator indicator-center">
-                <FiLogOut />
-              </div>
-            </a>
-          </li>
         </ul>
-        <Tooltip label={user.username} orientation="right">
-          <div>
-            <label
-              tabIndex={0}
-              className="w-10 h-10 shadow-md cursor-pointer select-none btn-ghost avatar aspect-1 btn-circle mask hover:shadow-lg"
-            >
-              <ShowDrawerBtn drawerContent="user">
-                <img
-                  src={
-                    user?.image
-                      ? user.image
-                      : `https://avatars.dicebear.com/api/identicon/${user.username}.svg`
-                  }
-                  alt={`${user.username}'s avatar`}
-                  className="rounded-full"
-                />
-              </ShowDrawerBtn>
-            </label>
-          </div>
-        </Tooltip>
+        <div className="">
+          <a
+            className="self-center w-12 h-12 p-0 tooltip tooltip-right"
+            data-tip="Log out"
+            href="#"
+            onClick={handleLogOut}
+          >
+            <div className="translate-y-1/2 indicator indicator-center">
+              <FiLogOut />
+            </div>
+          </a>
+        </div>
       </nav>
     </IconContext.Provider>
   );
