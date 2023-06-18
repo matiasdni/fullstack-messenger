@@ -1,8 +1,4 @@
-import axios, {
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosRequestHeaders,
-} from "axios";
+import axios, { AxiosRequestConfig, AxiosRequestHeaders } from "axios";
 
 interface AdaptAxiosRequestConfig extends AxiosRequestConfig {
   headers: AxiosRequestHeaders;
@@ -12,17 +8,17 @@ const BASE_URL = "/api";
 
 const api = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
+  headers: {
+    Authorization: localStorage.getItem("token"),
+  },
 });
 
-// add token to headers
 api.interceptors.request.use(
   (config: AdaptAxiosRequestConfig) => {
-    const token = localStorage.getItem("token") || "";
-    config.headers["Authorization"] = `Bearer ${token}`;
     return config;
   },
-  (error: AxiosError) => {
-    console.log(error.toJSON());
+  (error) => {
     return Promise.reject(error);
   }
 );
