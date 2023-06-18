@@ -3,6 +3,7 @@ import { loginUser } from "services/auth";
 import { removeTokenFromStorage } from "utils/localStorage";
 import { User } from "../users/types";
 import { AuthInitialState, AuthState, LoginData } from "./types";
+import { setNotification } from "features/notification/notificationSlice";
 
 const initialState: AuthInitialState = {
   user: null,
@@ -11,9 +12,16 @@ const initialState: AuthInitialState = {
 
 export const login = createAsyncThunk(
   "auth/login",
-  async (loginData: LoginData) => {
-    const { user, token } = (await loginUser(loginData)) as AuthState;
-    return { user, token };
+  async (loginData: LoginData, thunkAPI) => {
+    try {
+      const { user, token } = (await loginUser(loginData)) as AuthState;
+      return { user, token };
+    } catch (error) {
+      thunkAPI.dispatch(
+        setNotification({ message: error.message, status: "error" })
+      );
+      return thunkAPI.rejectWithValue(error);
+    }
   }
 );
 
@@ -57,19 +65,13 @@ const authSlice = createSlice({
       };
     },
     updateFriendRequest(state, action) {
-      const friendRequests = state.user.friendRequests.map((friendRequest) => {
-        if (friendRequest.id === action.payload.friendId) {
-          return {
-            ...friendRequest,
-            status: action.payload.status,
-          };
-        }
-        return friendRequest;
-      });
-      state.user = {
-        ...state.user,
-        friendRequests,
-      };
+      const request = state.user.friendRequests.find(
+        (friendRequest) =>
+          friendRequest.userId === action.payload.userId &&
+          friendRequest.friendId === action.payload.friendId
+      );
+      if (!request) return;
+      request.status = action.payload.status;
     },
     removeFriendRequest(state, action) {
       const friendRequests = state.user.friendRequests.filter(
@@ -162,15 +164,6 @@ const authSlice = createSlice({
     builder.addCase(login.rejected, (state, _action) => {
       state.user = null;
       state.token = null;
-
-      removeTokenFromStorage();
-    });
-
-    builder.addCase(login.pending, (state, _action) => {
-      state.user = null;
-      state.token = null;
-
-      removeTokenFromStorage();
     });
   },
 });
