@@ -41,7 +41,8 @@ const createChat = async (req: AuthenticatedRequest, res: Response) => {
 
   if (chat_type === "private") {
     const user = await User.findByPk(currentUser.id);
-    const otherUser = await User.findByPk(userIds[0]);
+    const filteredUserIds = userIds.filter((id) => id !== currentUser.id);
+    const otherUser = await User.findByPk(filteredUserIds[0]);
 
     if (!user || !otherUser) {
       return res.status(400).json({ error: "Invalid user IDs" });
@@ -105,9 +106,9 @@ const createChat = async (req: AuthenticatedRequest, res: Response) => {
         },
       });
     });
-  } else {
-    io.to(userIds).emit("join-room", chat.id);
   }
+
+  io.to(userIds).emit("join-room", chat.id);
 };
 
 const chatById = async (req: any, res: Response) => {
