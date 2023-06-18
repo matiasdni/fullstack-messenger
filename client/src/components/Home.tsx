@@ -1,26 +1,38 @@
 import { useEffect, useState } from "react";
 
 import { DrawerProvider } from "@/contexts/DrawerContext";
-import useSocketEvents from "../hooks/UseSocketEvents";
 import { DrawerContent, DrawerSide, DrawerWrapper } from "components/Drawer";
 import { Chat } from "./chat/Chat";
 import DarkModeToggle from "./common/DarkModeToggle";
 import { LoadingChat } from "./common/LoadingChat";
 import Sidebar from "./sidebar/Sidebar";
+import useSocket from "hooks/useSocket";
+import { useAppSelector } from "store";
 
 const container =
   "container absolute right-0 left-0 text-neutral-800 dark:text-neutral-300 bg-white dark:bg-gray-900 antialiased shadow-md 2xl:max-w-screen-xl";
 
 export const Home = () => {
   const [loading, setLoading] = useState<boolean>(true);
-
-  useSocketEvents();
+  const auth = useAppSelector((state) => state.auth);
+  const socket = useSocket();
 
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
   }, []);
+
+  useEffect(() => {
+    if (auth.token) {
+      socket.auth = { token: auth.token };
+      socket.connect();
+    }
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [auth.token, socket]);
 
   if (loading) {
     return <LoadingChat />;
