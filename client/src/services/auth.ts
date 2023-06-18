@@ -19,7 +19,6 @@ interface LoginResponse {
 export const loginUser = async (
   loginData: LoginData
 ): Promise<LoginResponse> => {
-  const response = await api.post(BASE_URL, loginData);
-  if (response.status === 200) return response.data;
-  else throw new Error("Login failed");
+  const res = await api.post(BASE_URL, loginData);
+  return res.data;
 };
