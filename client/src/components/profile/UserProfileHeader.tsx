@@ -71,7 +71,7 @@ export function UserProfileHeader(props: {
           <img
             src={
               image ||
-              "https://avatars.dicebear.com/api/avataaars/John%20Doe.svg?mood[]=happy"
+              `https://api.dicebear.com/6.x/avataaars/svg?seed=${props.user.username}`
             }
             alt="avatar"
             className="h-full"
