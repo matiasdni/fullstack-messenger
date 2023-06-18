@@ -4,7 +4,9 @@ import { useState } from "react";
 import { createChat } from "features/chats/chatsSlice";
 import { chatData } from "services/chats";
 import { searchUsersByName, sendFriendRequest } from "services/user";
-import { useAppDispatch, useThunkDispatch } from "store";
+import { useAppDispatch, useAppSelector } from "store";
+import api from "services/api";
+import { clsx } from "clsx";
 
 const StatusIndicator = ({ online }) => {
   return (
@@ -40,23 +42,22 @@ export const UserSearch = () => {
 };
 
 const SearchListItem = ({ user }) => {
-  const { user: currentUser } = useAuth();
+  const auth = useAuth();
   const dispatch = useAppDispatch();
-  const thunkDispatch = useThunkDispatch();
 
   const handleMessageClick = async () => {
     const chat: chatData = {
-      name: `${user.username}-${currentUser.username}`,
+      name: `${user.username}-${auth.user.username}`,
       chat_type: "private",
       userIds: [user.id],
     };
 
-    await thunkDispatch(createChat(chat));
+    await dispatch(createChat(chat));
   };
 
   const handleAddFriendClick = async () => {
-    const friendRequest = await sendFriendRequest(currentUser.id, user.id);
-    dispatch(addSentFriendRequest(friendRequest));
+    const friendRequest = await sendFriendRequest(auth.user.id, user.id);
+    await dispatch(addSentFriendRequest(friendRequest));
   };
 
   return (
@@ -73,7 +74,12 @@ const SearchListItem = ({ user }) => {
       </div>
       <div className="grow basis-1/4 justify-center text-center">
         <button
-          className={`text-sm font-medium text-gray-500 dark:text-gray-300`}
+          className={clsx({
+            "text-sm font-medium text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200":
+              !user.friend,
+            hidden: user.friend,
+          })}
+          disabled={user.friend}
           onClick={handleAddFriendClick}
         >
           Add Friend
@@ -94,11 +100,17 @@ const SearchListItem = ({ user }) => {
 };
 
 const SearchResults = ({ results }) => {
+  const friends = useAppSelector((state) => state.auth.user.friends);
+  const resultsWithFriends = results.map((user) => {
+    const friend = friends.find((friend) => friend.id === user.id);
+    return { ...user, friend: !!friend };
+  });
+
   return (
     <div className="px-4 pb-4 pt-5 text-gray-900 dark:text-gray-300 sm:p-6 sm:pb-4">
       <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
         <ul className="flex flex-col space-y-2">
-          {results.map((user) => (
+          {resultsWithFriends.map((user) => (
             <SearchListItem key={user.id} user={user} />
           ))}
         </ul>
@@ -109,13 +121,23 @@ const SearchResults = ({ results }) => {
 
 const UserSearchForm = ({ setResults }) => {
   const [username, setUsername] = useState("");
+  const currentUser = useAuth().user;
+  const token = useAppSelector((state) => state.auth.token);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const username = e.target.username.value;
 
+    // check that api token and redux store token are the same
+    const apiToken = api.defaults.headers.common["Authorization"];
+
+    if (apiToken !== token) {
+      api.defaults.headers.common["Authorization"] = token;
+    }
+
     if (username) {
       const users = await searchUsersByName(username);
+      const filteredUsers = users.filter((user) => user.id !== currentUser.id);
       setResults(users);
     }
   };
