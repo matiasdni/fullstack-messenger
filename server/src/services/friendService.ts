@@ -100,7 +100,14 @@ const friendService = {
     const friendRequest = request[0];
 
     if (friendRequest.status === "pending") {
-      throw new ApiError(400, "Friend request already sent");
+      return {
+        id: friendRequest.friendId,
+        friendId: friendRequest.friendId,
+        userId: friendRequest.userId,
+        username: friendRequest.friend.username,
+        status: friendRequest.status,
+        createdAt: friendRequest.createdAt,
+      };
     }
 
     if (friendRequest.status === "accepted") {
