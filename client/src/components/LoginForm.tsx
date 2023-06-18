@@ -6,6 +6,7 @@ import { isFulfilled } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router";
 import { getChats } from "@/features/chats/chatsSlice";
 import { setNotification } from "features/notification/notificationSlice";
+import api from "services/api";
 
 export const LoginForm = ({ onRegisterClick }) => {
   const [username, setUsername] = useState("");
@@ -15,27 +16,24 @@ export const LoginForm = ({ onRegisterClick }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(login({ username, password }))
-      .then((action) => {
-        if (isFulfilled(action)) {
-          dispatch(getChats(action.payload.token)).then((action) => {
-            if (isFulfilled(action)) {
-              navigate("/");
-              dispatch(
-                setNotification({
-                  message: "Login successful",
-                  status: "success",
-                })
-              );
-            }
-          });
-        } else {
-          throw new Error("Login failed");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    dispatch(login({ username, password })).then((action) => {
+      if (isFulfilled(action)) {
+        dispatch(getChats(action.payload.token)).then((action) => {
+          if (isFulfilled(action)) {
+            api.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${action.payload.token}`;
+            navigate("/");
+            dispatch(
+              setNotification({
+                message: "Login successful",
+                status: "success",
+              })
+            );
+          }
+        });
+      }
+    });
   };
 
   return (
