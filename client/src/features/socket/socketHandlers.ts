@@ -16,6 +16,7 @@ import {
   updateUser,
 } from "features/auth/authSlice";
 import { friendRequest, User } from "features/users/types";
+import { setNotification } from "features/notification/notificationSlice";
 
 export const onConnect =
   (chatsRef: React.MutableRefObject<Chat[]>) => (): void => {
@@ -44,7 +45,13 @@ export function onMessage(
 
 export function onFriendRequest(dispatch: AppDispatch) {
   return (data: any) => {
-    console.log("friend request received");
+    console.log("friend request received", data);
+    dispatch(
+      setNotification({
+        message: `${data.username} sent you a friend request`,
+        status: "info",
+      })
+    );
     dispatch(addFriendRequest(data));
   };
 }
@@ -58,7 +65,15 @@ export function onFriendRequestAccepted(dispatch: AppDispatch) {
 }
 
 export function onChatInvite(dispatch: AppDispatch) {
-  return (data: any) => dispatch(addChatInvite(data));
+  return (data: any) => {
+    dispatch(
+      setNotification({
+        message: "You have been invited to a chat",
+        status: "info",
+      })
+    );
+    return dispatch(addChatInvite(data));
+  };
 }
 
 export function onUserUpdate(dispatch: AppDispatch) {
