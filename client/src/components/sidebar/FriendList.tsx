@@ -59,9 +59,8 @@ const FriendCard = ({ friend, setSelectedUser, selectedUser }) => {
 
   return (
     <li
-      className="flex items-center space-x-2 p-2 rounded-md cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
+      className="flex box-border items-center space-x-2 p-2 rounded-md cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
       onClick={async () => {
-        // set active chat to friend
         dispatch(setActiveChatToUser(friend.id));
       }}
     >
@@ -96,9 +95,9 @@ const FriendCard = ({ friend, setSelectedUser, selectedUser }) => {
           </svg>
         </svg>
         {/* remove friend */}
-        <div className="dropdown dropdown-left">
+        <div className="dropdown dropdown-left h-full">
           <MdMoreVert
-            className="w-5 h-5 fill-neutral-300 hover:fill-neutral-700"
+            className="w-6 h-6 fill-neutral-300 hover:fill-neutral-700"
             tabIndex={0}
             onClick={() => {
               setSelectedUser(friend);
