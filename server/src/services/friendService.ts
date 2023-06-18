@@ -1,17 +1,28 @@
 import { Op } from "sequelize";
 import { UserFriends } from "../models/UserFriends";
-import { User, sequelize } from "../models/initModels";
+import { sequelize, User } from "../models/initModels";
 import { ApiError } from "../utils/ApiError";
+import logger from "../utils/logger";
 
-const findAllWithId = async (userId: string, friendId: string, ...args: any) =>
-  UserFriends.findAll({
-    where: {
-      [Op.or]: [
-        { userId, friendId, status: "accepted", ...args },
-        { userId: friendId, friendId: userId, ...args },
-      ],
-    },
-  });
+const findAllWithId = (userId: string, friendId: string, ...args: any) => {
+  // args is an object so need to format it to match the signature of findAll
+  const options = args[0];
+  const { where, ...rest } = options;
+  const newWhere = {
+    ...where,
+    [Op.or]: [
+      {
+        userId,
+        friendId,
+      },
+      {
+        userId: friendId,
+        friendId: userId,
+      },
+    ],
+  };
+  return UserFriends.findAll({ ...rest, where: newWhere });
+};
 
 const friendService = {
   getFriends: async (userId: string) => {
@@ -64,18 +75,14 @@ const friendService = {
       ],
     });
 
-    const formattedFriendRequests = friendRequests.map((friendRequest) => {
-      return {
-        id: friendRequest.friendId,
-        friendId: friendRequest.friendId,
-        userId: friendRequest.userId,
-        username: friendRequest.user.username,
-        status: friendRequest.status,
-        createdAt: friendRequest.createdAt,
-      };
-    });
-
-    return formattedFriendRequests;
+    return friendRequests.map((friendRequest) => ({
+      id: friendRequest.friendId,
+      friendId: friendRequest.friendId,
+      userId: friendRequest.userId,
+      username: friendRequest.user.username,
+      status: friendRequest.status,
+      createdAt: friendRequest.createdAt,
+    }));
   },
   sendFriendRequest: async (userId: string, friendId: string) => {
     const request = await UserFriends.findCreateFind({
@@ -83,15 +90,37 @@ const friendService = {
         userId,
         friendId,
       },
-      defaults: {
-        status: "pending",
-      },
+      include: [
+        {
+          association: "friend",
+          attributes: ["id", "username"],
+        },
+      ],
     });
-
-    if (!request[1] && request[0].status === "pending") {
-      throw new ApiError(403, "Friend request already sent");
-    }
     const friendRequest = request[0];
+
+    if (friendRequest.status === "pending") {
+      throw new ApiError(400, "Friend request already sent");
+    }
+
+    if (friendRequest.status === "accepted") {
+      // check if user is already a friend from the user instance
+      const user = await User.findByPk(userId, {
+        include: [
+          {
+            association: "friends",
+            attributes: ["id"],
+          },
+        ],
+      });
+
+      logger.info(user);
+      throw new ApiError(400, "Already friends");
+    }
+
+    friendRequest.status = "pending";
+    await friendRequest.save();
+
     await friendRequest.reload({
       include: [
         {
@@ -101,13 +130,7 @@ const friendService = {
       ],
     });
 
-    if (friendRequest.status === "rejected") {
-      friendRequest.status = "pending";
-      // todo: update timestamps, currently shows the time when the friend request was first sent
-      await friendRequest.save();
-    }
-
-    const formattedFriendRequest = {
+    return {
       id: friendRequest.friendId,
       friendId: friendRequest.friendId,
       userId: friendRequest.userId,
@@ -115,10 +138,9 @@ const friendService = {
       status: friendRequest.status,
       createdAt: friendRequest.createdAt,
     };
-    return formattedFriendRequest;
   },
   getFriend: async (userId: string, friendId: string) => {
-    const friend = await UserFriends.findOne({
+    return await UserFriends.findOne({
       where: {
         [Op.or]: [
           { userId, friendId },
@@ -126,10 +148,11 @@ const friendService = {
         ],
       },
     });
-    return friend;
   },
   acceptFriendRequest: async (userId: string, friendId: string) => {
-    const friendRequests = await findAllWithId(userId, friendId);
+    const friendRequests = await findAllWithId(userId, friendId, {
+      status: "pending",
+    });
     if (!friendRequests || friendRequests.length === 0) {
       throw new ApiError(404, "Friend request not found");
     }
@@ -169,17 +192,17 @@ const friendService = {
   },
   rejectFriendRequest: async (userId: string, friendId: string) => {
     const t = await sequelize.transaction();
+    const friendRequest = await UserFriends.findOne({
+      where: {
+        userId: friendId,
+        friendId: userId,
+      },
+    });
+    if (!friendRequest) {
+      throw new Error("Friend request not found");
+    }
+    friendRequest.status = "rejected";
     try {
-      const friendRequest = await UserFriends.findOne({
-        where: {
-          userId: friendId,
-          friendId: userId,
-        },
-      });
-      if (!friendRequest) {
-        throw new Error("Friend request not found");
-      }
-      friendRequest.status = "rejected";
       await friendRequest.save({ transaction: t });
 
       const reverseFriendRequest = await UserFriends.findOne({
@@ -203,26 +226,30 @@ const friendService = {
 
   removeFriend: async (userId: string, friendId: string) => {
     const t = await sequelize.transaction();
+    const friendRequests: UserFriends[] = await UserFriends.findAll({
+      where: {
+        [Op.or]: [
+          { userId, friendId },
+          { userId: friendId, friendId: userId },
+        ],
+      },
+    });
+    if (!friendRequests || friendRequests.length === 0) {
+      throw new ApiError(404, "Friend not found");
+    }
+
     try {
-      const friendRequests: UserFriends[] = await UserFriends.findAll({
+      // delete friend requests from both users
+      await UserFriends.destroy({
         where: {
           [Op.or]: [
-            { userId, friendId, status: "accepted" },
-            { userId: friendId, friendId: userId, status: "accepted" },
+            { userId, friendId },
+            { userId: friendId, friendId: userId },
           ],
         },
+        transaction: t,
       });
-      if (!friendRequests || friendRequests.length === 0) {
-        throw new ApiError(404, "Friend not found");
-      }
-      // delete friend requests from both users
-      await Promise.all(
-        friendRequests.map((friendRequest) =>
-          friendRequest.destroy({ transaction: t })
-        )
-      );
       await t.commit();
-
       // return the new friend lists of both users
       const friends = await friendService.getFriends(userId);
       const friendsOfFriend = await friendService.getFriends(friendId);
@@ -250,7 +277,7 @@ const friendService = {
       ],
     });
 
-    const formattedFriendRequests = friendRequests.map((friendRequest) => {
+    return friendRequests.map((friendRequest) => {
       return {
         id: friendRequest.friendId,
         friendId: friendRequest.friendId,
@@ -260,8 +287,6 @@ const friendService = {
         createdAt: friendRequest.createdAt,
       };
     });
-
-    return formattedFriendRequests;
   },
 };
 
