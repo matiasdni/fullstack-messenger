@@ -9,19 +9,7 @@ const BASE_URL = "/api";
 const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
-  headers: {
-    Authorization: localStorage.getItem("token"),
-  },
 });
-
-api.interceptors.request.use(
-  (config: AdaptAxiosRequestConfig) => {
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 api.interceptors.response.use(
   (response) => {
