@@ -1,10 +1,11 @@
 import _ from "lodash";
 import "./src/models/initModels";
-import { Chat, User, initModels, sequelize } from "./src/models/initModels";
+import { Chat, initModels, sequelize, User } from "./src/models/initModels";
 import { addUserToChat, createChat } from "./src/services/chatService";
 import friendService from "./src/services/friendService";
 import { createMessage } from "./src/services/messageService";
 import { createUser } from "./src/services/userService";
+import { UserFriends } from "./src/models/UserFriends";
 
 // sample data with different real names and passwords
 const sampleUsers = [
@@ -37,30 +38,36 @@ async function main() {
     const user2 = await createUser("test2", "test");
 
     // add friends
-    await friendService.sendFriendRequest(user1.id, user2.id);
-    await friendService.sendFriendRequest(user2.id, user1.id);
+    await UserFriends.bulkCreate([
+      { userId: user1.id, friendId: user2.id },
+      { userId: user2.id, friendId: user1.id },
+    ]);
 
     const users = await User.bulkCreate(sampleUsers, {
       returning: true,
     });
 
     // add friends
-    users.forEach(async (user) => {
-      await friendService.sendFriendRequest(user1.id, user.id);
-      await friendService.sendFriendRequest(user.id, user1.id);
-      await friendService.sendFriendRequest(user2.id, user.id);
-      await friendService.sendFriendRequest(user.id, user2.id);
-    });
+    for (const user of users) {
+      await UserFriends.bulkCreate([
+        { userId: user1.id, friendId: user.id },
+        { userId: user.id, friendId: user1.id },
+        { userId: user2.id, friendId: user.id },
+        { userId: user.id, friendId: user2.id },
+      ]);
+    }
 
     // accept friend requests
     await friendService.acceptFriendRequest(user1.id, user2.id);
     await friendService.acceptFriendRequest(user2.id, user1.id);
 
     for (let i = 0; i < _.floor((users.length / 5) * 3); i++) {
-      await friendService.acceptFriendRequest(user1.id, users[i].id);
-      await friendService.acceptFriendRequest(users[i].id, user1.id);
-      await friendService.acceptFriendRequest(user2.id, users[i].id);
-      await friendService.acceptFriendRequest(users[i].id, user2.id);
+      try {
+        await friendService.acceptFriendRequest(user1.id, users[i].id);
+        await friendService.acceptFriendRequest(users[i].id, user1.id);
+        await friendService.acceptFriendRequest(user2.id, users[i].id);
+        await friendService.acceptFriendRequest(users[i].id, user2.id);
+      } catch (error) {}
     }
 
     // Create the general chat
