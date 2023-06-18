@@ -42,7 +42,7 @@ const ChatItem = ({ chat }) => {
   const nameToDisplay =
     chat.chat_type === "group"
       ? name
-      : chat.users?.find((u: User) => u.id !== user.id)?.username;
+      : chat.users?.find((u: User) => u.id !== user?.id)?.username;
 
   return (
     <li>
@@ -63,7 +63,9 @@ const ChatItem = ({ chat }) => {
         </figure>
         <div className="whitespace-nowrap truncate w-full">
           <div className="flex items-center justify-between">
-            <span className="font-semibold truncate">{nameToDisplay}</span>
+            <span className={`${isActive ? "font-semibold" : null} truncate`}>
+              {nameToDisplay}
+            </span>
             <span className=" text-xs">{time}</span>
           </div>
           <p className="truncate text-sm w-full">

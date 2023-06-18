@@ -1,7 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import notificationReducer from "features/notification/notificationSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { RootState } from "types";
 import authReducer from "./features/auth/authSlice";
 import chatsReducer from "./features/chats/chatsSlice";
 import inviteReducer from "./features/invites/inviteSlice";
@@ -18,6 +17,7 @@ const store = configureStore({
 });
 
 export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 

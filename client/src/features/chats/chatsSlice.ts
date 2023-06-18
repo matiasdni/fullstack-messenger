@@ -57,6 +57,9 @@ const chatsSlice = createSlice({
     setActiveChat: (state, action: PayloadAction<string>) => {
       state.activeChatId = action.payload;
     },
+    setChats: (state, action: PayloadAction<Chat[]>) => {
+      state.chats = action.payload;
+    },
     addChat: (state, action) => {
       if (state.chats.some((chat) => chat.id === action.payload.id)) return;
       state.chats.push(action.payload);
@@ -127,8 +130,14 @@ export const selectActiveChat = (state: RootState) => {
   return state.chats.chats.find((chat) => chat.id === activeChatId);
 };
 
-export const { setActiveChat, addMessage, addChat, updateChat, removeChat } =
-  chatsSlice.actions;
+export const {
+  setActiveChat,
+  addMessage,
+  addChat,
+  updateChat,
+  removeChat,
+  setChats,
+} = chatsSlice.actions;
 
 export default chatsSlice.reducer;
 

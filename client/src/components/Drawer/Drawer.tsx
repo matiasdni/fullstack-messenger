@@ -1,6 +1,6 @@
 import { useActiveChat } from "@/hooks/useChats";
-import { FC, ReactNode } from "react";
 import { useDrawer } from "contexts/DrawerContext";
+import { FC, ReactNode } from "react";
 import ChatInfo from "../chat/ChatInfo";
 import { UserProfile } from "../profile/UserProfile";
 import InviteList from "./InviteList";
@@ -10,7 +10,6 @@ interface Props {
   drawerContent?: "chat" | "user" | "notifications";
 }
 
-const colors = "border-0 divide-x-0";
 const DrawerWrapper: FC<Props> = ({ children }) => {
   return (
     <div className="drawer-end flex relative h-[768px] min-h-full max-w-screen-xl aspect-w-3 aspect-h-2 cursor-default">
@@ -23,7 +22,7 @@ const DrawerWrapper: FC<Props> = ({ children }) => {
 const DrawerContent: FC<Props> = ({ children }) => {
   return (
     <div
-      className={`drawer-content flex-1 flex max-w-full shadow-md ${colors}`}
+      className={`drawer-content flex-1 flex max-w-full shadow-md border-0 divide-x-0`}
     >
       {/* Main content here */}
       {children}

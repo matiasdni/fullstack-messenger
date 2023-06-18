@@ -14,10 +14,21 @@ const DarkModeToggle = () => {
   };
 
   return (
-    <label className="swap swap-rotate">
-      <input type="checkbox" className="hidden" onChange={toggleDarkMode} />
-      <MdOutlineLightMode className="swap-on fill-current w-8 h-8" />
-      <MdOutlineDarkMode className="swap-off fill-current w-8 h-8 " />
+    <label className="swap swap-rotate" htmlFor="dark-mode-toggle">
+      <input
+        type="checkbox"
+        className="hidden"
+        onChange={toggleDarkMode}
+        role="switch"
+      />
+      <MdOutlineLightMode
+        className="swap-on fill-current w-8 h-8"
+        data-testid="light-mode-icon"
+      />
+      <MdOutlineDarkMode
+        className="swap-off fill-current w-8 h-8"
+        data-testid="dark-mode-icon"
+      />
     </label>
   );
 };

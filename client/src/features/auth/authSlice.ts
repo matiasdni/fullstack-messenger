@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { setNotification } from "features/notification/notificationSlice";
 import { loginUser } from "services/authService";
 import { removeTokenFromStorage } from "utils/localStorage";
 import { User } from "../users/types";
 import { AuthInitialState, AuthState, LoginData } from "./types";
-import { setNotification } from "features/notification/notificationSlice";
 
 const initialState: AuthInitialState = {
   user: null,
@@ -156,9 +156,6 @@ const authSlice = createSlice({
     builder.addCase(login.fulfilled, (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
-      localStorage.setItem("token", action.payload.token);
-      localStorage.setItem("username", action.payload.user.username);
-      localStorage.setItem("userId", action.payload.user.id);
     });
 
     builder.addCase(login.rejected, (state, _action) => {
