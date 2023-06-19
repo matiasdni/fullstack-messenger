@@ -110,7 +110,6 @@ Chat.init(
         if (this.ownerId) {
           const user = await UserModel.findByPk(this.ownerId.toString());
           if (!user) {
-            // todo: make a custom error class for database errors
             throw new ApiError(400, "Owner does not exist");
           }
         }
