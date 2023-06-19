@@ -63,7 +63,7 @@ const ChatItem = ({ chat }) => {
         </figure>
         <div className="whitespace-nowrap truncate w-full">
           <div className="flex items-center justify-between">
-            <span className={`${isActive ? "font-semibold" : null} truncate`}>
+            <span className={`${isActive ? "font-semibold" : ""} truncate`}>
               {nameToDisplay}
             </span>
             <span className=" text-xs">{time}</span>

@@ -13,7 +13,8 @@ import Tooltip from "../common/Tooltip";
 import { ShowDrawerBtn } from "../Drawer/Drawer";
 import { ChatList } from "./ChatList";
 import SidebarHeader from "./SidebarHeader";
-import { Tab } from "./SidebarTab";
+
+export type Tab = "chats" | "friends" | "invites" | "friend_requests";
 
 const FriendList = lazy(() => import("./FriendList"));
 const InviteList = lazy(() => import("../Drawer/InviteList"));

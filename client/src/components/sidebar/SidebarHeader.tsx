@@ -1,13 +1,13 @@
 import { useDrawer } from "@/contexts/DrawerContext";
+import { GroupForm } from "components/GroupForm";
+import { UserSearch } from "components/UserSearch";
+import { Modal } from "components/common/Modal";
 import Tooltip from "components/common/Tooltip";
 import { FC, useState } from "react";
 import { IoIosNotifications } from "react-icons/io";
 import { IconContext } from "react-icons/lib";
 import { MdGroupAdd, MdOutlineMessage } from "react-icons/md";
-import { Tab } from "./SidebarTab";
-import { Modal } from "components/common/Modal";
-import { UserSearch } from "components/UserSearch";
-import { GroupForm } from "components/GroupForm";
+import { Tab } from "./Sidebar";
 
 interface SidebarHeaderProps {
   activeTab: Tab;
