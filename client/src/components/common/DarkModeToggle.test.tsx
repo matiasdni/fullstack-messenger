@@ -1,17 +1,17 @@
 import { fireEvent, screen } from "@testing-library/react";
-import { render } from "../../test/setup";
+import { renderWithProviders } from "../../utils/test-utils";
 import DarkModeToggle from "./DarkModeToggle";
 
 describe("DarkModeToggle component", () => {
   test("renders toggle switch", () => {
-    render(<DarkModeToggle />);
+    renderWithProviders(<DarkModeToggle />);
 
     const toggleSwitch = screen.getByRole("switch");
     expect(toggleSwitch).toBeInTheDocument();
   });
 
   test("toggles dark mode on click", () => {
-    render(<DarkModeToggle />);
+    renderWithProviders(<DarkModeToggle />);
     describe("DarkModeToggle component", () => {
       it("should have light mode icon", () => {
         const lightModeIcon = screen.getByTestId("light-mode-icon");
