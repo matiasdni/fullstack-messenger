@@ -1,5 +1,5 @@
 {
-  "name": "fullstackproject",
+  "name": "fullstack-messenger-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
