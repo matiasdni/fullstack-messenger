@@ -1,10 +1,11 @@
 /**
  * Returns a string representing the time elapsed since the given date.
  * @param date The date to calculate the elapsed time from.
+ * @param now The current time (optional, defaults to the current time).
  * @returns A string representing the elapsed time in years, months, days, hours, minutes, or seconds.
  */
-const timeSince = (date: Date) => {
-  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+const timeSince = (date: Date, now: Date = new Date()) => {
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
   let interval = seconds / 31536000;
   if (interval > 1) {
     return Math.floor(interval) + " years";
