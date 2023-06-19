@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import "express-async-errors";
+import session from "express-session";
 import http from "http";
 import { Server } from "socket.io";
 import inviteRouter from "./controllers/inviteController";
@@ -16,16 +17,25 @@ import logger from "./utils/logger";
 const app = express();
 const server = http.createServer(app);
 
-export const io = new Server(server, {
-  cors: {
+app.use(express.json());
+
+app.use(
+  cors({
     origin: "http://localhost:3000",
     credentials: true,
+  })
+);
+
+const sessionMiddleware = session({
+  secret: "keyboard cat",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
   },
 });
 
-app.use(cors());
-
-app.use(express.json());
+app.use(sessionMiddleware);
 
 app.use("/api/auth", loginRouter);
 
@@ -40,6 +50,13 @@ app.use("/api/chats", chatRouter);
 app.use("/api/invites", inviteRouter);
 
 app.use(errorHandler);
+
+export const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    credentials: true,
+  },
+});
 
 io.use(authenticateSocket);
 

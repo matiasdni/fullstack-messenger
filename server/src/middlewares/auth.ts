@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { mySocket } from "../listeners/types";
+import { User } from "../models/user";
 import { getUserByToken } from "../services/userService";
 import { ApiError } from "../utils/ApiError";
 import logger from "../utils/logger";
-import { User } from "../models/user";
 
 export interface AuthRequest extends Request {
   user: User;
@@ -14,44 +14,41 @@ const authenticate = async (
   res: Response,
   next: NextFunction
 ) => {
-  if (!req.header("Authorization")) {
-    logger.error("header missing token");
-    throw new ApiError(401 as const, "header missing");
-  }
-  const token = req.header("Authorization")!.replace("Bearer ", "");
-
-  if (!token || token === "") {
-    logger.error("header missing token");
-    throw new ApiError(401 as const, "header missing token");
-  }
-
-  const user = await getUserByToken(token);
-  if (!user) {
-    logger.error("failed to authenticate in middleware");
-    throw new ApiError(401 as const, "invalid credentials");
+  if (!req.session.user) {
+    logger.error("failed to authenticate in middleware: no session");
+    // try to authenticate with token
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      throw new ApiError(401 as const, "unauthorized");
+    }
+    const user = await getUserByToken(token);
+    if (!user) {
+      throw new ApiError(401 as const, "unauthorized");
+    }
+    req.user = user;
   }
 
-  req.user = user;
+  const user = await User.findByPk(req.session.user);
+  req.user = user!;
   next();
 };
 
 export const authenticateSocket = async (
   socket: mySocket,
-  next: (err?: Error) => void
+  next: (err?: Error | undefined) => void
 ) => {
   const token = socket.handshake.auth.token;
-  getUserByToken(token)
-    .then((user: any) => {
-      if (!token || !user) {
-        logger.error("failed to authenticate in middleware");
-        return next(new Error("unauthorized"));
-      }
-      socket.user = user;
-      next();
-    })
-    .catch((err) => {
-      next(err);
-    });
+  try {
+    const user = await getUserByToken(token);
+    if (!token || !user) {
+      logger.error("failed to authenticate in middleware");
+      return next(new Error("unauthorized"));
+    }
+    socket.user = user;
+    next();
+  } catch (error) {
+    next(new Error("unauthorized"));
+  }
 };
 
 export default authenticate;
