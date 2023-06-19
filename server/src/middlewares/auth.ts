@@ -14,22 +14,13 @@ const authenticate = async (
   res: Response,
   next: NextFunction
 ) => {
-  if (!req.session.user) {
-    logger.error("failed to authenticate in middleware: no session");
-    // try to authenticate with token
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      throw new ApiError(401 as const, "unauthorized");
-    }
-    const user = await getUserByToken(token);
-    if (!user) {
-      throw new ApiError(401 as const, "unauthorized");
-    }
-    req.user = user;
+  // try to authenticate with token
+  const token = req.headers.authorization?.split(" ")[1] || "";
+  const user = await getUserByToken(token);
+  if (!user || !token) {
+    throw new ApiError(401 as const, "unauthorized");
   }
-
-  const user = await User.findByPk(req.session.user);
-  req.user = user!;
+  req.user = user;
   next();
 };
 

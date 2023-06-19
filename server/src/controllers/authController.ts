@@ -6,6 +6,7 @@ import { User } from "../models/user";
 import friendService from "../services/friendService";
 import { getPendingInvites } from "../services/inviteService";
 import { ApiError } from "../utils/ApiError";
+import { jwtSign } from "../utils/jwt";
 import logger from "../utils/logger";
 
 declare module "express-session" {
@@ -32,30 +33,28 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     throw new ApiError(401 as const, "invalid credentials");
   }
 
-  const token = jwt.sign({ ...user }, jwtSecret, { expiresIn: "1d" });
+  const token = await jwtSign(
+    { username: user.username, id: user.id },
+    jwtSecret,
+    {
+      expiresIn: "1d",
+    }
+  );
   const friends = await friendService.getFriends(user.id);
   const friendRequests = await friendService.getFriendRequests(user.id);
   const sentFriendRequests = await friendService.getSentFriendRequests(user.id);
   const chatInvites = await getPendingInvites({ userId: user.id });
 
-  req.session.regenerate((err) => {
-    if (err) next(err);
-    req.session.user = user.id;
-
-    req.session.save((err) => {
-      if (err) next(err);
-      res.status(200).json({
-        token,
-        user: {
-          id: user.id,
-          username: user.username,
-          chatInvites,
-          friends,
-          friendRequests,
-          sentFriendRequests,
-        },
-      });
-    });
+  res.status(200).json({
+    token,
+    user: {
+      id: user.id,
+      username: user.username,
+      chatInvites,
+      friends,
+      friendRequests,
+      sentFriendRequests,
+    },
   });
 });
 
@@ -94,15 +93,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 router.get(
   "/logout",
   async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`user ${req.session.user} logged out`);
-    req.session.user = undefined;
-    req.session.save(function (err) {
-      if (err) next(err);
-      req.session.regenerate(function (err) {
-        if (err) next(err);
-      });
-      res.status(200).json({ message: "logged out" });
-    });
+    res.status(200).json({ message: "logged out" });
   }
 );
 

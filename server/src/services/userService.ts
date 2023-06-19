@@ -1,15 +1,15 @@
-import jwt from "jsonwebtoken";
 import { Op } from "sequelize";
 import { jwtSecret } from "../config";
 import { Chat } from "../models/chat";
 import { User } from "../models/user";
 import { ApiError } from "../utils/ApiError";
+import { jwtVerify } from "../utils/jwt";
 import { getChatIds } from "./userChatService";
 
 export const getUserByToken = async (token: string): Promise<User | null> => {
   try {
-    const decoded = jwt.verify(token, jwtSecret) as User;
-    return await User.findByPk(decoded.dataValues.id, {
+    const decoded = (await jwtVerify(token, jwtSecret)) as Partial<User>;
+    return await User.findByPk(decoded.id, {
       attributes: { exclude: ["password"] },
       include: [
         {

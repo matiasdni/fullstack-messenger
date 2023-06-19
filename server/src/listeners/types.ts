@@ -6,23 +6,6 @@ export type newMessage = {
   room: string;
 };
 
-export interface ClientToServerEvents {
-  "join-room": (room: string) => void;
-  "leave-room": (room: string) => void;
-  sendMessage: (message: { content: string; room: string }) => void;
-}
-
-export interface ServerToClientEvents {
-  "chat:message": (message: newMessage) => void;
-}
-
-export interface SocketData {
-  user: {
-    id: string;
-    username: string;
-  };
-}
-
 export interface mySocket extends Socket {
   user?: User;
 }

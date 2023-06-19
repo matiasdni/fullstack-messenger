@@ -18,5 +18,9 @@ export const config = {
   jwt: {
     secret: process.env.JWT_SECRET || "secret",
   },
+  session: {
+    secret: process.env.SESSION_SECRET || "secret",
+  },
 };
 export const jwtSecret = config.jwt.secret;
+export const sessionSecret = config.session.secret;

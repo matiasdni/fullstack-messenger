@@ -1,9 +1,10 @@
 import { Response } from "express";
 import { Invite } from "../../../shared/types";
+import { connectedClients } from "../listeners/socketHandler";
 import { mySocket } from "../listeners/types";
 import authenticate, { AuthRequest } from "../middlewares/auth";
 import { Chat } from "../models/chat";
-import { connectedClients, io } from "../server";
+import { io } from "../server";
 import { rejectInvite, updateInvite } from "../services/inviteService";
 
 const router = require("express").Router();

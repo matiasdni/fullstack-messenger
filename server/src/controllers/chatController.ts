@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import fs from "fs";
+import { connectedClients } from "../listeners/socketHandler";
 import { AuthRequest } from "../middlewares/auth";
 import { Chat } from "../models/chat";
 import { Message } from "../models/message";
 import { User } from "../models/user";
-import { connectedClients, io } from "../server";
+import { io } from "../server";
 import {
   createChatWithUsers,
   findOrCreatePrivateChat,
