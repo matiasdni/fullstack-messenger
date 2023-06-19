@@ -1,7 +1,7 @@
+import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { AuthState } from "../features/auth/types";
 import { User } from "../features/users/types";
-import { RootState } from "../types";
 
 const useAuth = (): AuthState => {
   return useSelector((state: RootState): AuthState => state.auth);

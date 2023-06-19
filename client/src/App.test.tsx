@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import App from "./App";
-import { default as store } from "./store";
+import { default as store } from "./app/store";
 
 describe("App component", () => {
   describe("when not logged in", () => {

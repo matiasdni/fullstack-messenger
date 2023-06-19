@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
+import { useAppSelector } from "@/app/store";
 import { DrawerProvider } from "@/contexts/DrawerContext";
 import { DrawerContent, DrawerSide, DrawerWrapper } from "components/Drawer";
+import useSocket from "hooks/useSocket";
 import { Chat } from "./chat/Chat";
 import DarkModeToggle from "./common/DarkModeToggle";
 import { LoadingChat } from "./common/LoadingChat";
 import Sidebar from "./sidebar/Sidebar";
-import useSocket from "hooks/useSocket";
-import { useAppSelector } from "store";
 
 const container =
   "container absolute right-0 left-0 text-neutral-800 dark:text-neutral-300 bg-white dark:bg-gray-900 antialiased shadow-md 2xl:max-w-screen-xl";

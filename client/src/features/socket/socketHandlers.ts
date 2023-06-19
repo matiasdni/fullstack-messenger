@@ -1,3 +1,5 @@
+import { socket } from "@/app/socket";
+import { AppDispatch } from "@/app/store";
 import {
   addChatInvite,
   addFriend,
@@ -15,8 +17,6 @@ import { Chat, Message } from "features/chats/types";
 import { setNotification } from "features/notification/notificationSlice";
 import { User, friendRequest } from "features/users/types";
 import React from "react";
-import { socket } from "socket";
-import { AppDispatch } from "store";
 
 export const onConnect =
   (chatsRef: React.MutableRefObject<Chat[]>) => (): void => {

@@ -9,13 +9,14 @@ import usersReducer from "features/users/usersSlice";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { afterEach } from "vitest";
+import { ReactElement } from "react";
 
 afterEach(() => {
   cleanup();
 });
 
 function customRenderWithProviders(
-  ui: React.ReactElement,
+  ui: ReactElement,
   {
     preloadedState = {},
     store = configureStore({

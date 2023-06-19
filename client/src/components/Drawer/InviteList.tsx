@@ -1,3 +1,4 @@
+import { useAppDispatch } from "@/app/store";
 import {
   removeChatInvite,
   updateFriendRequest,
@@ -10,9 +11,8 @@ import { friendRequest } from "features/users/types";
 import { useAuth } from "hooks/useAuth";
 import { FC, useMemo } from "react";
 import { acceptFriendRequest, rejectFriendRequest } from "services/userService";
-import { useAppDispatch } from "store";
-import { InviteAttributes } from "../../../../shared/types";
 import timeSince from "utils/timeSince";
+import { InviteAttributes } from "../../../../shared/types";
 
 type PendingInvite = Invite | friendRequest;
 

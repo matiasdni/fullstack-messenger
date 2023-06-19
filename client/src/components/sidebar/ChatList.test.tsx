@@ -1,6 +1,6 @@
+import store from "@/app/store";
 import { setChats } from "@/features/chats/chatsSlice";
 import { Chat } from "@/features/chats/types";
-import store from "@/store";
 import fireEvent from "@testing-library/user-event";
 import { renderWithProviders, screen } from "utils/test-utils";
 import { ChatList } from "./ChatList";

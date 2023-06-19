@@ -1,8 +1,8 @@
-import { RootState } from "@/types";
+import { useAppDispatch, useAppSelector } from "@/app/store";
 import { clearNotification } from "@/features/notification/notificationSlice";
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "store";
+import { RootState } from "app/store";
 import { clsx } from "clsx";
+import { useEffect } from "react";
 
 const Notification = () => {
   const dispatch = useAppDispatch();

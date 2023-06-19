@@ -1,7 +1,6 @@
-import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { useAppSelector } from "@/app/store";
 import { useLocation } from "react-router";
-import { useAppSelector } from "store";
+import { Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoute = () => {
   const location = useLocation();

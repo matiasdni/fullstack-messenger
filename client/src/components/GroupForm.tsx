@@ -1,11 +1,11 @@
+import { useAppDispatch, useAppSelector } from "@/app/store";
+import { createChat } from "features/chats/chatsSlice";
+import { User } from "features/users/types";
 import { useCallback, useState } from "react";
 import OptionTypeBase from "react-select";
 import AsyncSelect from "react-select/async";
-import { createChat } from "features/chats/chatsSlice";
-import { User } from "features/users/types";
 import { chatData } from "services/chatService";
 import { searchUsersByName } from "services/userService";
-import { useAppDispatch, useAppSelector } from "store";
 
 interface UserOption extends OptionTypeBase {
   label: string;

@@ -1,12 +1,9 @@
+import { useAppDispatch, useAppSelector } from "@/app/store";
+import { selectActiveChat, setActiveChat } from "features/chats/chatsSlice";
+import { Chat } from "features/chats/types";
+import { User } from "features/users/types";
+import { useUser } from "hooks/useAuth";
 import { useCallback, useMemo } from "react";
-import {
-  selectActiveChat,
-  setActiveChat,
-} from "../../features/chats/chatsSlice";
-import { Chat } from "../../features/chats/types";
-import { User } from "../../features/users/types";
-import { useUser } from "../../hooks/useAuth";
-import { useAppDispatch, useAppSelector } from "../../store";
 import { Avatar } from "../common/Avatar";
 
 const ChatItem = ({ chat }) => {

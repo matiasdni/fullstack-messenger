@@ -180,13 +180,10 @@ const authSlice = createSlice({
 
 export const {
   logOut,
-  setAuth,
   addFriendRequest,
   removeFriendRequest,
   updateFriendRequest,
-  setUserChatInvites,
   addSentFriendRequest,
-  removeSentFriendRequest,
   addFriend,
   updateUser,
   removeChatInvite,

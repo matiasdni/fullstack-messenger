@@ -33,7 +33,7 @@ export const removeUserFromChat = async (chatId: string, userId: string) => {
   return response.data;
 };
 
-export const updateChatInfo = async (chatId: string, formData: any) => {
+export const updateChatInfo = async (chatId: string, formData) => {
   const response = await api.put(`${BASE_URL}/${chatId}`, formData);
   return response.data;
 };

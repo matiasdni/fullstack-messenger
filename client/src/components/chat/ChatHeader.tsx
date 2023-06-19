@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Chat } from "../../features/chats/types";
+import { Chat } from "features/chats/types";
 import { Avatar } from "../common/Avatar";
 import ChatInfo from "./ChatInfo";
 

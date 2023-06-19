@@ -14,7 +14,7 @@ interface SidebarHeaderProps {
   onChangeTab: (tab: Tab) => void;
 }
 
-const SidebarHeader: FC<SidebarHeaderProps> = ({ activeTab, onChangeTab }) => {
+const SidebarHeader: FC<SidebarHeaderProps> = ({ activeTab }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState<boolean>(false);
   const { setDrawerContent } = useDrawer();

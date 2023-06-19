@@ -1,14 +1,14 @@
+import { useAppDispatch } from "@/app/store";
 import { updateUser } from "@/features/auth/authSlice";
 import { User } from "@/features/users/types";
-import { removeFriend } from "services/userService";
-import { useAppDispatch } from "@/store";
+import { ShowDrawerBtn } from "components/Drawer";
+import { useDrawer } from "contexts/DrawerContext";
+import { setActiveChatToUser } from "features/chats/chatsSlice";
 import { useAuth } from "hooks/useAuth";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { MdMoreVert } from "react-icons/md";
-import { useDrawer } from "contexts/DrawerContext";
-import { ShowDrawerBtn } from "components/Drawer";
-import { setActiveChatToUser } from "features/chats/chatsSlice";
+import { removeFriend } from "services/userService";
 
 const RemoveFriendModal = ({ user, handleRemoveFriend }) => {
   return (
@@ -50,7 +50,11 @@ const RemoveFriendModal = ({ user, handleRemoveFriend }) => {
   );
 };
 
-const FriendCard = ({ friend, setSelectedUser, selectedUser }) => {
+const FriendCard = ({
+  friend,
+  setSelectedUser,
+  selectedUser: _selectedUser,
+}) => {
   const dispatch = useAppDispatch();
   const drawer = useDrawer();
   const handleUserClick = () => {
@@ -110,7 +114,7 @@ const FriendCard = ({ friend, setSelectedUser, selectedUser }) => {
             {/*  Open selected user profile */}
             <li>
               <ShowDrawerBtn drawerContent={"user"}>
-                <a
+                <div
                   onClick={() => {
                     setSelectedUser(friend);
                     drawer.setDrawerContent("user");
@@ -118,11 +122,11 @@ const FriendCard = ({ friend, setSelectedUser, selectedUser }) => {
                   }}
                 >
                   View profile
-                </a>
+                </div>
               </ShowDrawerBtn>
             </li>
             <li>
-              <a
+              <div
                 onClick={() => {
                   setSelectedUser(friend);
                   const modal = document.getElementById(
@@ -132,7 +136,7 @@ const FriendCard = ({ friend, setSelectedUser, selectedUser }) => {
                 }}
               >
                 Remove friend
-              </a>
+              </div>
             </li>
           </ul>
         </div>

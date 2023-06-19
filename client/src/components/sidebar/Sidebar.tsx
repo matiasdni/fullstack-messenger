@@ -1,13 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { useAppDispatch, useAppSelector } from "@/app/store";
 import { logout } from "@/features/auth/authSlice";
-import { useAppDispatch } from "@/store";
 import { Chat } from "features/chats/types";
-import { lazy, Suspense, useState } from "react";
+import { lazy, ReactNode, Suspense, useState } from "react";
 import { FaUserFriends } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
 import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
 import { IconContext } from "react-icons/lib";
-import { useAppSelector } from "store";
 import Tooltip from "../common/Tooltip";
 import { ShowDrawerBtn } from "../Drawer/Drawer";
 import { ChatList } from "./ChatList";
@@ -21,7 +20,7 @@ const InviteList = lazy(() => import("../Drawer/InviteList"));
 function SidebarContent(props: {
   activeTab: "chats" | "friends" | "invites" | "friend_requests";
   chats: Chat[];
-  fallback: JSX.Element;
+  fallback: ReactNode;
 }) {
   return (
     <>

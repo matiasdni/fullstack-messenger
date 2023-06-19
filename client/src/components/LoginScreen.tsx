@@ -1,8 +1,8 @@
+import { useAppDispatch } from "@/app/store";
 import { login } from "@/features/auth/authSlice";
 import { getChats } from "@/features/chats/chatsSlice";
 import { setNotification } from "@/features/notification/notificationSlice";
 import api from "@/services/api";
-import { useAppDispatch } from "@/store";
 import { isFulfilled } from "@reduxjs/toolkit";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";

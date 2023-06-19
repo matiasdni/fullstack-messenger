@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
-import { socket } from "socket";
-import { useAppDispatch, useAppSelector } from "store";
+import { socket } from "@/app/socket";
+import { useAppDispatch, useAppSelector } from "@/app/store";
 import * as socketHandlers from "features/socket/socketHandlers";
+import { useEffect, useRef } from "react";
 
 const useSocket = () => {
   const dispatch = useAppDispatch();

@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import notificationReducer from "features/notification/notificationSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import authReducer from "./features/auth/authSlice";
-import chatsReducer from "./features/chats/chatsSlice";
-import inviteReducer from "./features/invites/inviteSlice";
-import usersReducer from "./features/users/usersSlice";
+import authReducer from "../features/auth/authSlice";
+import chatsReducer from "../features/chats/chatsSlice";
+import inviteReducer from "../features/invites/inviteSlice";
+import usersReducer from "../features/users/usersSlice";
 
 const store = configureStore({
   reducer: {

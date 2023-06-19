@@ -4,9 +4,9 @@ import {
   Dispatch,
   PayloadAction,
 } from "@reduxjs/toolkit";
+import { RootState } from "app/store";
 import { deleteInvite, updateInvite } from "services/inviteService";
 import { fetchUserRequests } from "services/userService";
-import { RootState } from "types";
 import { InviteAttributes } from "../../../../shared/types";
 import { Invite } from "./types";
 
@@ -117,5 +117,4 @@ const invitesSlice = createSlice({
 });
 
 export const { addInvite, removeInvite } = invitesSlice.actions;
-export const selectInvites = (state: RootState) => state.invites;
 export default invitesSlice.reducer;

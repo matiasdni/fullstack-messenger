@@ -1,3 +1,4 @@
+import { useAppDispatch, useAppSelector } from "@/app/store";
 import { clsx } from "clsx";
 import { addSentFriendRequest } from "features/auth/authSlice";
 import { createChat } from "features/chats/chatsSlice";
@@ -6,7 +7,6 @@ import { useState } from "react";
 import api from "services/api";
 import { chatData } from "services/chatService";
 import { searchUsersByName, sendFriendRequest } from "services/userService";
-import { useAppDispatch, useAppSelector } from "store";
 
 const StatusIndicator = ({ online }) => {
   return (
@@ -125,7 +125,6 @@ const SearchResults = ({ results }) => {
 
 const UserSearchForm = ({ setResults }) => {
   const [username, setUsername] = useState("");
-  const currentUser = useAuth().user;
   const token = useAppSelector((state) => state.auth.token);
 
   const handleSubmit = async (e) => {
@@ -141,7 +140,6 @@ const UserSearchForm = ({ setResults }) => {
 
     if (username) {
       const users = await searchUsersByName(username);
-      const filteredUsers = users.filter((user) => user.id !== currentUser.id);
       setResults(users);
     }
   };

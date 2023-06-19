@@ -1,10 +1,17 @@
+import { useAppDispatch } from "@/app/store";
 import { updateChat } from "@/features/chats/chatsSlice";
 import { Chat } from "@/features/chats/types";
-import { useToken } from "@/hooks/useAuth";
-import { removeUserFromChat, updateChatInfo } from "services/chatService";
-import { useAppDispatch } from "@/store";
-import { FC, useCallback, useEffect, useState } from "react";
+import { setNotification } from "features/notification/notificationSlice";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { MdOutlineEdit } from "react-icons/md";
+import { removeUserFromChat, updateChatInfo } from "services/chatService";
 import { Avatar } from "../common/Avatar";
 import AvatarStack from "./AvatarStack";
 import EditChatForm from "./EditChatForm";
@@ -12,7 +19,7 @@ import UserTable from "./UserTable";
 
 interface ChatInfoProps {
   activeChat: Chat;
-  setShowChatInfo: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowChatInfo: Dispatch<SetStateAction<boolean>>;
 }
 
 const ChatInfo: FC<ChatInfoProps> = ({ activeChat, setShowChatInfo }) => {
@@ -27,8 +34,6 @@ const ChatInfo: FC<ChatInfoProps> = ({ activeChat, setShowChatInfo }) => {
   const dispatch = useAppDispatch();
   const locale = navigator.language;
 
-  const token = useToken();
-
   useEffect(() => {
     setChatName(activeChat.name);
     setChatDescription(activeChat.description);
@@ -41,11 +46,10 @@ const ChatInfo: FC<ChatInfoProps> = ({ activeChat, setShowChatInfo }) => {
       try {
         const response = await removeUserFromChat(activeChat.id, id);
       } catch (error) {
-        console.error(error);
-        // notify error
+        dispatch(setNotification({ message: error.message, status: "error" }));
       }
     },
-    [activeChat.id]
+    [activeChat.id, dispatch]
   );
 
   const handleSave = useCallback(async () => {
