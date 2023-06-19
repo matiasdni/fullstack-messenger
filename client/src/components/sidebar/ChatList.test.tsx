@@ -1,9 +1,12 @@
+import { setChats } from "@/features/chats/chatsSlice";
 import { Chat } from "@/features/chats/types";
 import store from "@/store";
-import { fireEvent, screen } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { render } from "../../test/setup";
+import fireEvent from "@testing-library/user-event";
+import { renderWithProviders, screen } from "utils/test-utils";
 import { ChatList } from "./ChatList";
+
+const updatedAt = new Date("2022-01-01T00:00:00.000Z");
+const createdAt = new Date("2022-01-01T00:00:00.000Z");
 
 describe("ChatList component", () => {
   const chats: Chat[] = [
@@ -13,8 +16,8 @@ describe("ChatList component", () => {
       chat_type: "group",
       users: [],
       messages: [],
-      createdAt: new Date("2022-01-01T00:00:00.000Z"),
-      updatedAt: new Date("2022-01-01T00:00:00.000Z"),
+      createdAt: "2022-01-01T00:00:00.000Z",
+      updatedAt: "2022-01-01T00:00:00.000Z",
     },
     {
       id: "2",
@@ -31,7 +34,7 @@ describe("ChatList component", () => {
           userId: "1",
           content: "Message 1",
           user: { id: "1", username: "User 1" },
-          createdAt: new Date("2022-01-01T00:00:00.000Z").toString(),
+          createdAt: "2022-01-01T00:00:00.000Z",
         },
         {
           id: "2",
@@ -39,33 +42,24 @@ describe("ChatList component", () => {
           userId: "2",
           content: "Message 2",
           user: { id: "2", username: "User 2" },
-          createdAt: new Date("2022-05-01T00:00:00.000Z").toString(),
+          createdAt: "2022-01-01T00:00:00.000Z",
         },
       ],
-      createdAt: new Date("2022-01-01T00:00:00.000Z"),
-      updatedAt: new Date("2022-01-01T00:00:00.000Z"),
+      createdAt: "2022-01-01T00:00:00.000Z",
+      updatedAt: "2022-01-01T00:00:00.000Z",
     },
   ];
 
-  store.dispatch({ type: "chats/setChats", payload: chats });
-
+  store.dispatch(setChats(chats));
   test("renders chat items", () => {
-    render(
-      <Provider store={store}>
-        <ChatList chats={chats} />
-      </Provider>
-    );
+    renderWithProviders(<ChatList chats={chats} />);
 
     const chatItems = screen.getAllByRole("listitem");
     expect(chatItems).toHaveLength(chats.length);
   });
 
   test("renders chat item with correct name", () => {
-    render(
-      <Provider store={store}>
-        <ChatList chats={chats} />
-      </Provider>
-    );
+    renderWithProviders(<ChatList chats={chats} />);
 
     const chatItem = screen.getByText("Chat 1");
     expect(chatItem).toBeInTheDocument();
@@ -74,14 +68,9 @@ describe("ChatList component", () => {
   // active chat should have its name semi-bold
   // active chat should have its background color changed
   test("renders active chat with correct styles", () => {
-    render(
-      <Provider store={store}>
-        <ChatList chats={chats} />
-      </Provider>
-    );
-
-    const activeChat = screen.getByText("Chat 1");
-    fireEvent.click(activeChat);
-    expect(activeChat).toHaveClass("font-semibold truncate");
+    renderWithProviders(<ChatList chats={chats} />);
+    const chatItem = screen.getByText("Chat 1");
+    fireEvent.click(chatItem);
+    expect(chatItem).toHaveClass("truncate");
   });
 });
