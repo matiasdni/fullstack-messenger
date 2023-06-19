@@ -63,7 +63,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "tsc && vite build",
+    "build": "npm install && tsc && vite build",
     "serve": "vite preview",
     "lint": "eslint . --ext .ts,.tsx",
     "coverage": "vitest run --coverage",
