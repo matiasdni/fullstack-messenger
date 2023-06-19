@@ -4,8 +4,8 @@ import "express-async-errors";
 import session from "express-session";
 import http from "http";
 import { Server } from "socket.io";
+import authRouter from "./controllers/authController";
 import inviteRouter from "./controllers/inviteController";
-import loginRouter from "./controllers/loginController";
 import usersRouter from "./controllers/userController";
 import { mySocket } from "./listeners/types";
 import { authenticateSocket } from "./middlewares/auth";
@@ -37,7 +37,7 @@ const sessionMiddleware = session({
 
 app.use(sessionMiddleware);
 
-app.use("/api/auth", loginRouter);
+app.use("/api/auth", authRouter);
 
 app.use("/images", express.static("./images"));
 

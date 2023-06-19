@@ -1,6 +1,6 @@
-import { Chats, InviteAttributes, Senders } from "../../../shared/types";
-import { friendRequest, User } from "features/users/types";
+import { User, friendRequest } from "features/users/types";
 import api from "services/api";
+import { Chats, InviteAttributes, Senders } from "../../../shared/types";
 
 const BASE_URL = "/users";
 

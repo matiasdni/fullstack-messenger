@@ -91,15 +91,19 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-router.delete("/", async (req: Request, res: Response, next: NextFunction) => {
-  req.session.user = undefined;
-  req.session.save(function (err) {
-    if (err) next(err);
-    req.session.regenerate(function (err) {
+router.get(
+  "/logout",
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`user ${req.session.user} logged out`);
+    req.session.user = undefined;
+    req.session.save(function (err) {
       if (err) next(err);
+      req.session.regenerate(function (err) {
+        if (err) next(err);
+      });
+      res.status(200).json({ message: "logged out" });
     });
-    res.status(200).json({ message: "logged out" });
-  });
-});
+  }
+);
 
 export default router;
