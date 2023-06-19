@@ -128,7 +128,7 @@ export const findOrCreatePrivateChat = async (
   currentUser: User,
   otherUser: User
 ): Promise<Chat> => {
-  const [chat, created] = await Chat.findOrCreate({
+  const [chat] = await Chat.findOrCreate({
     where: {
       [Op.and]: {
         [Op.or]: [

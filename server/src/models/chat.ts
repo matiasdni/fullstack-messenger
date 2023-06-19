@@ -3,18 +3,14 @@ import {
   DataTypes,
   ForeignKey,
   HasManyAddAssociationMixin,
-  HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
   HasManyRemoveAssociationMixin,
-  HasOneGetAssociationMixin,
-  HasOneSetAssociationMixin,
   Model,
   NonAttribute,
 } from "sequelize";
 import { ApiError } from "../utils/ApiError";
 import { sequelize } from "../utils/db";
-import { Invite, User, Message } from "./index";
-import { User as UserModel } from "./index";
+import { Invite, Message, User } from "./index";
 
 class Chat extends Model {
   declare id: string;
@@ -31,19 +27,11 @@ class Chat extends Model {
   declare readonly updatedAt: Date;
 
   declare getUsers: HasManyGetAssociationsMixin<User>;
-  declare getMessages: HasManyGetAssociationsMixin<Message>;
-  declare getInvites: HasManyGetAssociationsMixin<Invite>;
-  declare getOwner: HasOneGetAssociationMixin<User>;
-  declare setOwner: HasOneSetAssociationMixin<User, "id">;
-
-  declare createUser: HasManyCreateAssociationMixin<User, "id">;
-  declare createMessage: HasManyCreateAssociationMixin<Message, "chatId">;
 
   declare addUser: HasManyAddAssociationMixin<User, "id">;
   declare removeUser: HasManyRemoveAssociationMixin<User, "id">;
 
   declare addInvites: HasManyAddAssociationMixin<Invite[], "id">;
-  declare removeInvites: HasManyRemoveAssociationMixin<Invite[], "id">;
 
   async addUsers(users: User[]): Promise<Chat> {
     const transaction = await this.sequelize!.transaction();
@@ -108,7 +96,7 @@ Chat.init(
     validate: {
       async ownerExists() {
         if (this.ownerId) {
-          const user = await UserModel.findByPk(this.ownerId.toString());
+          const user = await User.findByPk(this.ownerId.toString());
           if (!user) {
             throw new ApiError(400, "Owner does not exist");
           }

@@ -23,4 +23,3 @@ export const config = {
   },
 };
 export const jwtSecret = config.jwt.secret;
-export const sessionSecret = config.session.secret;

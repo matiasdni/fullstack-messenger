@@ -1,5 +1,5 @@
 import { socket } from "@/app/socket";
-import { AppDispatch, useAppSelector } from "@/app/store";
+import { AppDispatch } from "@/app/store";
 import {
   addChatInvite,
   addFriend,
@@ -15,7 +15,7 @@ import {
 } from "features/chats/chatsSlice";
 import { Chat, Message } from "features/chats/types";
 import { setNotification } from "features/notification/notificationSlice";
-import { User, friendRequest } from "features/users/types";
+import { friendRequest, User } from "features/users/types";
 import React from "react";
 
 export const onConnect =

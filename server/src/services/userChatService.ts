@@ -10,12 +10,3 @@ export const getChatIds = async (userId: string) => {
 
   return chat_ids.map((chat: UserChat) => chat.chat_id) as string[];
 };
-
-export const chatUsers = async (chatId: string) => {
-  return await UserChat.findAll({
-    where: {
-      chat_id: chatId,
-    },
-    attributes: ["user_id"],
-  });
-};

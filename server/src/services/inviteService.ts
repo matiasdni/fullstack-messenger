@@ -10,7 +10,7 @@ import {
   Status,
   TChat,
 } from "../../../shared/types";
-import { Invite, User } from "../models";
+import { Invite } from "../models";
 import { ApiError } from "../utils/ApiError";
 
 // senderId: The id of the user who is sending the invite.

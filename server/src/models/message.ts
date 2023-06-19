@@ -1,13 +1,6 @@
-import {
-  BelongsToCreateAssociationMixin,
-  BelongsToGetAssociationMixin,
-  DataTypes,
-  ForeignKey,
-  Model,
-} from "sequelize";
+import { DataTypes, ForeignKey, Model } from "sequelize";
 import { sequelize } from "../utils/db";
-import { Chat } from "./index";
-import { User } from "./index";
+import { Chat, User } from "./index";
 
 class Message extends Model {
   declare id: string;
@@ -17,12 +10,6 @@ class Message extends Model {
 
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
-
-  declare getUser: BelongsToGetAssociationMixin<User>;
-  declare setUser: BelongsToCreateAssociationMixin<User>;
-
-  declare getChat: BelongsToGetAssociationMixin<Chat>;
-  declare setChat: BelongsToCreateAssociationMixin<Chat>;
 }
 
 Message.init(

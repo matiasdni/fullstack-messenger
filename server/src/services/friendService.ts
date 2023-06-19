@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import { UserFriends, User } from "../models";
+import { User, UserFriends } from "../models";
 import { ApiError } from "../utils/ApiError";
 import logger from "../utils/logger";
 import { sequelize } from "../utils/db";

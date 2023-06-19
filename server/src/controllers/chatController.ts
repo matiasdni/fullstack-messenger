@@ -2,9 +2,7 @@ import { Request, Response } from "express";
 import fs from "fs";
 import { connectedClients } from "../listeners/socketHandler";
 import { AuthRequest } from "../middlewares/auth";
-import { Chat, Invite } from "../models";
-import { Message } from "../models";
-import { User } from "../models";
+import { Chat, Invite, Message, User } from "../models";
 import { io } from "../server";
 import {
   createChatWithUsers,
@@ -161,7 +159,6 @@ const removeUserFromChat = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  const currentUser = req.user;
   const chat = await Chat.findByPk(req.params.chatId);
   if (!chat) throw new ApiError(404, "Chat not found");
   const user = await User.findByPk(req.params.userId);

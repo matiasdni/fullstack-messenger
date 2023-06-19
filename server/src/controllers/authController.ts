@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { jwtSecret } from "../config";
 import { User } from "../models";
@@ -10,7 +10,7 @@ import logger from "../utils/logger";
 
 const router = express.Router();
 
-router.post("/", async (req: Request, res: Response, next: NextFunction) => {
+router.post("/", async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
   const user = await User.findOne({
@@ -83,11 +83,8 @@ router.get("/", async (req: any, res) => {
   });
 });
 
-router.get(
-  "/logout",
-  async (req: Request, res: Response, next: NextFunction) => {
-    res.status(200).json({ message: "logged out" });
-  }
-);
+router.get("/logout", async (req: Request, res: Response) => {
+  res.status(200).json({ message: "logged out" });
+});
 
 export default router;

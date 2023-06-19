@@ -1,5 +1,4 @@
-import { Chat, UserChat } from "../models";
-import { Message } from "../models";
+import { Chat, Message, UserChat } from "../models";
 
 export async function createMessage(
   content: string,

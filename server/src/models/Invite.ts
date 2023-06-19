@@ -6,8 +6,7 @@ import {
   NonAttribute,
 } from "sequelize";
 import { sequelize } from "../utils/db";
-import { Chat } from "./index";
-import { User } from "./index";
+import { Chat, User } from "./index";
 
 class Invite extends Model {
   declare id: CreationOptional<string>;

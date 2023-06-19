@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { User } from "../models/user";
+import { User } from "../models";
 
 export type newMessage = {
   content: string;
