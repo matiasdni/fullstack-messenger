@@ -1,5 +1,6 @@
-import { DataTypes, Model, NonAttribute, Sequelize } from "sequelize";
-import { User } from "./initModels";
+import { DataTypes, Model, NonAttribute } from "sequelize";
+import { sequelize } from "../utils/db";
+import { User } from "./index";
 
 class UserFriends extends Model {
   declare userId: string;
@@ -12,46 +13,44 @@ class UserFriends extends Model {
   declare readonly updatedAt: Date;
 }
 
-const initUserFriends = (sequelize: Sequelize): void => {
-  UserFriends.init(
-    {
-      userId: {
-        type: DataTypes.UUID,
-        primaryKey: true,
-        allowNull: false,
-      },
-      friendId: {
-        type: DataTypes.UUID,
-        primaryKey: true,
-        allowNull: false,
-      },
-      status: {
-        type: DataTypes.ENUM("pending", "accepted", "rejected"),
-        allowNull: false,
-        defaultValue: "pending",
+UserFriends.init(
+  {
+    userId: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      allowNull: false,
+    },
+    friendId: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM("pending", "accepted", "rejected"),
+      allowNull: false,
+      defaultValue: "pending",
+    },
+  },
+  {
+    hooks: {
+      afterCreate: async (userFriends, options) => {
+        const friend = await UserFriends.findOne({
+          where: {
+            userId: userFriends.friendId,
+            friendId: userFriends.userId,
+            status: "pending",
+          },
+        });
+        if (friend) {
+          await friend.update({ status: "accepted" }, options);
+          await userFriends.update({ status: "accepted" }, options);
+        }
       },
     },
-    {
-      hooks: {
-        afterCreate: async (userFriends, options) => {
-          const friend = await UserFriends.findOne({
-            where: {
-              userId: userFriends.friendId,
-              friendId: userFriends.userId,
-              status: "pending",
-            },
-          });
-          if (friend) {
-            await friend.update({ status: "accepted" }, options);
-            await userFriends.update({ status: "accepted" }, options);
-          }
-        },
-      },
-      sequelize,
-      tableName: "user_friends",
-      underscored: true,
-    }
-  );
-};
+    sequelize,
+    tableName: "user_friends",
+    underscored: true,
+  }
+);
 
-export { UserFriends, initUserFriends };
+export default UserFriends;

@@ -10,12 +10,11 @@ import {
   HasOneSetAssociationMixin,
   Model,
   NonAttribute,
-  Sequelize,
 } from "sequelize";
 import { ApiError } from "../utils/ApiError";
-import { Invite } from "./Invite";
-import { Message } from "./message";
-import { User } from "./user";
+import { sequelize } from "../utils/db";
+import { Invite, User, Message } from "./index";
+import { User as UserModel } from "./index";
 
 class Chat extends Model {
   declare id: string;
@@ -61,68 +60,66 @@ class Chat extends Model {
   }
 }
 
-const initChat = (sequelize: Sequelize): void => {
-  Chat.init(
-    {
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-        allowNull: false,
-        unique: true,
+Chat.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false,
+      unique: true,
 
-        validate: {
-          isUUID: {
-            args: 4,
-            msg: "id must be a valid uuid",
-          },
-          notNull: {
-            msg: "id cannot be null",
-          },
+      validate: {
+        isUUID: {
+          args: 4,
+          msg: "id must be a valid uuid",
         },
-      },
-      name: {
-        type: DataTypes.STRING(32),
-        allowNull: true,
-      },
-      description: {
-        type: DataTypes.STRING(32),
-        allowNull: true,
-      },
-      image: {
-        type: DataTypes.STRING,
-      },
-      chat_type: {
-        type: DataTypes.ENUM,
-        values: ["private", "group"],
-        allowNull: false,
-        defaultValue: "private",
-        validate: {
-          isIn: [["private", "group"]],
+        notNull: {
+          msg: "id cannot be null",
         },
-      },
-      ownerId: {
-        type: DataTypes.UUID,
-        allowNull: true,
       },
     },
-    {
+    name: {
+      type: DataTypes.STRING(32),
+      allowNull: true,
+    },
+    description: {
+      type: DataTypes.STRING(32),
+      allowNull: true,
+    },
+    image: {
+      type: DataTypes.STRING,
+    },
+    chat_type: {
+      type: DataTypes.ENUM,
+      values: ["private", "group"],
+      allowNull: false,
+      defaultValue: "private",
       validate: {
-        async ownerExists() {
-          if (this.ownerId) {
-            const user = await User.findByPk(this.ownerId.toString());
-            if (!user) {
-              // todo: make a custom error class for database errors
-              throw new ApiError(400, "Owner does not exist");
-            }
-          }
-        },
+        isIn: [["private", "group"]],
       },
+    },
+    ownerId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+  },
+  {
+    validate: {
+      async ownerExists() {
+        if (this.ownerId) {
+          const user = await UserModel.findByPk(this.ownerId.toString());
+          if (!user) {
+            // todo: make a custom error class for database errors
+            throw new ApiError(400, "Owner does not exist");
+          }
+        }
+      },
+    },
 
-      tableName: "chat",
-      sequelize,
-    }
-  );
-};
+    tableName: "chat",
+    sequelize,
+  }
+);
 
-export { Chat, initChat };
+export default Chat;

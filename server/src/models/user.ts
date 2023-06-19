@@ -6,10 +6,9 @@ import {
   HasManyGetAssociationsMixin,
   Model,
   NonAttribute,
-  Sequelize,
 } from "sequelize";
-import { Chat } from "./chat";
-import { Message } from "./message";
+import { sequelize } from "../utils/db";
+import { Chat, Message } from "./index";
 
 class User extends Model {
   declare id: CreationOptional<string>;
@@ -37,81 +36,79 @@ class User extends Model {
   }
 }
 
-const initUser = (sequelize: Sequelize): void => {
-  User.init(
-    {
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-        unique: true,
-        allowNull: false,
-        validate: {
-          notNull: {
-            msg: "Id cannot be null",
-          },
-          isUUID: {
-            args: 4,
-            msg: "Id must be a valid uuid",
-          },
+User.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      unique: true,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Id cannot be null",
         },
-      },
-      username: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-        validate: {
-          len: {
-            args: [4, 32],
-            msg: "Username must be between 4 and 32 characters",
-          },
-          notNull: {
-            msg: "Username cannot be null",
-          },
-          isAlphanumeric: {
-            msg: "Username must be alphanumeric",
-          },
+        isUUID: {
+          args: 4,
+          msg: "Id must be a valid uuid",
         },
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          len: {
-            args: [4, 100],
-            msg: "Password must be between 4 and 100 characters",
-          },
-          notNull: {
-            msg: "Password cannot be null",
-          },
-        },
-      },
-      image: {
-        type: DataTypes.STRING,
       },
     },
-    {
-      hooks: {
-        beforeCreate: async (user: User) => {
-          user.password = await bcrypt.hash(user.password!, 10);
+    username: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+      validate: {
+        len: {
+          args: [4, 32],
+          msg: "Username must be between 4 and 32 characters",
+        },
+        notNull: {
+          msg: "Username cannot be null",
+        },
+        isAlphanumeric: {
+          msg: "Username must be alphanumeric",
         },
       },
-      getterMethods: {
-        ownedChatsCount() {
-          return this.ownedChats?.length;
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: {
+          args: [4, 100],
+          msg: "Password must be between 4 and 100 characters",
         },
-        messagesCount() {
-          return this.getMessages?.length;
-        },
-        chatsCount() {
-          return this.getChats?.length;
+        notNull: {
+          msg: "Password cannot be null",
         },
       },
-      sequelize,
-      tableName: "user",
-      underscored: true,
-    }
-  );
-};
+    },
+    image: {
+      type: DataTypes.STRING,
+    },
+  },
+  {
+    hooks: {
+      beforeCreate: async (user: User) => {
+        user.password = await bcrypt.hash(user.password!, 10);
+      },
+    },
+    getterMethods: {
+      ownedChatsCount() {
+        return this.ownedChats?.length;
+      },
+      messagesCount() {
+        return this.getMessages?.length;
+      },
+      chatsCount() {
+        return this.getChats?.length;
+      },
+    },
+    sequelize,
+    tableName: "user",
+    underscored: true,
+  }
+);
 
-export { User, initUser };
+export default User;

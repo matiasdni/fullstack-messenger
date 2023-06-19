@@ -1,8 +1,8 @@
 import { Op } from "sequelize";
-import { UserFriends } from "../models/UserFriends";
-import { sequelize, User } from "../models/initModels";
+import { UserFriends, User } from "../models";
 import { ApiError } from "../utils/ApiError";
 import logger from "../utils/logger";
+import { sequelize } from "../utils/db";
 
 const findAllWithId = (userId: string, friendId: string, ...args: any) => {
   // args is an object so need to format it to match the signature of findAll
@@ -39,7 +39,7 @@ const friendService = {
       },
     });
 
-    const friendIds = friends.map((friend) => {
+    const friendIds = friends.map((friend: any) => {
       if (friend.userId === userId) {
         return friend.friendId;
       }
@@ -54,7 +54,7 @@ const friendService = {
       },
       attributes: ["id", "username"],
     });
-    return friendsList.map((friend) => {
+    return friendsList.map((friend: any) => {
       return {
         id: friend.id as String,
         username: friend.username,
@@ -75,7 +75,7 @@ const friendService = {
       ],
     });
 
-    return friendRequests.map((friendRequest) => ({
+    return friendRequests.map((friendRequest: any) => ({
       id: friendRequest.friendId,
       friendId: friendRequest.friendId,
       userId: friendRequest.userId,
@@ -182,7 +182,7 @@ const friendService = {
       throw new ApiError(404, "Friend request not found");
     }
     await Promise.all(
-      friendRequests.map(async (friendRequest) => {
+      friendRequests.map(async (friendRequest: any) => {
         friendRequest.status = "accepted";
         await friendRequest.save();
       })
@@ -302,7 +302,7 @@ const friendService = {
       ],
     });
 
-    return friendRequests.map((friendRequest) => {
+    return friendRequests.map((friendRequest: any) => {
       return {
         id: friendRequest.friendId,
         friendId: friendRequest.friendId,

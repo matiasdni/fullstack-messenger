@@ -1,11 +1,10 @@
 import _ from "lodash";
-import "./src/models/initModels";
-import { Chat, initModels, sequelize, User } from "./src/models/initModels";
-import { addUserToChat, createChat } from "./src/services/chatService";
-import friendService from "./src/services/friendService";
-import { createMessage } from "./src/services/messageService";
-import { createUser } from "./src/services/userService";
-import { UserFriends } from "./src/models/UserFriends";
+import { addUserToChat, createChat } from "../services/chatService";
+import friendService from "../services/friendService";
+import { createMessage } from "../services/messageService";
+import { createUser } from "../services/userService";
+import { connectToDatabase, sequelize } from "./db";
+import { ChatInstance, User, UserFriends } from "../models";
 
 // sample data with different real names and passwords
 const sampleUsers = [
@@ -30,7 +29,7 @@ const sampleUsers = [
 
 async function main() {
   try {
-    await initModels();
+    await connectToDatabase();
     await sequelize.sync({ force: true });
 
     // Create sample users
@@ -89,7 +88,7 @@ async function main() {
     await createMessage("How is your day going?", user1.id, generalChat.id);
 
     // Create another chat
-    const anotherChat: Chat = await createChat(
+    const anotherChat: ChatInstance = await createChat(
       "Another chat",
       "Another sample chat",
       "group",

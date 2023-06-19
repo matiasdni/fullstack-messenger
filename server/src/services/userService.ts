@@ -1,7 +1,6 @@
 import { Op } from "sequelize";
 import { jwtSecret } from "../config";
-import { Chat } from "../models/chat";
-import { User } from "../models/user";
+import { Chat, User } from "../models";
 import { ApiError } from "../utils/ApiError";
 import { jwtVerify } from "../utils/jwt";
 import { getChatIds } from "./userChatService";

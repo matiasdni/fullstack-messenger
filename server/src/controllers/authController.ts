@@ -1,19 +1,12 @@
 import express, { NextFunction, Request, Response } from "express";
-import { SessionData } from "express-session";
 import jwt from "jsonwebtoken";
 import { jwtSecret } from "../config";
-import { User } from "../models/user";
+import { User } from "../models";
 import friendService from "../services/friendService";
 import { getPendingInvites } from "../services/inviteService";
 import { ApiError } from "../utils/ApiError";
 import { jwtSign } from "../utils/jwt";
 import logger from "../utils/logger";
-
-declare module "express-session" {
-  interface SessionData {
-    user: string;
-  }
-}
 
 const router = express.Router();
 
@@ -58,8 +51,8 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-router.get("/", async (req: Request, res: Response, next: NextFunction) => {
-  const userId = req.session.user;
+router.get("/", async (req: any, res) => {
+  const userId = req.user.id;
   if (!userId) {
     logger.error("no user in session");
     throw new ApiError(401 as const, "no session");

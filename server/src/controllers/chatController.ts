@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import fs from "fs";
 import { connectedClients } from "../listeners/socketHandler";
 import { AuthRequest } from "../middlewares/auth";
-import { Chat } from "../models/chat";
-import { Message } from "../models/message";
-import { User } from "../models/user";
+import { Chat, Invite } from "../models";
+import { Message } from "../models";
+import { User } from "../models";
 import { io } from "../server";
 import {
   createChatWithUsers,
@@ -15,7 +15,12 @@ import { ApiError } from "../utils/ApiError";
 import logger from "../utils/logger";
 
 interface AuthenticatedRequest extends Request {
-  user: User;
+  user:
+    | Partial<User>
+    | {
+        username: string;
+        id: string;
+      };
 }
 
 export enum ChatTypeEnum {
@@ -30,15 +35,15 @@ export interface ChatData {
   chat_type: ChatType;
   userIds: string[];
   description?: string;
-  currentUser?: User;
+  currentUser?: Partial<User>;
 }
 
 // todo: fix this spaghetti
 const createChat = async (req: AuthenticatedRequest, res: Response) => {
   const { name, description, chat_type, userIds } = req.body as ChatData;
-  const currentUser: User = req.user;
+  const currentUser = req.user;
 
-  let chat: Chat;
+  let chat: Chat | null = null;
 
   if (chat_type === "private") {
     const user = await User.findByPk(currentUser.id);
@@ -87,19 +92,19 @@ const createChat = async (req: AuthenticatedRequest, res: Response) => {
 
   res.status(200).json(chat.toJSON());
 
-  const currentUserSockets = connectedClients[currentUser.id];
+  const currentUserSockets = connectedClients[currentUser.id as string];
   currentUserSockets.forEach((socket) => {
-    socket.join(chat.id);
+    socket.join(chat?.id as string);
   });
 
   if (chat.chat_type === "group") {
     const invites = chat.invites;
-    invites.forEach((invite) => {
+    invites.forEach((invite: Invite) => {
       io.to(invite.recipientId).emit("chat-invite", {
         invite,
         chat: {
-          id: chat.id,
-          name: chat.name,
+          id: chat?.id,
+          name: chat?.name,
         },
         sender: {
           id: currentUser.id,

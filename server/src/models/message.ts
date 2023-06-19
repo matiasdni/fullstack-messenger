@@ -4,10 +4,10 @@ import {
   DataTypes,
   ForeignKey,
   Model,
-  Sequelize,
 } from "sequelize";
-import { User } from "./user";
-import { Chat } from "./chat";
+import { sequelize } from "../utils/db";
+import { Chat } from "./index";
+import { User } from "./index";
 
 class Message extends Model {
   declare id: string;
@@ -25,35 +25,33 @@ class Message extends Model {
   declare setChat: BelongsToCreateAssociationMixin<Chat>;
 }
 
-const initMessage = (sequelize: Sequelize): void => {
-  Message.init(
-    {
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-        unique: true,
-        allowNull: false,
-      },
-      content: {
-        type: new DataTypes.TEXT(),
-        allowNull: false,
-      },
-      userId: {
-        type: DataTypes.UUID,
-        allowNull: false,
-      },
-      chatId: {
-        type: DataTypes.UUID,
-        allowNull: false,
-      },
+Message.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      unique: true,
+      allowNull: false,
     },
-    {
-      tableName: "message",
-      sequelize,
-      underscored: true,
-    }
-  );
-};
+    content: {
+      type: new DataTypes.TEXT(),
+      allowNull: false,
+    },
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    chatId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+  },
+  {
+    tableName: "message",
+    sequelize,
+    underscored: true,
+  }
+);
 
-export { Message, initMessage };
+export default Message;

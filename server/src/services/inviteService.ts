@@ -3,7 +3,6 @@ import {
   CreateInviteInput,
   GetPendingInvitesInput,
   GetPendingInvitesOutput,
-  Invite,
   InviteAttributes,
   RejectInviteInput,
   Sender,
@@ -11,7 +10,7 @@ import {
   Status,
   TChat,
 } from "../../../shared/types";
-import { Invite as InviteModel, User } from "../models/initModels";
+import { Invite, User } from "../models";
 import { ApiError } from "../utils/ApiError";
 
 // senderId: The id of the user who is sending the invite.
@@ -22,7 +21,7 @@ const createInvite = async ({
   chatId,
   recipientId,
 }: CreateInviteInput): Promise<InviteAttributes> => {
-  const invite = await InviteModel.create({
+  const invite = await Invite.create({
     senderId: senderId,
     chatId: chatId,
     recipientId: recipientId,
@@ -34,10 +33,10 @@ const createInvite = async ({
 // inviteId: The id of the invite to accept or reject.
 // userId: The id of the user who is accepting or rejecting the invite.
 const updateInvite = async (
-  updatedInvite: Invite,
-  user: User
+  updatedInvite: any,
+  user: any
 ): Promise<InviteAttributes> => {
-  const invite = await InviteModel.findOne({
+  const invite = await Invite.findOne({
     where: {
       id: updatedInvite.id,
       recipientId: user.id,
@@ -78,7 +77,7 @@ const rejectInvite = async ({
   userId,
 }: RejectInviteInput): Promise<void> => {
   // delete invite from database if it exists for now. Later implement a way to view rejected invites maybe?
-  const invite = await InviteModel.findOne({
+  const invite = await Invite.findOne({
     where: {
       id: inviteId,
       recipientId: userId,
@@ -97,7 +96,7 @@ const rejectInvite = async ({
 const getPendingInvites = async ({
   userId,
 }: GetPendingInvitesInput): Promise<GetPendingInvitesOutput> => {
-  const invites = await InviteModel.findAll({
+  const invites = await Invite.findAll({
     where: {
       recipientId: userId,
       status: "pending",
@@ -115,7 +114,7 @@ const getPendingInvites = async ({
     order: [["createdAt", "DESC"]],
   });
 
-  const inviteAttributes = invites.map((invite) => ({
+  const inviteAttributes = invites.map((invite: any) => ({
     id: invite.id,
     status: invite.status as Status,
     senderId: invite.senderId,
@@ -125,12 +124,12 @@ const getPendingInvites = async ({
     updatedAt: invite.updatedAt,
   }));
 
-  const senders = invites.reduce((acc, invite) => {
+  const senders = invites.reduce((acc: any, invite: any) => {
     acc[invite.senderId] = invite.sender.toJSON() as Sender;
     return acc;
   }, {} as Senders);
 
-  const chats = invites.reduce((acc, invite) => {
+  const chats = invites.reduce((acc: any, invite: any) => {
     acc[invite.chatId] = invite.chat.toJSON() as TChat;
     return acc;
   }, {} as Chats);

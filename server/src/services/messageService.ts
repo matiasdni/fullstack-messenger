@@ -1,5 +1,5 @@
-import { Chat, UserChat } from "../models/initModels";
-import { Message } from "../models/message";
+import { Chat, UserChat } from "../models";
+import { Message } from "../models";
 
 export async function createMessage(
   content: string,

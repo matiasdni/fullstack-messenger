@@ -1,13 +1,12 @@
 import _ from "lodash";
 import { Op, Transaction } from "sequelize";
 import { ChatData } from "../controllers/chatController";
-import { Invite } from "../models/Invite";
-import { Chat } from "../models/chat";
-import { User } from "../models/user";
 
-export async function addUserToChat(user: User, chat: Chat) {
+import { Chat, Invite, User } from "../models";
+
+export const addUserToChat = async (user: User, chat: Chat) => {
   await chat.addUser(user);
-}
+};
 
 export async function findChats(ids: string[]): Promise<Chat[]> {
   const chats = await Chat.findAll({
@@ -37,7 +36,7 @@ export async function findChats(ids: string[]): Promise<Chat[]> {
     ],
   });
 
-  const sortedChats = _.orderBy(
+  return _.orderBy(
     chats,
     [
       (chat) => {
@@ -49,8 +48,6 @@ export async function findChats(ids: string[]): Promise<Chat[]> {
     ],
     ["desc"]
   );
-
-  return sortedChats;
 }
 
 export async function createChat(
@@ -92,8 +89,11 @@ export const createChatWithUsers = async (
 
   // add invitations to chat
   await chat.addInvites(invitations, { transaction });
+  const user = await User.findByPk(chatData.currentUser!.id, {
+    transaction,
+  });
   // add current user to chat (owner / creator)
-  await chat.addUser(chatData.currentUser!, { transaction });
+  await chat.addUser(user!, { transaction });
 
   await chat.reload({
     include: [
@@ -150,4 +150,12 @@ export const findOrCreatePrivateChat = async (
   });
 
   return chat;
+};
+
+module.exports = {
+  addUserToChat,
+  findChats,
+  createChat,
+  createChatWithUsers,
+  findOrCreatePrivateChat,
 };
