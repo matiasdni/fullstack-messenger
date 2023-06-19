@@ -1,45 +1,28 @@
-import React, { useState } from "react";
+import { FC, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppDispatch } from "@/store";
-import { login } from "@/features/auth/authSlice";
-import { isFulfilled } from "@reduxjs/toolkit";
-import { useNavigate } from "react-router";
-import { getChats } from "@/features/chats/chatsSlice";
-import { setNotification } from "features/notification/notificationSlice";
-import api from "services/api";
 
-export const LoginForm = ({ onRegisterClick }) => {
+type LoginFormProps = {
+  onRegisterClick: () => void;
+  navigate: (path: string) => void;
+  handleSubmit: (username: string, password: string) => void;
+};
+
+export const LoginForm: FC<LoginFormProps> = ({
+  onRegisterClick,
+  navigate,
+  handleSubmit,
+}) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    dispatch(login({ username, password })).then((action) => {
-      if (isFulfilled(action)) {
-        api.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${action.payload.token}`;
-        dispatch(getChats(action.payload.token)).then((action) => {
-          if (isFulfilled(action)) {
-            navigate("/");
-            dispatch(
-              setNotification({
-                message: "Login successful",
-                status: "success",
-              })
-            );
-          }
-        });
-      }
-    });
-  };
 
   return (
     <>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit(username, password);
+        }}
+        data-testid="login-form"
         className="form-input m-auto max-w-md rounded-lg border-0 bg-blue-50 py-[16px] shadow-md ring-1 dark:border-collapse  dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:shadow-2xl dark:ring-0"
       >
         {/* input fields */}
@@ -56,8 +39,9 @@ export const LoginForm = ({ onRegisterClick }) => {
             </label>
             <input
               id="login-username"
+              data-testid="login-username"
               type="text"
-              placeholder="Username     "
+              placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400"
@@ -75,6 +59,7 @@ export const LoginForm = ({ onRegisterClick }) => {
             <input
               id="login-password"
               type="password"
+              data-testid="login-password"
               placeholder="Password"
               autoComplete={"current-password"}
               value={password}
@@ -112,6 +97,7 @@ export const LoginForm = ({ onRegisterClick }) => {
               // disabled={loading}
               className="h-10 w-full rounded-lg bg-blue-700 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               type="submit"
+              data-testid="login-button"
             >
               Sign In
             </button>
