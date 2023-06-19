@@ -1,13 +1,3 @@
-import { socket } from "socket";
-import { AppDispatch } from "store";
-import React from "react";
-import { Chat, Message } from "features/chats/types";
-import {
-  addMessage,
-  getChatById,
-  removeChat,
-  updateChat,
-} from "features/chats/chatsSlice";
 import {
   addChatInvite,
   addFriend,
@@ -15,8 +5,18 @@ import {
   removeFriendRequest,
   updateUser,
 } from "features/auth/authSlice";
-import { friendRequest, User } from "features/users/types";
+import {
+  addMessage,
+  getChatById,
+  removeChat,
+  updateChat,
+} from "features/chats/chatsSlice";
+import { Chat, Message } from "features/chats/types";
 import { setNotification } from "features/notification/notificationSlice";
+import { User, friendRequest } from "features/users/types";
+import React from "react";
+import { socket } from "socket";
+import { AppDispatch } from "store";
 
 export const onConnect =
   (chatsRef: React.MutableRefObject<Chat[]>) => (): void => {
@@ -40,6 +40,7 @@ export function onMessage(
     } else {
       dispatch(addMessage(data));
     }
+    dispatch(setNotification({ message: "New Message!", status: "info" }));
   };
 }
 
