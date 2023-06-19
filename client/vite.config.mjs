@@ -3,8 +3,8 @@
 
 import react from "@vitejs/plugin-react";
 import path from "path";
-import { defineConfig } from "vite";
-import { checker } from "vite-plugin-checker";
+import {defineConfig} from "vite";
+import {checker} from "vite-plugin-checker";
 import svgrPlugin from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
 
