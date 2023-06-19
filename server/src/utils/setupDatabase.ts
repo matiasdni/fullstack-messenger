@@ -4,7 +4,7 @@ import friendService from "../services/friendService";
 import { createMessage } from "../services/messageService";
 import { createUser } from "../services/userService";
 import { connectToDatabase, sequelize } from "./db";
-import { ChatInstance, User, UserFriends } from "../models";
+import { Chat, User, UserFriends } from "../models";
 
 // sample data with different real names and passwords
 const sampleUsers = [
@@ -88,7 +88,7 @@ async function main() {
     await createMessage("How is your day going?", user1.id, generalChat.id);
 
     // Create another chat
-    const anotherChat: ChatInstance = await createChat(
+    const anotherChat: Chat = await createChat(
       "Another chat",
       "Another sample chat",
       "group",

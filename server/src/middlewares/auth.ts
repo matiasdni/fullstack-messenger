@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { mySocket } from "../listeners/types";
-import { User } from "../models/user";
+import { User } from "../models";
 import { getUserByToken } from "../services/userService";
 import { ApiError } from "../utils/ApiError";
 import logger from "../utils/logger";

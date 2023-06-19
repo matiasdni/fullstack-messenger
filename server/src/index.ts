@@ -1,16 +1,16 @@
 import { server } from "./server";
-import "./models/initModels";
-import { initModels } from "./models/initModels";
+import "./models";
 import logger from "./utils/logger";
+import { connectToDatabase } from "./utils/db";
 
 const PORT = process.env.PORT || 3001;
 
-initModels()
+connectToDatabase()
   .then(() => {
     server.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);
     });
   })
-  .catch((err) => {
+  .catch((err: Error) => {
     logger.error(err);
   });
