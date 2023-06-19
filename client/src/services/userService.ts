@@ -1,4 +1,4 @@
-import { User, friendRequest } from "features/users/types";
+import { friendRequest } from "features/users/types";
 import api from "services/api";
 import { Chats, InviteAttributes, Senders } from "../../../shared/types";
 
@@ -25,9 +25,13 @@ export const createUser = async (user: {
   return await api.post(`${BASE_URL}`, user);
 };
 
-export const searchUsersByName = async (name: string): Promise<User[]> => {
+export const searchUsersByName = async (name: string) => {
   const response = await api.post(`${BASE_URL}/search`, { name });
-  return response.data;
+  if (response.data) {
+    return response.data;
+  } else {
+    throw new Error("Response data is undefined");
+  }
 };
 
 export const fetchUserChats = async (id: string) => {
