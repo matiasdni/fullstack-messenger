@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "fullstack-messenger-backend",
   "version": "1.0.0",
   "description": "Backend server for the chat app",
   "main": "index.ts",
@@ -8,7 +8,9 @@
     "start": "nodemon --exec ts-node ./src/index.ts",
     "start:prod": "NODE_ENV=production nodemon --exec ts-node ./src/index.ts",
     "setup-db": "ts-node setupDatabase.ts",
-    "dev": "ts-node ./src/utils/setupDatabase.ts && npm start"
+    "dev": "ts-node ./src/utils/setupDatabase.ts && npm start",
+    "build:ui": "rm -rf build && cd ../client/ && npm run build && cp -r build ../server",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
   },
   "keywords": [],
   "author": "",

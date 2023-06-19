@@ -34,6 +34,8 @@ app.use(
   })
 );
 
+app.use(express.static('build'));
+
 app.use("/api/auth", authRouter);
 
 app.use("/images", express.static("./images"));
