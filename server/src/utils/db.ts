@@ -1,6 +1,6 @@
-import { config } from "../config";
-import { Sequelize } from "sequelize";
-import { Pool } from "pg";
+import {config} from "./config";
+import {Sequelize} from "sequelize";
+import {Pool} from "pg";
 
 const db: any = config.database;
 

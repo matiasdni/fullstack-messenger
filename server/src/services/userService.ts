@@ -1,8 +1,8 @@
-import { Op } from "sequelize";
-import { jwtSecret } from "../config";
-import { User } from "../models";
-import { ApiError } from "../utils/ApiError";
-import { jwtVerify } from "../utils/jwt";
+import {Op} from "sequelize";
+import {jwtSecret} from "../utils/config";
+import {User} from "../models";
+import {ApiError} from "../utils/ApiError";
+import {jwtVerify} from "../utils/jwt";
 
 export const getUserByToken = async (token: string): Promise<User | null> => {
   try {

@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { jwtSecret } from "../config";
+import {jwtSecret} from "./config";
 
 const jwtSign = (
   payload: string | object | Buffer,

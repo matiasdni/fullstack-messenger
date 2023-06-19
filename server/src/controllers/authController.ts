@@ -1,11 +1,11 @@
-import express, { Request, Response } from "express";
+import express, {Request, Response} from "express";
 import jwt from "jsonwebtoken";
-import { jwtSecret } from "../config";
-import { User } from "../models";
+import {jwtSecret} from "../utils/config";
+import {User} from "../models";
 import friendService from "../services/friendService";
-import { getPendingInvites } from "../services/inviteService";
-import { ApiError } from "../utils/ApiError";
-import { jwtSign } from "../utils/jwt";
+import {getPendingInvites} from "../services/inviteService";
+import {ApiError} from "../utils/ApiError";
+import {jwtSign} from "../utils/jwt";
 import logger from "../utils/logger";
 
 const router = express.Router();
