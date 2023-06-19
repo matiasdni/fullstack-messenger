@@ -39,13 +39,12 @@ const createDatabase = async (): Promise<void> => {
 };
 
 const connectToDatabase = async (): Promise<void> => {
-  await createDatabase();
+  process.env.NODE_ENV !== "production" && (await createDatabase());
   try {
     await sequelize.authenticate();
     console.log("connected to database");
   } catch (error) {
     console.error("connection error", error);
-    throw error;
   }
 };
 
