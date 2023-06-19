@@ -16,8 +16,8 @@ export interface Chat {
   id: string;
   name?: string;
   description?: string;
-  updatedAt: Date;
-  createdAt: Date;
+  updatedAt: string;
+  createdAt: string;
   messages?: Message[];
   users?: User[];
   owner?: User;
