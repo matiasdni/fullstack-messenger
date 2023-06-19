@@ -1,5 +1,5 @@
 import { socket } from "@/app/socket";
-import { AppDispatch } from "@/app/store";
+import { AppDispatch, useAppSelector } from "@/app/store";
 import {
   addChatInvite,
   addFriend,
@@ -30,7 +30,8 @@ export function onDisconnect() {
 
 export function onMessage(
   chatsRef: React.MutableRefObject<Chat[]>,
-  dispatch: AppDispatch
+  dispatch: AppDispatch,
+  currentUser: User
 ) {
   return async (data: Message): Promise<void> => {
     console.log("message received");
@@ -40,7 +41,8 @@ export function onMessage(
     } else {
       dispatch(addMessage(data));
     }
-    dispatch(setNotification({ message: "New Message!", status: "info" }));
+    if (data.userId !== currentUser.id)
+      dispatch(setNotification({ message: "New Message!", status: "info" }));
   };
 }
 
@@ -88,15 +90,3 @@ export function onChatUpdate(dispatch: AppDispatch) {
 export function onLeaveRoom(dispatch: AppDispatch) {
   return (data) => dispatch(removeChat(data));
 }
-
-export default {
-  onConnect,
-  onDisconnect,
-  onMessage,
-  onFriendRequest,
-  onFriendRequestAccepted,
-  onChatInvite,
-  onUserUpdate,
-  onChatUpdate,
-  onLeaveRoom,
-} as const;

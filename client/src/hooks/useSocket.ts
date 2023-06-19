@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 
 const useSocket = () => {
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.auth.user);
   const chats = useAppSelector((state) => state.chats.chats);
   const chatsRef = useRef(chats);
 
@@ -16,7 +17,7 @@ const useSocket = () => {
     const eventHandlers = {
       connect: socketHandlers.onConnect(chatsRef),
       disconnect: socketHandlers.onDisconnect,
-      message: socketHandlers.onMessage(chatsRef, dispatch),
+      message: socketHandlers.onMessage(chatsRef, dispatch, currentUser),
       "friend-request": socketHandlers.onFriendRequest(dispatch),
       "friend-request-accepted":
         socketHandlers.onFriendRequestAccepted(dispatch),
