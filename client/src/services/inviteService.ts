@@ -1,6 +1,6 @@
 import { Invite } from "features/invites/types";
-import { InviteAttributes } from "../../../shared/types";
 import api from "services/api";
+import { InviteAttributes } from "../../../shared/types";
 
 const BASE_URL = "/invites";
 

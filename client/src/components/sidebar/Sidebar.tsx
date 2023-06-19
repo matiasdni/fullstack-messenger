@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { logOut } from "@/features/auth/authSlice";
-import { setNotification } from "@/features/notification/notificationSlice";
+import { logout } from "@/features/auth/authSlice";
 import { useAppDispatch } from "@/store";
 import { Chat } from "features/chats/types";
 import { lazy, Suspense, useState } from "react";
@@ -82,10 +81,7 @@ export const VerticalNav = ({ handleTabChange, activeTab }) => {
   const user = useAppSelector((state) => state.auth.user);
 
   const handleLogOut = () => {
-    dispatch(logOut());
-    dispatch(
-      setNotification({ message: "Logged out successfully", status: "success" })
-    );
+    dispatch(logout());
   };
 
   return (

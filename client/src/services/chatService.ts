@@ -22,7 +22,9 @@ export const fetchChatById = async (chatId: string): Promise<Chat> => {
 };
 
 export const sendMessage = async (chatId: string, message: string) => {
-  const response = await api.post(`${BASE_URL}/${chatId}/message`, { message });
+  const response = await api.post(`${BASE_URL}/${chatId}/message`, {
+    message,
+  });
   return response.data;
 };
 

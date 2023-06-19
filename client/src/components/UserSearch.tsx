@@ -1,12 +1,12 @@
+import { clsx } from "clsx";
 import { addSentFriendRequest } from "features/auth/authSlice";
+import { createChat } from "features/chats/chatsSlice";
 import { useAuth } from "hooks/useAuth";
 import { useState } from "react";
-import { createChat } from "features/chats/chatsSlice";
+import api from "services/api";
 import { chatData } from "services/chatService";
 import { searchUsersByName, sendFriendRequest } from "services/userService";
 import { useAppDispatch, useAppSelector } from "store";
-import api from "services/api";
-import { clsx } from "clsx";
 
 const StatusIndicator = ({ online }) => {
   return (

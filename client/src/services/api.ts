@@ -1,12 +1,8 @@
-import axios, { AxiosRequestConfig, AxiosRequestHeaders } from "axios";
-
-interface AdaptAxiosRequestConfig extends AxiosRequestConfig {
-  headers: AxiosRequestHeaders;
-}
+import axios, { AxiosInstance } from "axios";
 
 const BASE_URL = "/api";
 
-const api = axios.create({
+const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
 });
@@ -26,5 +22,4 @@ api.interceptors.response.use(
     }
   }
 );
-
 export default api;

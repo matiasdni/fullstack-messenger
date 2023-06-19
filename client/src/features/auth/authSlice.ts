@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { setNotification } from "features/notification/notificationSlice";
-import { loginUser } from "services/authService";
-import { removeTokenFromStorage } from "utils/localStorage";
+import { loginUser, logoutUser } from "services/authService";
 import { User } from "../users/types";
 import { AuthInitialState, AuthState, LoginData } from "./types";
 
@@ -25,6 +24,22 @@ export const login = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
+  try {
+    const res = await logoutUser();
+    thunkAPI.dispatch(
+      setNotification({ message: res.message, status: "success" })
+    );
+    thunkAPI.dispatch(logOut());
+    return res;
+  } catch (error) {
+    thunkAPI.dispatch(
+      setNotification({ message: error.message, status: "error" })
+    );
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -32,8 +47,6 @@ const authSlice = createSlice({
     logOut(state) {
       state.user = null;
       state.token = null;
-
-      removeTokenFromStorage();
     },
     setAuth(state, action) {
       state.user = action.payload.user;

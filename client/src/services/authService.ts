@@ -22,3 +22,8 @@ export const loginUser = async (
   const res = await api.post(BASE_URL, loginData);
   return res.data;
 };
+
+export const logoutUser = async () => {
+  const res = await api.get(`${BASE_URL}/logout`);
+  return res.data;
+};
