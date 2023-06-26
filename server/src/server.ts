@@ -4,13 +4,13 @@ import "express-async-errors";
 import helmet from "helmet";
 import http from "http";
 import { Server, Socket } from "socket.io";
-import authRouter from "./controllers/authController";
-import inviteRouter from "./controllers/inviteController";
-import usersRouter from "./controllers/userController";
+import authRouter from "./routers/auth";
+import inviteRouter from "./routers/invite";
+import usersRouter from "./routers/users";
 import setupSocketHandler from "./listeners/socketHandler";
 import { authenticateSocket } from "./middlewares/auth";
 import errorHandler from "./middlewares/errorHandler";
-import chatRouter from "./routes/chats";
+import chatRouter from "./routers/chats";
 
 const app = express();
 
@@ -34,7 +34,7 @@ app.use(
   })
 );
 
-app.use(express.static('build'));
+app.use(express.static("build"));
 
 app.use("/api/auth", authRouter);
 

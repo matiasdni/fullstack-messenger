@@ -1,4 +1,4 @@
-import { Op } from "sequelize";
+import { CreationOptional, Op } from "sequelize";
 import { User, UserFriends } from "../models";
 import { ApiError } from "../utils/ApiError";
 import logger from "../utils/logger";
@@ -311,6 +311,13 @@ const friendService = {
         status: friendRequest.status,
         createdAt: friendRequest.createdAt,
       };
+    });
+  },
+  removeUser(id: CreationOptional<string>) {
+    return User.destroy({
+      where: {
+        id,
+      },
     });
   },
 };

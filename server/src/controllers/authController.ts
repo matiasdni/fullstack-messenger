@@ -1,16 +1,15 @@
-import express, {Request, Response} from "express";
+import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import {jwtSecret} from "../utils/config";
-import {User} from "../models";
+import { jwtSecret } from "../utils/config";
+import { User } from "../models";
 import friendService from "../services/friendService";
-import {getPendingInvites} from "../services/inviteService";
-import {ApiError} from "../utils/ApiError";
-import {jwtSign} from "../utils/jwt";
+import { getPendingInvites } from "../services/inviteService";
+import { ApiError } from "../utils/ApiError";
+import { jwtSign } from "../utils/jwt";
 import logger from "../utils/logger";
+import { AuthRequest } from "../middlewares/auth";
 
-const router = express.Router();
-
-router.post("/", async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
   const user = await User.findOne({
@@ -49,10 +48,10 @@ router.post("/", async (req: Request, res: Response) => {
       sentFriendRequests,
     },
   });
-});
+};
 
-router.get("/", async (req: any, res) => {
-  const userId = req.user.id;
+export const getMe = async (req: Request, res: Response) => {
+  const userId = (req as AuthRequest).user.id;
   if (!userId) {
     logger.error("no user in session");
     throw new ApiError(401 as const, "no session");
@@ -81,10 +80,8 @@ router.get("/", async (req: any, res) => {
       sentFriendRequests,
     },
   });
-});
+};
 
-router.get("/logout", async (req: Request, res: Response) => {
+export const logOut = async (req: Request, res: Response) => {
   res.status(200).json({ message: "logged out" });
-});
-
-export default router;
+};

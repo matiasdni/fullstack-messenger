@@ -10,7 +10,7 @@ export interface AuthRequest extends Request {
 }
 
 const authenticate = async (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -20,7 +20,7 @@ const authenticate = async (
   if (!user || !token) {
     throw new ApiError(401 as const, "unauthorized");
   }
-  req.user = user;
+  (req as AuthRequest).user = user;
   next();
 };
 
