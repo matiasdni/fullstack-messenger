@@ -32,6 +32,10 @@ async function main() {
     await connectToDatabase();
     await sequelize.sync({ force: true });
 
+    // destroy all data in the database
+    await User.destroy({ where: {} });
+    await Chat.destroy({ where: {} });
+
     // Create sample users
     const user1 = await createUser("test", "test");
     const user2 = await createUser("test2", "test");

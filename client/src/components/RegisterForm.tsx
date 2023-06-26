@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createUser } from "services/userService";
+import { useAppDispatch } from "app/store";
+import { setNotification } from "features/notification/notificationSlice";
 
 interface Props {
   onLoginClick: () => void;
@@ -9,6 +11,7 @@ interface Props {
 export const RegisterForm: React.FC<Props> = ({ onLoginClick }) => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const dispatch = useAppDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,14 +20,20 @@ export const RegisterForm: React.FC<Props> = ({ onLoginClick }) => {
       username,
       password,
     };
-
-    const response = await createUser(user);
-
-    if (response.status === 201) {
+    try {
+      await createUser(user);
       onLoginClick();
-    } else {
-      // display error message to user
-      console.log(response);
+      dispatch(
+        setNotification({
+          message: "Account created successfully",
+          status: "success",
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      dispatch(
+        setNotification({ message: "Error creating user", status: "error" })
+      );
     }
   };
 

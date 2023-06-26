@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import _ from "lodash";
 import { AuthRequest } from "../middlewares/auth";
 import { io } from "../server";
-import { findChats } from "../services/chatService";
+import { addUserToChat, findChats } from "../services/chatService";
 import friendService from "../services/friendService";
 import { getPendingInvites } from "../services/inviteService";
 import { getChatIds } from "../services/userChatService";
@@ -14,10 +14,39 @@ import {
 } from "../services/userService";
 import { ApiError } from "../utils/ApiError";
 import logger from "../utils/logger";
+import { Chat } from "../models";
+import { where } from "sequelize";
 
 export const newUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
+  if (!username || !password) {
+    logger.error("username or password missing");
+    throw new ApiError(400, "username or password missing");
+  }
+  if (username.length < 3 || password.length < 3) {
+    logger.error("username or password too short");
+    throw new ApiError(400, "username or password too short");
+  }
+  if (username.length > 20 || password.length > 20) {
+    logger.error("username or password too long");
+    throw new ApiError(400, "username or password too long");
+  }
+
   const user = await createUser(username, password);
+
+  // find general chat and add user to it
+  const chat = await Chat.findOne({
+    where: {
+      name: "General",
+    },
+  });
+
+  const generalChat = await Chat.findByPk(chat?.id);
+  if (!generalChat) {
+    throw new ApiError(404, "General chat not found");
+  }
+  await addUserToChat(user, generalChat);
+
   res.status(201).json(user);
 };
 

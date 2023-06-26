@@ -70,14 +70,6 @@ const SidebarHeader: FC<SidebarHeaderProps> = ({ activeTab }) => {
             </IconContext.Provider>
           </div>
         </div>
-
-        {/* Search input */}
-        <div className="pb-1">
-          <input
-            className="min-w-full p-1 space-y-0 text-left border border-gray-400 rounded shadow-sm form-input bg-neutral-100 dark:border-gray-600 dark:bg-gray-700"
-            placeholder="Search for users"
-          />
-        </div>
       </header>
 
       {/*

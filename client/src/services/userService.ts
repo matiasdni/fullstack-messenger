@@ -22,7 +22,8 @@ export const createUser = async (user: {
   username: string;
   password: string;
 }) => {
-  return await api.post(`${BASE_URL}`, user);
+  const response = await api.post(`${BASE_URL}/register`, user);
+  return response.data;
 };
 
 export const searchUsersByName = async (name: string) => {

@@ -1,4 +1,3 @@
-import { validateUserData } from "../middlewares/validationMiddleware";
 import {
   acceptFriendRequest,
   getAll,
@@ -18,7 +17,7 @@ import authenticate from "../middlewares/auth";
 
 const router = require("express").Router();
 
-router.post("/register", validateUserData, newUser);
+router.post("/register", newUser);
 
 router.get("/", getAll);
 
