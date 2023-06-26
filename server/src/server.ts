@@ -23,6 +23,8 @@ export const io = new Server(server, {
   },
 });
 
+app.use(express.static("build"));
+
 app.use(helmet());
 
 app.use(express.json());
@@ -33,8 +35,6 @@ app.use(
     credentials: true,
   })
 );
-
-app.use(express.static("build"));
 
 app.use("/api/auth", authRouter);
 
