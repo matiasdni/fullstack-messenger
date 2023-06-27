@@ -50,7 +50,8 @@ const UserTable = ({
                   <div className="avatar">
                     <div className="mask mask-circle w-10 h-10">
                       <img
-                        src={`https://avatars.dicebear.com/api/identicon/${user.username}.svg`}
+                        src={`https://api.dicebear.com/6.x/avataaars/svg?seed=${user.username}`}
+                        alt="avatar"
                       />
                     </div>
                   </div>

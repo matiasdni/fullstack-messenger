@@ -6,7 +6,7 @@ const AvatarStack = ({ users }) => (
           className={
             "inline-block w-8 h-8 rounded-full ring-2 ring-white bg-current dark:bg-gray-400 dark:ring-gray-800"
           }
-          src={`https://avatars.dicebear.com/api/identicon/${user.username}.svg`}
+          src={`https://api.dicebear.com/6.x/avataaars/svg?seed=${user.username}`}
           alt=""
         />
       </div>

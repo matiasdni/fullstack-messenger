@@ -125,19 +125,10 @@ const SearchResults = ({ results }) => {
 
 const UserSearchForm = ({ setResults }) => {
   const [username, setUsername] = useState("");
-  const token = useAppSelector((state) => state.auth.token);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const username = e.target.username.value;
-
-    // check that api token and redux store token are the same
-    const apiToken = api.defaults.headers.common["Authorization"];
-
-    if (apiToken !== token) {
-      api.defaults.headers.common["Authorization"] = token;
-    }
-
     if (username) {
       const users = await searchUsersByName(username);
       setResults(users);

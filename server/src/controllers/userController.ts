@@ -183,7 +183,7 @@ export const getRequests = async (req: AuthRequest, res: Response) => {
 export const searchUser = async (req: AuthRequest, res: Response) => {
   const { name } = req.body;
   const users = await searchUsers(name, req.user);
-  res.status(200).json(users.map((user) => user.toJSON()));
+  return res.status(200).json(users.map((user) => user.toJSON()));
 };
 
 export const removeUser = async (req: AuthRequest, res: Response) => {

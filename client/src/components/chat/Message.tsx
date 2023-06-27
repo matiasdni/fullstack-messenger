@@ -25,7 +25,7 @@ export const Message = ({ message }) => {
       <div className="w-2" />
       <img
         className="inline-block h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-600 dark:bg-opacity-50"
-        src={`https://avatars.dicebear.com/api/identicon/${message.user?.username}.svg`}
+        src={`https://api.dicebear.com/6.x/avataaars/svg?seed=${message.user?.username}`}
         alt=""
       />
     </div>
@@ -34,14 +34,14 @@ export const Message = ({ message }) => {
       <div className="mb-2 flex w-full shrink-0 items-center">
         <img
           className="inline-block h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-600 dark:bg-opacity-50"
-          src={`https://avatars.dicebear.com/api/identicon/${message.user?.username}.svg`}
+          src={`https://api.dicebear.com/6.x/avataaars/svg?seed=${message.user?.username}`}
           alt=""
         />
         <div className="w-2"></div>
         <div className="flex max-w-3/4 shrink-0 flex-col overflow-auto break-words rounded-lg bg-gray-200 bg-opacity-70 p-2 dark:bg-gray-700">
           <p className="text-teal text-sm">{message?.user.username}</p>
           <p className="mt-1 text-sm">{message?.content}</p>
-          <p className="text-grey-dark mt-1 text-right text-xs">
+          <p className="text-grey-dark mt-1 text-right text-xs chat-footer">
             {getTime(message?.createdAt)}
           </p>
         </div>
