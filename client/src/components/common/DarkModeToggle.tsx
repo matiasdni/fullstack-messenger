@@ -20,6 +20,7 @@ const DarkModeToggle = () => {
         className="hidden"
         onChange={toggleDarkMode}
         role="switch"
+        id="dark-mode-toggle"
       />
       <MdOutlineLightMode
         className="swap-on fill-current w-8 h-8"
