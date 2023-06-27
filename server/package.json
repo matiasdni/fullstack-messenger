@@ -1,7 +1,7 @@
 {
   "name": "fullstack-messenger-backend",
   "version": "1.0.0",
-  "description": "Backend server for the chat app",
+  "description": "Backend for fullstack messenger app",
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,9 +11,8 @@
     "dev": "ts-node ./src/utils/setupDatabase.ts && npm start",
     "build:ui": "rm -rf build && cd ../client/ && npm run build && cp -r build ../server"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Matias Niemelä",
+  "license": "MIT",
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
     "@types/body-parser": "^1.19.2",
@@ -53,16 +52,6 @@
   "devDependencies": {
     "nodemon": "^2.0.22"
   },
-  "presets": [
-    [
-      "@babel/preset-env",
-      {
-        "targets": {
-          "node": true
-        }
-      }
-    ]
-  ],
   "optionalDependencies": {
     "bufferutil": "^4.0.7",
     "utf-8-validate": "^5.0.10"

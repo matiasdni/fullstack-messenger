@@ -41,16 +41,30 @@ export const LoginScreen: React.FC = () => {
   };
 
   return (
-    <>
-      {currentForm === FormType.Login ? (
-        <LoginForm
-          onRegisterClick={() => setCurrentForm(FormType.Register)}
-          navigate={navigate}
-          handleSubmit={handleSubmit}
-        />
-      ) : (
-        <RegisterForm onLoginClick={() => setCurrentForm(FormType.Login)} />
-      )}
-    </>
+    <div className="flex items-center justify-center h-screen">
+      <div className="inline-flex py-20 px-10 rounded-2xl bg-neutral-100">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <h2 className="text-2xl font-bold text-start w-full">
+            Welcome to Fullstack Messenger
+          </h2>
+          <p className="text-lg text-gray-500">
+            A chat app built with React, Redux, and Tailwind, socket.io, and
+            more!
+          </p>
+        </div>
+        <div className="w-px h-96 bg-gray-300 dark:bg-gray-700 mx-8"></div>
+        <div className="flex flex-col items-center justify-center w-[448px]">
+          {currentForm === FormType.Login ? (
+            <LoginForm
+              onRegisterClick={() => setCurrentForm(FormType.Register)}
+              navigate={navigate}
+              handleSubmit={handleSubmit}
+            />
+          ) : (
+            <RegisterForm onLoginClick={() => setCurrentForm(FormType.Login)} />
+          )}
+        </div>
+      </div>
+    </div>
   );
 };

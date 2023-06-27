@@ -16,7 +16,7 @@ export const LoginForm: FC<LoginFormProps> = ({
   const [password, setPassword] = useState("");
 
   return (
-    <>
+    <div className="w-full">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -25,11 +25,11 @@ export const LoginForm: FC<LoginFormProps> = ({
         data-testid="login-form"
         className="form-input m-auto max-w-md rounded-lg border-0 bg-blue-50 py-[16px] shadow-md ring-1 dark:border-collapse  dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:shadow-2xl dark:ring-0"
       >
-        {/* input fields */}
         <div className="flex flex-col gap-4 p-4 md:p-8">
           <header>
             <h3 className="text-2xl font-bold">Sign in to your account</h3>
           </header>
+          {/* input fields */}
           <div>
             <label
               htmlFor="login-username"
@@ -67,32 +67,7 @@ export const LoginForm: FC<LoginFormProps> = ({
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 transition-none focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400"
             />
           </div>
-          {/* buttons etc */}
-          <div className="h-full w-full">
-            <div className="inline-flex w-full justify-between">
-              <div className="space-x-2 text-sm">
-                <input
-                  id="remember"
-                  type="checkbox"
-                  value=""
-                  className="focus:ring-3 h-4 w-4 rounded border border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 dark:active:bg-gray-700"
-                />
-
-                <label
-                  htmlFor="remember"
-                  className="text-sm font-medium text-gray-900 dark:text-gray-300"
-                >
-                  Remember me
-                </label>
-              </div>
-              <Link to="/forgot-password">
-                <div className="justify-end text-sm text-blue-700 hover:underline dark:text-blue-500">
-                  <span>Lost Password?</span>
-                </div>
-              </Link>
-            </div>
-          </div>
-          <div className="">
+          <div>
             <button
               // disabled={loading}
               className="h-10 w-full rounded-lg bg-blue-700 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -118,8 +93,8 @@ export const LoginForm: FC<LoginFormProps> = ({
         </div>
       </form>
       <p className="mt-2 text-center text-xs text-gray-500">
-        &copy;2023 matiasdn. All rights reserved.
+        &copy;2023 matiasdn
       </p>
-    </>
+    </div>
   );
 };

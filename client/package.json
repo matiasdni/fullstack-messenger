@@ -2,6 +2,8 @@
   "name": "fullstack-messenger-client",
   "version": "0.1.0",
   "private": true,
+  "author": "Matias Niemelä",
+  "license": "MIT",
   "dependencies": {
     "@headlessui/react": "^1.7.15",
     "react": "^18.2.0",

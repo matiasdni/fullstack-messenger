@@ -65,8 +65,8 @@ const SearchListItem = ({ user }) => {
       <div className="inline-flex grow basis-1/3 items-center">
         <img
           className="inline-block h-8 w-8 rounded-full"
-          src={`https://avatars.dicebear.com/api/identicon/${user.username}.svg`}
-          alt=""
+          src={`https://api.dicebear.com/6.x/avataaars/svg?seed=${user.username}`}
+          alt="avatar"
         />
         <p className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
           {user.username}
