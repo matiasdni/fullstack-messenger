@@ -78,6 +78,8 @@ accessed [here](https://fullstack-messenger.onrender.com/).
 
 ![Send Message](images/img_11.png)
 
+![Notifications](images/img_12.png)
+
 ### Hour keeping
 
 | Date            | Hours | Description                                                                                                                                                                                                                                                                                                                                                                                                       |
