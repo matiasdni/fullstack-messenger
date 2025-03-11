@@ -8,7 +8,7 @@ This is a fullstack messenger web application developed using **React** and **No
 to send messages to other users, add and remove friends, create groups and send group messages.
 
 The application is deployed on [Render](https://render.com/) and can be
-accessed [here](https://fullstack-messenger.onrender.com/).
+accessed [here](https://fullstack-messenger-9omi.onrender.com).
 
 ### Features
 

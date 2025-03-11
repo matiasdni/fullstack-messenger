@@ -1,6 +1,6 @@
-import {config} from "./config";
-import {Sequelize} from "sequelize";
-import {Pool} from "pg";
+import { config } from "./config";
+import { Sequelize } from "sequelize";
+import { Pool } from "pg";
 
 const db: any = config.database;
 
@@ -12,6 +12,12 @@ const sequelize = new Sequelize(db.database, db.username, db.password, {
   sync: {
     alter: true,
   },
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
 });
 
 const createDatabase = async (): Promise<void> => {
@@ -20,6 +26,10 @@ const createDatabase = async (): Promise<void> => {
     host: db.host,
     password: db.password,
     port: db.port,
+    database: db.database,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   });
 
   try {
