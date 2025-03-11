@@ -2,7 +2,7 @@
   "name": "fullstack-messenger-backend",
   "version": "1.0.0",
   "description": "Backend for fullstack messenger app",
-  "main": "index.ts",
+  "main": "./src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --exec ts-node ./src/index.ts",
