@@ -4,10 +4,13 @@ import { Pool } from "pg";
 
 const db: any = config.database;
 
-const sequelize = new Sequelize(db.database, db.username, db.password, {
+const sequelize = new Sequelize({
+  dialect: db.dialect,
   host: db.host,
   port: db.port,
-  dialect: db.dialect,
+  database: db.database,
+  username: db.username,
+  password: db.password,
   logging: false,
   sync: {
     alter: true,
@@ -18,6 +21,7 @@ const sequelize = new Sequelize(db.database, db.username, db.password, {
       rejectUnauthorized: false,
     },
   },
+  ssl: true,
 });
 
 const createDatabase = async (): Promise<void> => {
